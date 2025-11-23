@@ -3,139 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ব্যবহারকারী রেজিস্ট্রেশন | cumillalg.govbd</title>
-    <meta name="description" content="কুমিল্লা স্থানীয় সরকারের অনলাইন নাগরিক সেবা পোর্টালে রেজিস্ট্রেশন করুন।">
+    <title>সাধারণ ব্যবহারকারী নিবন্ধন - কুমিল্লা সেবা পোর্টাল</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/custom.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-50">
+<body class="bg-gradient-to-br from-green-50 to-teal-50 min-h-screen">
     <!-- হেডার -->
-    <header class="bg-green-700 text-white shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <i class="fas fa-landmark text-2xl"></i>
-                <a href="index.html" class="text-xl font-bold">কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</a>
-            </div>
-            <div class="flex space-x-4">
-                <a href="admin_login.html" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold py-2 px-4 rounded transition duration-200">
-                    <i class="fas fa-user-shield mr-2"></i>অ্যাডমিন লগইন
-                </a>
-                <a href="user_login.html" class="bg-white hover:bg-gray-100 text-green-700 font-semibold py-2 px-4 rounded transition duration-200">
-                    <i class="fas fa-sign-in-alt mr-2"></i>লগইন
-                </a>
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <a href="index.html" class="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-arrow-left text-white"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">কুমিল্লা স্থানীয় সরকার</h1>
+                        <p class="text-gray-600 text-sm">সাধারণ ব্যবহারকারী নিবন্ধন</p>
+                    </div>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- রেজিস্ট্রেশন ফর্ম -->
-    <section class="py-12">
-        <div class="container mx-auto px-4 max-w-2xl">
-            <div class="bg-white rounded-lg shadow-md p-8">
-                <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">ব্যবহারকারী রেজিস্ট্রেশন</h2>
-                
-                <form id="registrationForm" class="space-y-6">
+    <!-- মূল কন্টেন্ট -->
+    <main class="container mx-auto px-4 py-8">
+        <div class="max-w-2xl mx-auto">
+            <!-- হেডার -->
+            <div class="text-center mb-8">
+                <div class="w-20 h-20 bg-gradient-to-r from-green-500 to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-users text-white text-3xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">সাধারণ ব্যবহারকারী (General User) অ্যাকাউন্ট তৈরি করুন</h2>
+                <p class="text-gray-600">লাল তারা (<span class="text-red-500">*</span>) চিহ্নিত ফিল্ডগুলো বাধ্যতামূলক</p>
+            </div>
+
+            <!-- ফর্ম -->
+            <div class="bg-white rounded-2xl shadow-lg p-8">
+                <form id="userRegistrationForm" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- জাতীয় পরিচয়পত্র নম্বর -->
                         <div>
-                            <label for="fullName" class="block text-gray-700 mb-2">পূর্ণ নাম</label>
-                            <input type="text" id="fullName" name="fullName" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                            <label for="userNid" class="block text-gray-700 mb-2 font-medium">
+                                জাতীয় পরিচয়পত্র নম্বর 🔢 <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="userNid" name="userNid" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                                   placeholder="১০ বা ১৭ ডিজিট" required
+                                   pattern="[0-9]{10}|[0-9]{17}">
+                            <p class="text-sm text-gray-500 mt-1">১০ অথবা ১৭ ডিজিট</p>
                         </div>
                         
+                        <!-- মোবাইল নম্বর -->
                         <div>
-                            <label for="fatherName" class="block text-gray-700 mb-2">পিতার নাম</label>
-                            <input type="text" id="fatherName" name="fatherName" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                            <label for="userMobile" class="block text-gray-700 mb-2 font-medium">
+                                মোবাইল নম্বর 📞 <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" id="userMobile" name="userMobile" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                                   placeholder="০১XXXXXXXXX" required
+                                   pattern="[0-9]{11}">
+                            <p class="text-sm text-gray-500 mt-1">১১ ডিজিট</p>
                         </div>
                     </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="motherName" class="block text-gray-700 mb-2">মাতার নাম</label>
-                            <input type="text" id="motherName" name="motherName" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
-                        </div>
-                        
-                        <div>
-                            <label for="nid" class="block text-gray-700 mb-2">জাতীয় পরিচয়পত্র নম্বর</label>
-                            <input type="text" id="nid" name="nid" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
-                        </div>
-                    </div>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label for="email" class="block text-gray-700 mb-2">ইমেইল</label>
-                            <input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
-                        </div>
-                        
-                        <div>
-                            <label for="mobile" class="block text-gray-700 mb-2">মোবাইল নম্বর</label>
-                            <input type="tel" id="mobile" name="mobile" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
-                        </div>
-                    </div>
-                    
+
+                    <!-- জন্ম তারিখ -->
                     <div>
-                        <label for="address" class="block text-gray-700 mb-2">ঠিকানা</label>
-                        <textarea id="address" name="address" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required></textarea>
+                        <label class="block text-gray-700 mb-2 font-medium">
+                            জন্ম তারিখ <span class="text-red-500">*</span>
+                        </label>
+                        <div class="grid grid-cols-3 gap-4">
+                            <select id="birthYear" name="birthYear" 
+                                    class="px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200" required>
+                                <option value="">বছর</option>
+                                <!-- জন্ম বছর options -->
+                            </select>
+                            <select id="birthMonth" name="birthMonth" 
+                                    class="px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200" required>
+                                <option value="">মাস</option>
+                                <option value="01">জানুয়ারি</option>
+                                <option value="02">ফেব্রুয়ারি</option>
+                                <option value="03">মার্চ</option>
+                                <option value="04">এপ্রিল</option>
+                                <option value="05">মে</option>
+                                <option value="06">জুন</option>
+                                <option value="07">জুলাই</option>
+                                <option value="08">আগস্ট</option>
+                                <option value="09">সেপ্টেম্বর</option>
+                                <option value="10">অক্টোবর</option>
+                                <option value="11">নভেম্বর</option>
+                                <option value="12">ডিসেম্বর</option>
+                            </select>
+                            <select id="birthDay" name="birthDay" 
+                                    class="px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200" required>
+                                <option value="">দিন</option>
+                                <!-- জন্ম দিন options -->
+                            </select>
+                        </div>
                     </div>
-                    
+
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- নাম (বাংলায়) -->
                         <div>
-                            <label for="password" class="block text-gray-700 mb-2">পাসওয়ার্ড</label>
-                            <input type="password" id="password" name="password" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                            <label for="userBanglaName" class="block text-gray-700 mb-2 font-medium">
+                                নাম (বাংলায়) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="userBanglaName" name="userBanglaName" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                                   placeholder="বাংলায় নাম লিখুন" required>
                         </div>
                         
+                        <!-- নাম (ইংরেজিতে) -->
                         <div>
-                            <label for="confirmPassword" class="block text-gray-700 mb-2">পাসওয়ার্ড নিশ্চিত করুন</label>
-                            <input type="password" id="confirmPassword" name="confirmPassword" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500" required>
+                            <label for="userEnglishName" class="block text-gray-700 mb-2 font-medium">
+                                নাম (ইংরেজিতে) <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" id="userEnglishName" name="userEnglishName" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                                   placeholder="ইংরেজিতে নাম লিখুন" required>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center">
-                        <input type="checkbox" id="terms" name="terms" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded" required>
-                        <label for="terms" class="ml-2 block text-sm text-gray-700">আমি <a href="#" class="text-green-600 hover:text-green-800">শর্তাবলী</a> এবং <a href="#" class="text-green-600 hover:text-green-800">গোপনীয়তা নীতি</a> পড়েছি এবং সম্মত</label>
+
+                    <!-- ই-মেইল ঠিকানা -->
+                    <div>
+                        <label for="userEmail" class="block text-gray-700 mb-2 font-medium">
+                            ই-মেইল ঠিকানা ✉️ <span class="text-red-500">*</span>
+                        </label>
+                        <input type="email" id="userEmail" name="userEmail" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                               placeholder="আপনার ইমেইল ঠিকানা" required>
                     </div>
-                    
-                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-md transition duration-200">
-                        রেজিস্ট্রেশন সম্পন্ন করুন
-                    </button>
-                    
-                    <div class="text-center">
-                        <p class="text-gray-600">ইতিমধ্যে অ্যাকাউন্ট আছে? <a href="user_login.html" class="text-green-600 hover:text-green-800 font-semibold">এখানে লগইন করুন</a></p>
+
+                    <!-- বাটন -->
+                    <div class="mt-8">
+                        <button type="submit" class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-4 px-8 rounded-xl transition duration-300 transform hover:scale-105">
+                            নিবন্ধন করুন ✅
+                        </button>
                     </div>
                 </form>
+
+                <!-- সফলতা বার্তা -->
+                <div id="userSuccessMessage" class="text-center hidden">
+                    <div class="w-20 h-20 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-check-circle text-green-600 text-3xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4" id="userSuccessUserName"></h3>
+                    <div class="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
+                        <p class="text-green-800 mb-4">
+                            <strong>✨ অভিনন্দন! ✨</strong>
+                        </p>
+                        <p class="text-green-700">
+                            আপনার আবেদন এখন 🧑‍💻 M²H. TUSAR _ COMPUTECH 💻 কর্তৃপক্ষের নিকট অনুমোদনের জন্য অপেক্ষা করছে। অ্যাকাউন্টটি অনুমোদিত/সক্রিয় হলে আপনাকে ইমেল বা মোবাইল নম্বরে মেসেজ পেরন করা হবে।
+                        </p>
+                    </div>
+                    <a href="index.html" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-xl transition duration-300">
+                        হোমপেজে ফিরে যান
+                    </a>
+                </div>
             </div>
         </div>
-    </section>
+    </main>
 
-    <!-- ফুটার -->
-    <footer class="bg-gray-800 text-white py-8 mt-12">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <h3 class="text-xl font-bold mb-4">কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</h3>
-                    <p class="text-gray-300">স্থানীয় সরকার বিভাগ, কুমিল্লা</p>
-                </div>
-                
-                <div>
-                    <h3 class="text-xl font-bold mb-4">যোগাযোগ</h3>
-                    <p class="text-gray-300 mb-2"><i class="fas fa-map-marker-alt mr-2"></i>কুমিল্লা সদর, কুমিল্লা</p>
-                    <p class="text-gray-300 mb-2"><i class="fas fa-phone mr-2"></i>০৮১-৬৮৫২০</p>
-                    <p class="text-gray-300"><i class="fas fa-envelope mr-2"></i>info@cumillalg.gov.bd</p>
-                </div>
-                
-                <div>
-                    <h3 class="text-xl font-bold mb-4">গুরুত্বপূর্ণ লিঙ্ক</h3>
-                    <ul class="space-y-2">
-                        <li><a href="index.html" class="text-gray-300 hover:text-white transition duration-200">হোমপেজ</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition duration-200">স্থানীয় সরকার বিভাগ</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
-                <p>&copy; ২০২৩ কুমিল্লা স্থানীয় সরকার। সকল স্বত্ব সংরক্ষিত।</p>
-            </div>
-        </div>
-    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userForm = document.getElementById('userRegistrationForm');
+            const successMessage = document.getElementById('userSuccessMessage');
+            const successUserName = document.getElementById('userSuccessUserName');
 
-    <script src="assets/js/script.js"></script>
+            // জন্ম বছর options পপুলেট করুন
+            const birthYearSelect = document.getElementById('birthYear');
+            const currentYear = new Date().getFullYear();
+            for (let year = currentYear; year >= 1900; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = year;
+                birthYearSelect.appendChild(option);
+            }
+
+            // জন্ম দিন options পপুলেট করুন
+            const birthDaySelect = document.getElementById('birthDay');
+            for (let day = 1; day <= 31; day++) {
+                const option = document.createElement('option');
+                option.value = day < 10 ? '0' + day : day;
+                option.textContent = day;
+                birthDaySelect.appendChild(option);
+            }
+
+            // ফর্ম সাবমিশন
+            userForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // সহজ ভ্যালিডেশন
+                const nid = document.getElementById('userNid').value.trim();
+                const mobile = document.getElementById('userMobile').value.trim();
+                const banglaName = document.getElementById('userBanglaName').value.trim();
+                const birthYear = document.getElementById('birthYear').value;
+                const birthMonth = document.getElementById('birthMonth').value;
+                const birthDay = document.getElementById('birthDay').value;
+                
+                if (!nid || !mobile || !banglaName || !birthYear || !birthMonth || !birthDay) {
+                    alert('দয়া করে সকল প্রয়োজনীয় ফিল্ড পূরণ করুন।');
+                    return;
+                }
+
+                // NID ভ্যালিডেশন
+                if (!/^\d{10}$|^\d{17}$/.test(nid)) {
+                    alert('জাতীয় পরিচয়পত্র নম্বর ১০ বা ১৭ ডিজিট হতে হবে।');
+                    return;
+                }
+
+                // মোবাইল ভ্যালিডেশন
+                if (!/^\d{11}$/.test(mobile)) {
+                    alert('মোবাইল নম্বর ১১ ডিজিট হতে হবে।');
+                    return;
+                }
+
+                // ফর্ম হাইড করুন
+                userForm.classList.add('hidden');
+                
+                // সফলতা বার্তা দেখান
+                successUserName.textContent = `✨ অভিনন্দন! ${banglaName} ✨`;
+                successMessage.classList.remove('hidden');
+            });
+        });
+    </script>
 </body>
 </html>
