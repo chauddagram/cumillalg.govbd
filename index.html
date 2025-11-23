@@ -3,357 +3,235 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>লগইন - কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</title>
-    <meta name="description" content="কুমিল্লা স্থানীয় সরকারের অনলাইন নাগরিক সেবা পোর্টালে লগইন বা রেজিস্ট্রেশন করুন">
+    <title>কুমিল্লা স্থানীয় সরকার সেবা পোর্টাল</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.maateen.me/kalpurush/font.css');
-        body { font-family: 'Kalpurush', Arial, sans-serif; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen flex items-center justify-center py-8">
-    <div class="container mx-auto px-4 max-w-6xl">
-        <!-- হেডার -->
-        <div class="text-center mb-8">
-            <div class="flex items-center justify-center space-x-3 mb-4">
-                <i class="fas fa-landmark text-3xl text-green-600"></i>
-                <h1 class="text-3xl font-bold text-gray-800">কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</h1>
-            </div>
-            <p class="text-gray-600 text-lg">আপনার প্রয়োজনীয় সরকারি সেবা সহজেই গ্রহণ করুন</p>
-        </div>
-
-        <!-- মূল কন্টেন্ট -->
-        <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
-            <div class="grid grid-cols-1 lg:grid-cols-2">
-                <!-- লগইন সেকশন -->
-                <div class="p-8 border-r border-gray-100">
-                    <div class="text-center mb-6">
-                        <i class="fas fa-sign-in-alt text-4xl text-green-600 mb-3"></i>
-                        <h2 class="text-2xl font-bold text-gray-800">লগইন করুন</h2>
-                        <p class="text-gray-600 mt-2">আপনার অ্যাকাউন্টে প্রবেশ করুন</p>
+<body class="bg-gradient-to-br from-blue-50 to-green-50 min-h-screen">
+    <!-- হেডার -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3 cursor-pointer" id="logo">
+                    <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-blue-600 rounded-full flex items-center justify-center">
+                        <i class="fas fa-landmark text-white text-xl"></i>
                     </div>
-
-                    <form id="loginForm" class="space-y-6">
-                        <div>
-                            <label for="loginEmail" class="block text-gray-700 mb-2 font-medium">ইমেইল বা ব্যবহারকারী নাম</label>
-                            <input type="text" id="loginEmail" name="loginEmail" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
-                                   placeholder="আপনার ইমেইল বা ইউজারনেম লিখুন" required>
-                        </div>
-                        
-                        <div>
-                            <label for="loginPassword" class="block text-gray-700 mb-2 font-medium">পাসওয়ার্ড</label>
-                            <input type="password" id="loginPassword" name="loginPassword" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
-                                   placeholder="আপনার পাসওয়ার্ড লিখুন" required>
-                        </div>
-                        
-                        <div class="flex justify-between items-center">
-                            <div class="flex items-center">
-                                <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
-                                <label for="remember" class="ml-2 block text-sm text-gray-700">মনে রাখুন</label>
-                            </div>
-                            <a href="#" class="text-sm text-green-600 hover:text-green-800 font-medium">পাসওয়ার্ড ভুলে গেছেন?</a>
-                        </div>
-                        
-                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105">
-                            <i class="fas fa-sign-in-alt mr-2"></i>লগইন করুন
-                        </button>
-                    </form>
-
-                    <!-- অ্যাডমিন লগইন লিঙ্ক -->
-                    <div class="mt-6 text-center">
-                        <a href="admin_login.html" class="inline-flex items-center text-yellow-600 hover:text-yellow-800 font-medium">
-                            <i class="fas fa-user-shield mr-2"></i>অ্যাডমিন লগইন
-                        </a>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">কুমিল্লা স্থানীয় সরকার</h1>
+                        <p class="text-gray-600 text-sm">ডিজিটাল সেবা পোর্টাল</p>
                     </div>
-                </div>
-
-                <!-- রেজিস্ট্রেশন সেকশন -->
-                <div class="p-8 bg-green-50">
-                    <div class="text-center mb-6">
-                        <i class="fas fa-user-plus text-4xl text-blue-600 mb-3"></i>
-                        <h2 class="text-2xl font-bold text-gray-800">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
-                        <p class="text-gray-600 mt-2">নিবন্ধন করুন এবং সেবা গ্রহণ শুরু করুন</p>
-                    </div>
-
-                    <form id="registrationForm" class="space-y-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="regName" class="block text-gray-700 mb-2 text-sm font-medium">পূর্ণ নাম</label>
-                                <input type="text" id="regName" name="regName" 
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
-                                       placeholder="পূর্ণ নাম" required>
-                            </div>
-                            
-                            <div>
-                                <label for="regEmail" class="block text-gray-700 mb-2 text-sm font-medium">ইমেইল</label>
-                                <input type="email" id="regEmail" name="regEmail" 
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
-                                       placeholder="ইমেইল ঠিকানা" required>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="regPhone" class="block text-gray-700 mb-2 text-sm font-medium">মোবাইল নম্বর</label>
-                                <input type="tel" id="regPhone" name="regPhone" 
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
-                                       placeholder="০১XXXXXXXXX" required>
-                            </div>
-                            
-                            <div>
-                                <label for="regNID" class="block text-gray-700 mb-2 text-sm font-medium">জাতীয় পরিচয়পত্র</label>
-                                <input type="text" id="regNID" name="regNID" 
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
-                                       placeholder="জাতীয় পরিচয়পত্র নম্বর" required>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label for="regPassword" class="block text-gray-700 mb-2 text-sm font-medium">পাসওয়ার্ড</label>
-                                <input type="password" id="regPassword" name="regPassword" 
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
-                                       placeholder="পাসওয়ার্ড" required>
-                            </div>
-                            
-                            <div>
-                                <label for="regConfirmPassword" class="block text-gray-700 mb-2 text-sm font-medium">পাসওয়ার্ড নিশ্চিত করুন</label>
-                                <input type="password" id="regConfirmPassword" name="regConfirmPassword" 
-                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
-                                       placeholder="পাসওয়ার্ড নিশ্চিত করুন" required>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center">
-                            <input type="checkbox" id="terms" name="terms" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" required>
-                            <label for="terms" class="ml-2 block text-sm text-gray-700">
-                                আমি <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">শর্তাবলী</a> এবং 
-                                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">গোপনীয়তা নীতি</a> পড়েছি এবং সম্মত
-                            </label>
-                        </div>
-                        
-                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105">
-                            <i class="fas fa-user-plus mr-2"></i>রেজিস্ট্রেশন সম্পন্ন করুন
-                        </button>
-                    </form>
                 </div>
             </div>
         </div>
+    </header>
 
-        <!-- তথ্য বক্স -->
-        <div class="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-            <div class="flex items-start">
-                <i class="fas fa-info-circle text-yellow-600 text-xl mt-1 mr-3"></i>
-                <div>
-                    <h3 class="font-semibold text-yellow-800 mb-2">গুরুত্বপূর্ণ তথ্য</h3>
-                    <p class="text-yellow-700 text-sm">
-                        রেজিস্ট্রেশন সম্পন্ন করার পর আপনার অ্যাকাউন্টটি অনুমোদনের জন্য প্রেরণ করা হবে। 
-                        কর্তৃপক্ষ কর্তৃক অনুমোদিত হওয়ার পরই আপনি লগইন করে সেবাসমূহ ব্যবহার করতে পারবেন। 
-                        অনুমোদন প্রক্রিয়ায় সাধারণত ২৪-৪৮ ঘন্টা সময় লাগতে পারে।
-                    </p>
+    <!-- হিরো সেকশন -->
+    <main class="container mx-auto px-4 py-12">
+        <div class="max-w-4xl mx-auto text-center">
+            <h2 class="text-4xl md:text-5xl font-bold text-gray-800 mb-6">
+                স্বাগতম 
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-blue-600">
+                    কুমিল্লা সেবা পোর্টাল
+                </span>
+            </h2>
+            <p class="text-xl text-gray-600 mb-12 max-w-2xl mx-auto">
+                আপনার প্রয়োজনীয় সকল সরকারি সেবা এখন অনলাইনে। সহজে নিবন্ধন করুন এবং সেবা গ্রহণ শুরু করুন।
+            </p>
+
+            <!-- একশন বাটন -->
+            <div class="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+                <button id="registerBtn" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-user-plus mr-3"></i>নিবন্ধন ✍️
+                </button>
+                
+                <button id="loginBtn" class="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-bold py-4 px-8 rounded-xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg">
+                    <i class="fas fa-key mr-3"></i>লগইন 🔑
+                </button>
+            </div>
+
+            <!-- ফিচার কার্ড -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-bolt text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">দ্রুত সেবা</h3>
+                    <p class="text-gray-600">অনলাইনে আবেদন করে দ্রুততম সময়ে সেবা গ্রহণ করুন</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-shield-alt text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">নিরাপদ</h3>
+                    <p class="text-gray-600">আপনার তথ্য সম্পূর্ণ নিরাপদ এবং গোপনীয়</p>
+                </div>
+                
+                <div class="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                    <div class="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mb-4 mx-auto">
+                        <i class="fas fa-mobile-alt text-purple-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">সর্বত্র প্রবেশযোগ্য</h3>
+                    <p class="text-gray-600">যেকোনো ডিভাইস থেকে যেকোনো সময় সেবা নিন</p>
                 </div>
             </div>
         </div>
+    </main>
 
-        <!-- ফুটার -->
-        <footer class="mt-8 text-center text-gray-600">
-            <p>&copy; ২০২৩ কুমিল্লা স্থানীয় সরকার। সকল স্বত্ব সংরক্ষিত।</p>
-        </footer>
+    <!-- নিবন্ধন মোডাল -->
+    <div id="registrationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-95">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-user-plus text-white text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">নিবন্ধন নির্বাচন করুন 📋</h3>
+                <p class="text-gray-600">আপনি কোন ধরনের অ্যাকাউন্ট তৈরি করতে চান?</p>
+            </div>
+            
+            <div class="space-y-4">
+                <a href="sub_admin_registration.html" class="block bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-4 px-6 rounded-xl text-center transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-building mr-2"></i>কন্ট্রোল/সাব-অ্যাডমিন: নিবন্ধন 🏢
+                </a>
+                
+                <a href="user_registration.html" class="block bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-4 px-6 rounded-xl text-center transition-all duration-300 transform hover:scale-105">
+                    <i class="fas fa-users mr-2"></i>সাধারণ ব্যবহারকারী: নিবন্ধন 🧑‍🤝‍🧑
+                </a>
+            </div>
+            
+            <button id="closeRegistrationModal" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-xl transition duration-300">
+                বাতিল
+            </button>
+        </div>
     </div>
 
-    <script>
-        // ফর্ম ভ্যালিডেশন এবং রিডাইরেক্ট
-        document.addEventListener('DOMContentLoaded', function() {
-            // লগইন ফর্ম
-            const loginForm = document.getElementById('loginForm');
-            if (loginForm) {
-                loginForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const email = document.getElementById('loginEmail').value.trim();
-                    const password = document.getElementById('loginPassword').value.trim();
-                    
-                    if (email && password) {
-                        // সফল লগইন - সেবা পোর্টালে রিডাইরেক্ট
-                        window.location.href = 'chauddagram.cumillalg.govbd_portal.html';
-                    } else {
-                        alert('দয়া করে ইমেইল এবং পাসওয়ার্ড প্রদান করুন।');
-                    }
-                });
-            }
+    <!-- লগইন মোডাল -->
+    <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all duration-300 scale-95">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-key text-white text-2xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-2">লগইন করুন 🔑</h3>
+                <p class="text-gray-600">আপনার অ্যাকাউন্টে প্রবেশ করুন</p>
+            </div>
+            
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label for="loginUsername" class="block text-gray-700 mb-2 font-medium">ইউজারনেম বা ইমেইল</label>
+                    <input type="text" id="loginUsername" name="loginUsername" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                           placeholder="আপনার ইউজারনেম বা ইমেইল" required>
+                </div>
+                
+                <div>
+                    <label for="loginPassword" class="block text-gray-700 mb-2 font-medium">পাসওয়ার্ড</label>
+                    <input type="password" id="loginPassword" name="loginPassword" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                           placeholder="আপনার পাসওয়ার্ড" required>
+                </div>
+                
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-300 transform hover:scale-105">
+                    লগইন করুন
+                </button>
+            </form>
+            
+            <div class="mt-4 text-center">
+                <a href="#" class="text-blue-600 hover:text-blue-800 text-sm">পাসওয়ার্ড ভুলে গেছেন?</a>
+            </div>
+            
+            <button id="closeLoginModal" class="w-full mt-6 bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-6 rounded-xl transition duration-300">
+                বাতিল
+            </button>
+        </div>
+    </div>
 
-            // রেজিস্ট্রেশন ফর্ম
-            const registrationForm = document.getElementById('registrationForm');
-            if (registrationForm) {
-                registrationForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
-                    const name = document.getElementById('regName').value.trim();
-                    const email = document.getElementById('regEmail').value.trim();
-                    const phone = document.getElementById('regPhone').value.trim();
-                    const nid = document.getElementById('regNID').value.trim();
-                    const password = document.getElementById('regPassword').value.trim();
-                    const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
-                    const terms = document.getElementById('terms').checked;
-                    
-                    // ভ্যালিডেশন
-                    if (!name || !email || !phone || !nid || !password || !confirmPassword) {
-                        alert('দয়া করে সকল প্রয়োজনীয় তথ্য প্রদান করুন।');
-                        return;
-                    }
-                    
-                    if (password !== confirmPassword) {
-                        alert('পাসওয়ার্ড মেলে না। দয়া করে আবার চেষ্টা করুন।');
-                        return;
-                    }
-                    
-                    if (!terms) {
-                        alert('দয়া করে শর্তাবলী এবং গোপনীয়তা নীতি পড়ে সম্মতি প্রদান করুন।');
-                        return;
-                    }
-                    
-                    // সফল রেজিস্ট্রেশন
-                    alert('রেজিস্ট্রেশন সফল! আপনার অ্যাকাউন্টটি অনুমোদনের জন্য প্রেরণ করা হয়েছে। অনুমোদন পাওয়ার পর আপনি লগইন করতে পারবেন।');
-                    registrationForm.reset();
-                });
+    <!-- ফুটার -->
+    <footer class="bg-white border-t border-gray-200 mt-16">
+        <div class="container mx-auto px-4 py-8">
+            <div class="text-center text-gray-600">
+                <p>&copy; ২০২৩ কুমিল্লা স্থানীয় সরকার। সকল স্বত্ব সংরক্ষিত।</p>
+                <p class="text-sm mt-2">M²H. TUSAR _ COMPUTECH 💻 দ্বারা উন্নয়নকৃত</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // সুপার অ্যাডমিন লগইন (লোগোতে ৩ বার ক্লিক)
+        let clickCount = 0;
+        let clickTimer;
+        
+        document.getElementById('logo').addEventListener('click', function() {
+            clickCount++;
+            
+            if (clickCount === 1) {
+                clickTimer = setTimeout(() => {
+                    clickCount = 0;
+                }, 1000);
+            } else if (clickCount === 3) {
+                clearTimeout(clickTimer);
+                window.location.href = 'super_admin_login.html';
+                clickCount = 0;
             }
         });
-    <script>
-    // localStorage-এ ইউজার ডেটা ম্যানেজমেন্ট
-    document.addEventListener('DOMContentLoaded', function() {
-        // localStorage থেকে ইউজার ডেটা লোড করুন
-        let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
-        
-        // লগইন ফর্ম
-        const loginForm = document.getElementById('loginForm');
-        if (loginForm) {
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const email = document.getElementById('loginEmail').value.trim();
-                const password = document.getElementById('loginPassword').value.trim();
-                
-                if (!email || !password) {
-                    showAlert('দয়া করে ইমেইল এবং পাসওয়ার্ড প্রদান করুন।', 'error');
-                    return;
-                }
-                
-                // ইউজার খুঁজে বের করুন
-                const user = users.find(u => u.email === email && u.password === password);
-                
-                if (user) {
-                    if (user.approved) {
-                        // সফল লগইন - সেবা পোর্টালে রিডাইরেক্ট
-                        showAlert('লগইন সফল! সেবা পোর্টালে নিয়ে যাওয়া হচ্ছে...', 'success');
-                        setTimeout(() => {
-                            window.location.href = 'chauddagram.cumillalg.govbd_portal.html';
-                        }, 1500);
-                    } else {
-                        showAlert('আপনার অ্যাকাউন্টটি এখনও অনুমোদিত হয়নি। দয়া করে অপেক্ষা করুন।', 'warning');
-                    }
-                } else {
-                    showAlert('ভুল ইমেইল বা পাসওয়ার্ড। দয়া করে আবার চেষ্টা করুন অথবা রেজিস্ট্রেশন করুন।', 'error');
-                }
-            });
-        }
 
-        // রেজিস্ট্রেশন ফর্ম
-        const registrationForm = document.getElementById('registrationForm');
-        if (registrationForm) {
-            registrationForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('regName').value.trim();
-                const email = document.getElementById('regEmail').value.trim();
-                const phone = document.getElementById('regPhone').value.trim();
-                const nid = document.getElementById('regNID').value.trim();
-                const password = document.getElementById('regPassword').value.trim();
-                const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
-                const terms = document.getElementById('terms').checked;
-                
-                // ভ্যালিডেশন
-                if (!name || !email || !phone || !nid || !password || !confirmPassword) {
-                    showAlert('দয়া করে সকল প্রয়োজনীয় তথ্য প্রদান করুন।', 'error');
-                    return;
-                }
-                
-                if (password !== confirmPassword) {
-                    showAlert('পাসওয়ার্ড মেলে না। দয়া করে আবার চেষ্টা করুন।', 'error');
-                    return;
-                }
-                
-                if (!terms) {
-                    showAlert('দয়া করে শর্তাবলী এবং গোপনীয়তা নীতি পড়ে সম্মতি প্রদান করুন।', 'error');
-                    return;
-                }
-                
-                // ইমেইল already exists কিনা চেক করুন
-                if (users.find(u => u.email === email)) {
-                    showAlert('এই ইমেইলটি ইতিমধ্যে রেজিস্ট্র্ড। দয়া করে অন্য ইমেইল ব্যবহার করুন।', 'error');
-                    return;
-                }
-                
-                // নতুন ইউজার তৈরি করুন
-                const newUser = {
-                    id: Date.now(),
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    nid: nid,
-                    password: password,
-                    approved: false, // ডিফল্টভাবে অননুমোদিত
-                    registrationDate: new Date().toISOString()
-                };
-                
-                users.push(newUser);
-                localStorage.setItem('portalUsers', JSON.stringify(users));
-                
-                // সফল রেজিস্ট্রেশন
-                showAlert('রেজিস্ট্রেশন সফল! আপনার অ্যাকাউন্টটি অনুমোদনের জন্য প্রেরণ করা হয়েছে। অনুমোদন পাওয়ার পর আপনি লগইন করতে পারবেন।', 'success');
-                registrationForm.reset();
-            });
-        }
-
-        // অ্যালার্ট ফাংশন
-        function showAlert(message, type = 'info') {
-            // বিদ্যমান অ্যালার্ট মুছে ফেলুন
-            const existingAlert = document.querySelector('.custom-alert');
-            if (existingAlert) {
-                existingAlert.remove();
-            }
-            
-            // নতুন অ্যালার্ট তৈরি করুন
-            const alert = document.createElement('div');
-            alert.className = `custom-alert fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg max-w-sm ${
-                type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' :
-                type === 'error' ? 'bg-red-100 text-red-800 border border-red-200' :
-                type === 'warning' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
-                'bg-blue-100 text-blue-800 border border-blue-200'
-            }`;
-            
-            alert.innerHTML = `
-                <div class="flex items-center">
-                    <i class="fas ${
-                        type === 'success' ? 'fa-check-circle' :
-                        type === 'error' ? 'fa-exclamation-circle' :
-                        type === 'warning' ? 'fa-exclamation-triangle' :
-                        'fa-info-circle'
-                    } mr-2"></i>
-                    <span>${message}</span>
-                </div>
-            `;
-            
-            document.body.appendChild(alert);
-            
-            // 5 সেকেন্ড পরে অ্যালার্ট মুছে ফেলুন
+        // নিবন্ধন মোডাল
+        document.getElementById('registerBtn').addEventListener('click', function() {
+            document.getElementById('registrationModal').classList.remove('hidden');
             setTimeout(() => {
-                alert.remove();
-            }, 5000);
-        }
-    });
-</script>
+                document.getElementById('registrationModal').classList.add('scale-100');
+            }, 10);
+        });
+
+        document.getElementById('closeRegistrationModal').addEventListener('click', function() {
+            document.getElementById('registrationModal').classList.add('hidden');
+            document.getElementById('registrationModal').classList.remove('scale-100');
+        });
+
+        // লগইন মোডাল
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            document.getElementById('loginModal').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('loginModal').classList.add('scale-100');
+            }, 10);
+        });
+
+        document.getElementById('closeLoginModal').addEventListener('click', function() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.getElementById('loginModal').classList.remove('scale-100');
+        });
+
+        // লগইন ফর্ম সাবমিশন
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            
+            if (username && password) {
+                // ডামি লগইন সফল
+                alert('লগইন সফল! ড্যাশবোর্ডে নিয়ে যাওয়া হচ্ছে...');
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('দয়া করে ইউজারনেম এবং পাসওয়ার্ড প্রদান করুন।');
+            }
+        });
+
+        // মোডাল বাইরে ক্লিক করলে বন্ধ
+        document.getElementById('registrationModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+                this.classList.remove('scale-100');
+            }
+        });
+
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+                this.classList.remove('scale-100');
+            }
+        });
+    </script>
 </body>
 </html>
