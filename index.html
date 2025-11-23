@@ -221,6 +221,139 @@
                 });
             }
         });
-    </script>
+    <script>
+    // localStorage-এ ইউজার ডেটা ম্যানেজমেন্ট
+    document.addEventListener('DOMContentLoaded', function() {
+        // localStorage থেকে ইউজার ডেটা লোড করুন
+        let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+        
+        // লগইন ফর্ম
+        const loginForm = document.getElementById('loginForm');
+        if (loginForm) {
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('loginEmail').value.trim();
+                const password = document.getElementById('loginPassword').value.trim();
+                
+                if (!email || !password) {
+                    showAlert('দয়া করে ইমেইল এবং পাসওয়ার্ড প্রদান করুন।', 'error');
+                    return;
+                }
+                
+                // ইউজার খুঁজে বের করুন
+                const user = users.find(u => u.email === email && u.password === password);
+                
+                if (user) {
+                    if (user.approved) {
+                        // সফল লগইন - সেবা পোর্টালে রিডাইরেক্ট
+                        showAlert('লগইন সফল! সেবা পোর্টালে নিয়ে যাওয়া হচ্ছে...', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'chauddagram.cumillalg.govbd_portal.html';
+                        }, 1500);
+                    } else {
+                        showAlert('আপনার অ্যাকাউন্টটি এখনও অনুমোদিত হয়নি। দয়া করে অপেক্ষা করুন।', 'warning');
+                    }
+                } else {
+                    showAlert('ভুল ইমেইল বা পাসওয়ার্ড। দয়া করে আবার চেষ্টা করুন অথবা রেজিস্ট্রেশন করুন।', 'error');
+                }
+            });
+        }
+
+        // রেজিস্ট্রেশন ফর্ম
+        const registrationForm = document.getElementById('registrationForm');
+        if (registrationForm) {
+            registrationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('regName').value.trim();
+                const email = document.getElementById('regEmail').value.trim();
+                const phone = document.getElementById('regPhone').value.trim();
+                const nid = document.getElementById('regNID').value.trim();
+                const password = document.getElementById('regPassword').value.trim();
+                const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
+                const terms = document.getElementById('terms').checked;
+                
+                // ভ্যালিডেশন
+                if (!name || !email || !phone || !nid || !password || !confirmPassword) {
+                    showAlert('দয়া করে সকল প্রয়োজনীয় তথ্য প্রদান করুন।', 'error');
+                    return;
+                }
+                
+                if (password !== confirmPassword) {
+                    showAlert('পাসওয়ার্ড মেলে না। দয়া করে আবার চেষ্টা করুন।', 'error');
+                    return;
+                }
+                
+                if (!terms) {
+                    showAlert('দয়া করে শর্তাবলী এবং গোপনীয়তা নীতি পড়ে সম্মতি প্রদান করুন।', 'error');
+                    return;
+                }
+                
+                // ইমেইল already exists কিনা চেক করুন
+                if (users.find(u => u.email === email)) {
+                    showAlert('এই ইমেইলটি ইতিমধ্যে রেজিস্ট্র্ড। দয়া করে অন্য ইমেইল ব্যবহার করুন।', 'error');
+                    return;
+                }
+                
+                // নতুন ইউজার তৈরি করুন
+                const newUser = {
+                    id: Date.now(),
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    nid: nid,
+                    password: password,
+                    approved: false, // ডিফল্টভাবে অননুমোদিত
+                    registrationDate: new Date().toISOString()
+                };
+                
+                users.push(newUser);
+                localStorage.setItem('portalUsers', JSON.stringify(users));
+                
+                // সফল রেজিস্ট্রেশন
+                showAlert('রেজিস্ট্রেশন সফল! আপনার অ্যাকাউন্টটি অনুমোদনের জন্য প্রেরণ করা হয়েছে। অনুমোদন পাওয়ার পর আপনি লগইন করতে পারবেন।', 'success');
+                registrationForm.reset();
+            });
+        }
+
+        // অ্যালার্ট ফাংশন
+        function showAlert(message, type = 'info') {
+            // বিদ্যমান অ্যালার্ট মুছে ফেলুন
+            const existingAlert = document.querySelector('.custom-alert');
+            if (existingAlert) {
+                existingAlert.remove();
+            }
+            
+            // নতুন অ্যালার্ট তৈরি করুন
+            const alert = document.createElement('div');
+            alert.className = `custom-alert fixed top-4 right-4 z-50 p-4 rounded-md shadow-lg max-w-sm ${
+                type === 'success' ? 'bg-green-100 text-green-800 border border-green-200' :
+                type === 'error' ? 'bg-red-100 text-red-800 border border-red-200' :
+                type === 'warning' ? 'bg-yellow-100 text-yellow-800 border border-yellow-200' :
+                'bg-blue-100 text-blue-800 border border-blue-200'
+            }`;
+            
+            alert.innerHTML = `
+                <div class="flex items-center">
+                    <i class="fas ${
+                        type === 'success' ? 'fa-check-circle' :
+                        type === 'error' ? 'fa-exclamation-circle' :
+                        type === 'warning' ? 'fa-exclamation-triangle' :
+                        'fa-info-circle'
+                    } mr-2"></i>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(alert);
+            
+            // 5 সেকেন্ড পরে অ্যালার্ট মুছে ফেলুন
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+    });
+</script>
 </body>
 </html>
