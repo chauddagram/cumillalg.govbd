@@ -203,20 +203,59 @@
         });
 
         // লগইন ফর্ম সাবমিশন
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('loginUsername').value.trim();
-            const password = document.getElementById('loginPassword').value.trim();
-            
-            if (username && password) {
-                // ডামি লগইন সফল
-                alert('লগইন সফল! ড্যাশবোর্ডে নিয়ে যাওয়া হচ্ছে...');
-                window.location.href = 'dashboard.html';
-            } else {
-                alert('দয়া করে ইউজারনেম এবং পাসওয়ার্ড প্রদান করুন।');
-            }
-        });
+        // নতুন কোড (এটি paste করুন):
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('loginUsername').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    
+    // ডেমো ইউজার credentials
+    const demoUsers = [
+        { username: "user", password: "user123", name: "সাধারণ ইউজার" },
+        { username: "admin", password: "admin123", name: "অ্যাডমিন" },
+        { username: "demo", password: "demo123", name: "ডেমো একাউন্ট" }
+    ];
+    
+    if (!username || !password) {
+        showAlert('দয়া করে ইউজারনেম এবং পাসওয়ার্ড প্রদান করুন।', 'error');
+        return;
+    }
+    
+    // ইউজার ভেরিফিকেশন
+    const user = demoUsers.find(u => u.username === username && u.password === password);
+    
+    if (user) {
+        showAlert(`লগইন সফল! স্বাগতম ${user.name}। ড্যাশবোর্ডে নিয়ে যাওয়া হচ্ছে...`, 'success');
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 2000);
+    } else {
+        showAlert('ভুল ইউজারনেম বা পাসওয়ার্ড। দয়া করে আবার চেষ্টা করুন।', 'error');
+    }
+});
+
+// অ্যালার্ট ফাংশন (যদি না থাকে)
+function showAlert(message, type = 'info') {
+    // সরলীকৃত অ্যালার্ট
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-xl text-white max-w-sm ${
+        type === 'success' ? 'bg-green-500' : 
+        type === 'error' ? 'bg-red-500' : 
+        'bg-blue-500'
+    }`;
+    alertDiv.innerHTML = `
+        <div class="flex items-center">
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    document.body.appendChild(alertDiv);
+    
+    setTimeout(() => {
+        alertDiv.remove();
+    }, 4000);
+}
 
         // মোডাল বাইরে ক্লিক করলে বন্ধ
         document.getElementById('registrationModal').addEventListener('click', function(e) {
