@@ -248,6 +248,37 @@
                 });
             });
         });
-    </script>
+    <script>
+    // সেবা পোর্টালে প্রবেশের আগে চেক করুন
+    document.addEventListener('DOMContentLoaded', function() {
+        // সরলীকৃত চেক - বাস্তবে আরও সুরক্ষিত চেক প্রয়োজন
+        const isLoggedIn = localStorage.getItem('portalCurrentUser');
+        
+        if (!isLoggedIn) {
+            // যদি লগইন না থাকে, index.html-এ রিডাইরেক্ট করুন
+            window.location.href = 'index.html';
+        }
+        
+        // সার্ভিস কার্ড ক্লিক হ্যান্ডলার
+        const serviceCards = document.querySelectorAll('.service-card a');
+        
+        serviceCards.forEach(card => {
+            card.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('এই সেবাটি শীঘ্রই চালু হবে। ধন্যবাদ!');
+            });
+        });
+        
+        // লগআউট ফাংশনালিটি
+        const logoutBtn = document.querySelector('a[href="index.html"]');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                localStorage.removeItem('portalCurrentUser');
+                window.location.href = 'index.html';
+            });
+        }
+    });
+</script>
 </body>
 </html>
