@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>অ্যাডমিন লগইন | cumillalg.govbd</title>
+    <meta name="description" content="কুমিল্লা স্থানীয় সরকারের অনলাইন নাগরিক সেবা পোর্টালের অ্যাডমিন লগইন পেজ।">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/custom.css">
+</head>
+<body class="bg-gray-50">
+    <!-- হেডার -->
+    <header class="bg-green-700 text-white shadow-md">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-landmark text-2xl"></i>
+                <a href="index.html" class="text-xl font-bold">কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</a>
+            </div>
+            <div class="flex space-x-4">
+                <a href="user_login.html" class="bg-white hover:bg-gray-100 text-green-700 font-semibold py-2 px-4 rounded transition duration-200">
+                    <i class="fas fa-user mr-2"></i>ব্যবহারকারী লগইন
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- অ্যাডমিন লগইন ফর্ম -->
+    <section class="py-12">
+        <div class="container mx-auto px-4 max-w-md">
+            <div class="bg-white rounded-lg shadow-md p-8">
+                <div class="text-center mb-6">
+                    <i class="fas fa-user-shield text-5xl text-yellow-500 mb-4"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">অ্যাডমিন লগইন</h2>
+                    <p class="text-gray-600 mt-2">শুধুমাত্র অনুমোদিত কর্মকর্তাদের জন্য</p>
+                </div>
+                
+                <form id="adminLoginForm" class="space-y-6">
+                    <div>
+                        <label for="adminId" class="block text-gray-700 mb-2">অ্যাডমিন আইডি</label>
+                        <input type="text" id="adminId" name="adminId" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
+                    </div>
+                    
+                    <div>
+                        <label for="adminPassword" class="block text-gray-700 mb-2">পাসওয়ার্ড</label>
+                        <input type="password" id="adminPassword" name="adminPassword" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-yellow-500" required>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold py-2 px-4 rounded-md transition duration-200">
+                        লগইন করুন
+                    </button>
+                    
+                    <div class="text-center text-sm text-gray-500">
+                        <p>এই প্যানেল শুধুমাত্র অনুমোদিত কর্মকর্তাদের জন্য</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- ফুটার -->
+    <footer class="bg-gray-800 text-white py-8 mt-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-bold mb-4">কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</h3>
+                    <p class="text-gray-300">স্থানীয় সরকার বিভাগ, কুমিল্লা</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">যোগাযোগ</h3>
+                    <p class="text-gray-300 mb-2"><i class="fas fa-map-marker-alt mr-2"></i>কুমিল্লা সদর, কুমিল্লা</p>
+                    <p class="text-gray-300 mb-2"><i class="fas fa-phone mr-2"></i>০৮১-৬৮৫২০</p>
+                    <p class="text-gray-300"><i class="fas fa-envelope mr-2"></i>info@cumillalg.gov.bd</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-bold mb-4">গুরুত্বপূর্ণ লিঙ্ক</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-300 hover:text-white transition duration-200">হোমপেজ</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition duration-200">স্থানীয় সরকার বিভাগ</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
+                <p>&copy; ২০২৩ কুমিল্লা স্থানীয় সরকার। সকল স্বত্ব সংরক্ষিত।</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
