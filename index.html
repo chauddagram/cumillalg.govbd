@@ -3,165 +3,224 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল | cumillalg.govbd</title>
-    <meta name="description" content="কুমিল্লা স্থানীয় সরকারের অনলাইন নাগরিক সেবা পোর্টাল। এখানে আপনি জন্ম সনদ, মৃত্যু সনদ, ট্রেড লাইসেন্স সহ বিভিন্ন সনদ অনলাইনে আবেদন করতে পারবেন।">
+    <title>লগইন - কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</title>
+    <meta name="description" content="কুমিল্লা স্থানীয় সরকারের অনলাইন নাগরিক সেবা পোর্টালে লগইন বা রেজিস্ট্রেশন করুন">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="assets/css/custom.css">
+    <style>
+        @import url('https://fonts.maateen.me/kalpurush/font.css');
+        body { font-family: 'Kalpurush', Arial, sans-serif; }
+    </style>
 </head>
-<body class="bg-gray-50">
-    <!-- হেডার -->
-    <header class="bg-green-700 text-white shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2">
-                <i class="fas fa-landmark text-2xl"></i>
-                <h1 class="text-xl font-bold">কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</h1>
+<body class="bg-gradient-to-br from-green-50 to-blue-50 min-h-screen flex items-center justify-center py-8">
+    <div class="container mx-auto px-4 max-w-6xl">
+        <!-- হেডার -->
+        <div class="text-center mb-8">
+            <div class="flex items-center justify-center space-x-3 mb-4">
+                <i class="fas fa-landmark text-3xl text-green-600"></i>
+                <h1 class="text-3xl font-bold text-gray-800">কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</h1>
             </div>
-            <div class="flex space-x-4">
-                <a href="admin_login.html" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-semibold py-2 px-4 rounded transition duration-200">
-                    <i class="fas fa-user-shield mr-2"></i>অ্যাডমিন লগইন
-                </a>
-                <a href="user_login.html" class="bg-white hover:bg-gray-100 text-green-700 font-semibold py-2 px-4 rounded transition duration-200">
-                    <i class="fas fa-user mr-2"></i>ব্যবহারকারী লগইন/রেজিস্ট্রেশন
-                </a>
+            <p class="text-gray-600 text-lg">আপনার প্রয়োজনীয় সরকারি সেবা সহজেই গ্রহণ করুন</p>
+        </div>
+
+        <!-- মূল কন্টেন্ট -->
+        <div class="bg-white rounded-xl shadow-2xl overflow-hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-2">
+                <!-- লগইন সেকশন -->
+                <div class="p-8 border-r border-gray-100">
+                    <div class="text-center mb-6">
+                        <i class="fas fa-sign-in-alt text-4xl text-green-600 mb-3"></i>
+                        <h2 class="text-2xl font-bold text-gray-800">লগইন করুন</h2>
+                        <p class="text-gray-600 mt-2">আপনার অ্যাকাউন্টে প্রবেশ করুন</p>
+                    </div>
+
+                    <form id="loginForm" class="space-y-6">
+                        <div>
+                            <label for="loginEmail" class="block text-gray-700 mb-2 font-medium">ইমেইল বা ব্যবহারকারী নাম</label>
+                            <input type="text" id="loginEmail" name="loginEmail" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                                   placeholder="আপনার ইমেইল বা ইউজারনেম লিখুন" required>
+                        </div>
+                        
+                        <div>
+                            <label for="loginPassword" class="block text-gray-700 mb-2 font-medium">পাসওয়ার্ড</label>
+                            <input type="password" id="loginPassword" name="loginPassword" 
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition duration-200"
+                                   placeholder="আপনার পাসওয়ার্ড লিখুন" required>
+                        </div>
+                        
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="remember" name="remember" class="h-4 w-4 text-green-600 focus:ring-green-500 border-gray-300 rounded">
+                                <label for="remember" class="ml-2 block text-sm text-gray-700">মনে রাখুন</label>
+                            </div>
+                            <a href="#" class="text-sm text-green-600 hover:text-green-800 font-medium">পাসওয়ার্ড ভুলে গেছেন?</a>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105">
+                            <i class="fas fa-sign-in-alt mr-2"></i>লগইন করুন
+                        </button>
+                    </form>
+
+                    <!-- অ্যাডমিন লগইন লিঙ্ক -->
+                    <div class="mt-6 text-center">
+                        <a href="admin_login.html" class="inline-flex items-center text-yellow-600 hover:text-yellow-800 font-medium">
+                            <i class="fas fa-user-shield mr-2"></i>অ্যাডমিন লগইন
+                        </a>
+                    </div>
+                </div>
+
+                <!-- রেজিস্ট্রেশন সেকশন -->
+                <div class="p-8 bg-green-50">
+                    <div class="text-center mb-6">
+                        <i class="fas fa-user-plus text-4xl text-blue-600 mb-3"></i>
+                        <h2 class="text-2xl font-bold text-gray-800">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+                        <p class="text-gray-600 mt-2">নিবন্ধন করুন এবং সেবা গ্রহণ শুরু করুন</p>
+                    </div>
+
+                    <form id="registrationForm" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="regName" class="block text-gray-700 mb-2 text-sm font-medium">পূর্ণ নাম</label>
+                                <input type="text" id="regName" name="regName" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
+                                       placeholder="পূর্ণ নাম" required>
+                            </div>
+                            
+                            <div>
+                                <label for="regEmail" class="block text-gray-700 mb-2 text-sm font-medium">ইমেইল</label>
+                                <input type="email" id="regEmail" name="regEmail" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
+                                       placeholder="ইমেইল ঠিকানা" required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="regPhone" class="block text-gray-700 mb-2 text-sm font-medium">মোবাইল নম্বর</label>
+                                <input type="tel" id="regPhone" name="regPhone" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
+                                       placeholder="০১XXXXXXXXX" required>
+                            </div>
+                            
+                            <div>
+                                <label for="regNID" class="block text-gray-700 mb-2 text-sm font-medium">জাতীয় পরিচয়পত্র</label>
+                                <input type="text" id="regNID" name="regNID" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
+                                       placeholder="জাতীয় পরিচয়পত্র নম্বর" required>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="regPassword" class="block text-gray-700 mb-2 text-sm font-medium">পাসওয়ার্ড</label>
+                                <input type="password" id="regPassword" name="regPassword" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
+                                       placeholder="পাসওয়ার্ড" required>
+                            </div>
+                            
+                            <div>
+                                <label for="regConfirmPassword" class="block text-gray-700 mb-2 text-sm font-medium">পাসওয়ার্ড নিশ্চিত করুন</label>
+                                <input type="password" id="regConfirmPassword" name="regConfirmPassword" 
+                                       class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm"
+                                       placeholder="পাসওয়ার্ড নিশ্চিত করুন" required>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center">
+                            <input type="checkbox" id="terms" name="terms" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" required>
+                            <label for="terms" class="ml-2 block text-sm text-gray-700">
+                                আমি <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">শর্তাবলী</a> এবং 
+                                <a href="#" class="text-blue-600 hover:text-blue-800 font-medium">গোপনীয়তা নীতি</a> পড়েছি এবং সম্মত
+                            </label>
+                        </div>
+                        
+                        <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition duration-200 transform hover:scale-105">
+                            <i class="fas fa-user-plus mr-2"></i>রেজিস্ট্রেশন সম্পন্ন করুন
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
-    </header>
 
-    <!-- হিরো সেকশন -->
-    <section class="bg-gradient-to-r from-green-600 to-green-800 text-white py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-4xl font-bold mb-4">কুমিল্লা স্থানীয় সরকার অনলাইন সেবা</h2>
-            <p class="text-xl max-w-3xl mx-auto">আপনার প্রয়োজনীয় সকল সরকারি সনদ ও সেবা এখন অনলাইনে পাবেন। ঘরে বসেই আবেদন করুন এবং সনদ সংগ্রহ করুন।</p>
-        </div>
-    </section>
-
-    <!-- সার্ভিসেস সেকশন -->
-    <section class="py-12">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">আমাদের সেবাসমূহ</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <!-- সার্ভিস কার্ড 1 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-baby text-blue-600 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">জন্ম নিবন্ধন সনদ</h3>
-                        <p class="text-gray-600 mb-4">জন্ম নিবন্ধন সনদের জন্য অনলাইনে আবেদন করুন এবং ঘরে বসেই সংগ্রহ করুন।</p>
-                        <a href="#" class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
-                            আবেদন করুন <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- সার্ভিস কার্ড 2 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-cross text-red-600 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">মৃত্যু নিবন্ধন সনদ</h3>
-                        <p class="text-gray-600 mb-4">মৃত্যু নিবন্ধন সনদের জন্য অনলাইনে আবেদন করুন এবং ঘরে বসেই সংগ্রহ করুন।</p>
-                        <a href="#" class="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
-                            আবেদন করুন <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- সার্ভিস কার্ড 3 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-store text-green-600 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">ট্রেড লাইসেন্স</h3>
-                        <p class="text-gray-600 mb-4">ব্যবসায়িক ট্রেড লাইসেন্সের জন্য অনলাইনে আবেদন করুন এবং ঘরে বসেই সংগ্রহ করুন।</p>
-                        <a href="#" class="inline-block bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
-                            আবেদন করুন <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- সার্ভিস কার্ড 4 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-users text-purple-600 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">ওয়ারিশান সনদ</h3>
-                        <p class="text-gray-600 mb-4">ওয়ারিশান সনদের জন্য অনলাইনে আবেদন করুন এবং ঘরে বসেই সংগ্রহ করুন।</p>
-                        <a href="#" class="inline-block bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
-                            আবেদন করুন <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- সার্ভিস কার্ড 5 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-home text-yellow-600 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">বাসস্থান সনদ</h3>
-                        <p class="text-gray-600 mb-4">বাসস্থান সনদের জন্য অনলাইনে আবেদন করুন এবং ঘরে বসেই সংগ্রহ করুন।</p>
-                        <a href="#" class="inline-block bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
-                            আবেদন করুন <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- সার্ভিস কার্ড 6 -->
-                <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition duration-300">
-                    <div class="p-6">
-                        <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4">
-                            <i class="fas fa-file-contract text-indigo-600 text-xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">চারিত্রিক সনদ</h3>
-                        <p class="text-gray-600 mb-4">চারিত্রিক সনদের জন্য অনলাইনে আবেদন করুন এবং ঘরে বসেই সংগ্রহ করুন।</p>
-                        <a href="#" class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
-                            আবেদন করুন <i class="fas fa-arrow-right ml-2"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ফুটার -->
-    <footer class="bg-gray-800 text-white py-8">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- তথ্য বক্স -->
+        <div class="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+            <div class="flex items-start">
+                <i class="fas fa-info-circle text-yellow-600 text-xl mt-1 mr-3"></i>
                 <div>
-                    <h3 class="text-xl font-bold mb-4">কুমিল্লা অনলাইন নাগরিক সেবা পোর্টাল</h3>
-                    <p class="text-gray-300">স্থানীয় সরকার বিভাগ, কুমিল্লা</p>
-                    <p class="text-gray-300 mt-2">সেবা গ্রহণে আপনার মূল্যবান মতামত আমাদের জন্য গুরুত্বপূর্ণ</p>
+                    <h3 class="font-semibold text-yellow-800 mb-2">গুরুত্বপূর্ণ তথ্য</h3>
+                    <p class="text-yellow-700 text-sm">
+                        রেজিস্ট্রেশন সম্পন্ন করার পর আপনার অ্যাকাউন্টটি অনুমোদনের জন্য প্রেরণ করা হবে। 
+                        কর্তৃপক্ষ কর্তৃক অনুমোদিত হওয়ার পরই আপনি লগইন করে সেবাসমূহ ব্যবহার করতে পারবেন। 
+                        অনুমোদন প্রক্রিয়ায় সাধারণত ২৪-৪৮ ঘন্টা সময় লাগতে পারে।
+                    </p>
                 </div>
-                
-                <div>
-                    <h3 class="text-xl font-bold mb-4">যোগাযোগ</h3>
-                    <p class="text-gray-300 mb-2"><i class="fas fa-map-marker-alt mr-2"></i>কুমিল্লা সদর, কুমিল্লা</p>
-                    <p class="text-gray-300 mb-2"><i class="fas fa-phone mr-2"></i>০৮১-৬৮৫২০</p>
-                    <p class="text-gray-300"><i class="fas fa-envelope mr-2"></i>info@cumillalg.gov.bd</p>
-                </div>
-                
-                <div>
-                    <h3 class="text-xl font-bold mb-4">গুরুত্বপূর্ণ লিঙ্ক</h3>
-                    <ul class="space-y-2">
-                        <li><a href="#" class="text-gray-300 hover:text-white transition duration-200">স্থানীয় সরকার বিভাগ</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition duration-200">ডিজিটাল বাংলাদেশ</a></li>
-                        <li><a href="#" class="text-gray-300 hover:text-white transition duration-200">প্রধানমন্ত্রীর কার্যালয়</a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="border-t border-gray-700 mt-8 pt-6 text-center text-gray-400">
-                <p>&copy; ২০২৩ কুমিল্লা স্থানীয় সরকার। সকল স্বত্ব সংরক্ষিত।</p>
             </div>
         </div>
-    </footer>
 
-    <script src="assets/js/script.js"></script>
+        <!-- ফুটার -->
+        <footer class="mt-8 text-center text-gray-600">
+            <p>&copy; ২০২৩ কুমিল্লা স্থানীয় সরকার। সকল স্বত্ব সংরক্ষিত।</p>
+        </footer>
+    </div>
+
+    <script>
+        // ফর্ম ভ্যালিডেশন এবং রিডাইরেক্ট
+        document.addEventListener('DOMContentLoaded', function() {
+            // লগইন ফর্ম
+            const loginForm = document.getElementById('loginForm');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const email = document.getElementById('loginEmail').value.trim();
+                    const password = document.getElementById('loginPassword').value.trim();
+                    
+                    if (email && password) {
+                        // সফল লগইন - সেবা পোর্টালে রিডাইরেক্ট
+                        window.location.href = 'chauddagram.cumillalg.govbd_portal.html';
+                    } else {
+                        alert('দয়া করে ইমেইল এবং পাসওয়ার্ড প্রদান করুন।');
+                    }
+                });
+            }
+
+            // রেজিস্ট্রেশন ফর্ম
+            const registrationForm = document.getElementById('registrationForm');
+            if (registrationForm) {
+                registrationForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('regName').value.trim();
+                    const email = document.getElementById('regEmail').value.trim();
+                    const phone = document.getElementById('regPhone').value.trim();
+                    const nid = document.getElementById('regNID').value.trim();
+                    const password = document.getElementById('regPassword').value.trim();
+                    const confirmPassword = document.getElementById('regConfirmPassword').value.trim();
+                    const terms = document.getElementById('terms').checked;
+                    
+                    // ভ্যালিডেশন
+                    if (!name || !email || !phone || !nid || !password || !confirmPassword) {
+                        alert('দয়া করে সকল প্রয়োজনীয় তথ্য প্রদান করুন।');
+                        return;
+                    }
+                    
+                    if (password !== confirmPassword) {
+                        alert('পাসওয়ার্ড মেলে না। দয়া করে আবার চেষ্টা করুন।');
+                        return;
+                    }
+                    
+                    if (!terms) {
+                        alert('দয়া করে শর্তাবলী এবং গোপনীয়তা নীতি পড়ে সম্মতি প্রদান করুন।');
+                        return;
+                    }
+                    
+                    // সফল রেজিস্ট্রেশন
+                    alert('রেজিস্ট্রেশন সফল! আপনার অ্যাকাউন্টটি অনুমোদনের জন্য প্রেরণ করা হয়েছে। অনুমোদন পাওয়ার পর আপনি লগইন করতে পারবেন।');
+                    registrationForm.reset();
+                });
+            }
+        });
+    </script>
 </body>
 </html>
