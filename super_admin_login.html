@@ -20,861 +20,352 @@
 
     <!-- প্রধান অ্যাপ্লিকেশন কন্টেইনার -->
     <div id="app" class="min-h-screen">
-        <!-- এখানে লগইন বা ড্যাশবোর্ড দেখাবে -->
+        <!-- লোডিং স্ক্রিন -->
         <div id="loading" class="flex justify-center items-center h-screen text-gray-600">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            অপেক্ষা করুন... সিস্টেম লোড হচ্ছে এবং প্রমাণীকরণ চলছে।
+            সিস্টেম লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।
+            <br>
+            <span class="text-xs mt-1">Firebase ও প্রমাণীকরণ ডেটা প্রস্তুত করা হচ্ছে।</span>
         </div>
+        <!-- এখানে লগইন বা ড্যাশবোর্ড দেখাবে -->
     </div>
 
-    <!-- Firebase SDK আমদানি -->
     <script type="module">
+        // Firebase মডিউল আমদানি (Imports)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, doc, setDoc, collection, query, onSnapshot, updateDoc, deleteDoc, addDoc, getDocs, where 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // IMPORTANT: Firebase Console থেকে প্রাপ্ত কনফিগারেশন সরাসরি এখানে সেট করা হলো
+        // কারণ GitHub Pages-এ __firebase_config গ্লোবাল ভ্যারিয়েবলটি অ্যাক্সেস করা যায় না।
+        const firebaseConfig = {
+          apiKey: "AIzaSyDSjhi_l5fec76l8gbZjWea9qYIF8PyfgM",
+          authDomain: "chauddagram-cumillalg-govbd.firebaseapp.com",
+          projectId: "chauddagram-cumillalg-govbd",
+          storageBucket: "chauddagram-cumillalg-govbd.firebasestorage.app",
+          messagingSenderId: "190893923606",
+          appId: "1:190893923606:web:4b862bd2a7bcd63df5c437",
+          measurementId: "G-G7T4CDR07Q"
+        };
         
-        // ফায়ারবেস কনফিগারেশন এবং অ্যাপ আইডি গ্লোবাল ভেরিয়েবল থেকে নেওয়া
+        // Canvas গ্লোবাল ভ্যারিয়েবল সেট করা (যদি Canvas-এ না থাকে তবে ডিফল্ট মান ব্যবহার করা হবে)
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'super-admin-default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        // --- কোর অ্যাপ লজিক (Core Application Logic) ---
 
+        // কোর অ্যাপ্লিকেশন লজিক (Core Application logic)
         const App = {
             db: null,
             auth: null,
-            userId: null,
             state: {
+                userId: null,
                 isAuthenticated: false,
-                currentView: 'login', // 'login' | 'dashboard'
-                dashboardView: 'overview', // 'overview' | 'user_management' | 'app_monitoring' | 'service_management' | 'settings' | 'reports'
-                isAuthReady: false,
-                users: [],
-                applications: [],
-                services: [],
-                loading: true,
-                message: { text: '', type: '' } // 'success' | 'error' | ''
+                currentView: 'loading', // 'loading', 'login', 'dashboard'
+                loginError: null,
+                isLoading: true,
+                
+                // ড্যাশবোর্ড ডেমো ডেটা
+                dashboardData: {
+                    totalUsers: 2500,
+                    activeApplications: 45,
+                    pendingApprovals: 12,
+                    systemHealth: 'Optimal',
+                    recentActivities: [
+                        { id: 1, user: 'User101', action: 'নতুন আবেদন জমা দিয়েছেন', time: '5 মিনিট আগে', status: 'pending' },
+                        { id: 2, user: 'User205', action: 'সনদপত্র ডাউনলোড করেছেন', time: '1 ঘন্টা আগে', status: 'success' },
+                        { id: 3, user: 'AdminA', action: 'ইউজার ডেটা আপডেট করেছেন', time: '4 ঘন্টা আগে', status: 'warning' },
+                    ]
+                }
             },
-            
-            // সুপার অ্যাডমিন ক্রেডেনশিয়াল (সিমুলেশন)
-            SUPER_ADMIN_ID: "tusarhasnbd@gmail.com",
-            SUPER_ADMIN_PASS: "M2hTusar@2025",
 
-            // ফায়ারবেস ডেটা সংগ্রহের পথ
+            // প্রমাণীকরণের জন্য সুপার অ্যাডমিন ক্রেডেনশিয়ালস (ডেমো)
+            SUPER_ADMIN_ID: 'tusharhasnbd@gmail.com',
+            SUPER_ADMIN_PASS: 'SuperAdmin', // এটি পরিবর্তন করা উচিত
+
+            // ফায়ারস্টোর কালেকশন রেফারেন্স
             COLLECTIONS: {
-                users: `artifacts/${appId}/public/data/users`,
-                applications: `artifacts/${appId}/public/data/applications`,
-                services: `artifacts/${appId}/public/data/services`,
+                USERS: `/artifacts/${appId}/public/data/users`, // পাবলিক ডেটা পাথ ব্যবহার করা হচ্ছে
+                APPLICATIONS: `/artifacts/${appId}/public/data/applications`,
+                SERVICES: `/artifacts/${appId}/public/data/services`,
             },
 
-            // অ্যাপ্লিকেশন শুরু করে
-            init() {
+            // অ্যাপ্লিকেশন শুরু করার ফাংশন
+            async init() {
                 try {
+                    // Firebase অ্যাপ্লিকেশন শুরু
                     const app = initializeApp(firebaseConfig);
-                    this.db = getFirestore(app);
-                    this.auth = getAuth(app);
+                    App.db = getFirestore(app);
+                    App.auth = getAuth(app);
                     
-                    this.setupAuthListener();
-                    console.log("Firebase সার্ভিস শুরু হয়েছে।");
+                    // ফায়ারবেস লগিং চালু (ত্রুটি দেখতে সহায়ক)
+                    setLogLevel('debug');
+                    
+                    // প্রমাণীকরণ অবস্থা শোনা
+                    onAuthStateChanged(App.auth, async (user) => {
+                        if (user) {
+                            App.state.userId = user.uid;
+                            App.state.isAuthenticated = true;
+                            // লগইন সফল হলে ড্যাশবোর্ড দেখাও
+                            await App.loadInitialData(); // ডেটা লোড করার চেষ্টা করুন
+                            App.changeView('dashboard');
 
-                } catch (e) {
-                    console.error("Firebase শুরু করতে সমস্যা:", e);
-                    this.updateState({ loading: false, message: { text: 'Firebase শুরু করতে ব্যর্থ হয়েছে।', type: 'error' } });
-                    this.render();
-                }
-            },
+                        } else {
+                            App.state.userId = null;
+                            App.state.isAuthenticated = false;
+                            App.state.isLoading = false;
+                            App.changeView('login');
+                        }
+                    });
 
-            // প্রমাণীকরণ শ্রোতা সেটআপ
-            async setupAuthListener() {
-                onAuthStateChanged(this.auth, async (user) => {
-                    if (user) {
-                        this.userId = user.uid;
-                        // ফায়ারস্টোর লিসেনার সেটআপ করা হচ্ছে
-                        this.setupFirestoreListeners();
-                        this.updateState({ isAuthReady: true, loading: false });
+                    // প্রমাণীকরণ শুরু করা
+                    if (initialAuthToken) {
+                        // কাস্টম টোকেন ব্যবহার করে সাইন ইন
+                        await signInWithCustomToken(App.auth, initialAuthToken);
                     } else {
-                        // অথ টোকেন থাকলে কাস্টম লগইন, না হলে বেনামী লগইন
-                        if (initialAuthToken) {
-                            try {
-                                await signInWithCustomToken(this.auth, initialAuthToken);
-                            } catch (e) {
-                                console.error("কাস্টম টোকেন দিয়ে লগইন ব্যর্থ:", e);
-                                await signInAnonymously(this.auth);
-                            }
-                        } else {
-                            await signInAnonymously(this.auth);
-                        }
+                        // বেনামী সাইন ইন (Anonymous Sign In) ব্যবহার করে প্রমাণীকরণ শুরু
+                        // এটি ডেটা অ্যাক্সেসের অনুমতি পেতে প্রয়োজন
+                        await signInAnonymously(App.auth);
                     }
-                });
-            },
 
-            // ফায়ারস্টোর লিসেনার সেটআপ করা হচ্ছে (রিয়েল-টাইম আপডেট)
-            setupFirestoreListeners() {
-                const userQuery = query(collection(this.db, this.COLLECTIONS.users));
-                onSnapshot(userQuery, (snapshot) => {
-                    const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    this.updateState({ users });
-                    this.ensureSuperAdminExists(users); // সুপার অ্যাডমিন ডেটা নিশ্চিত করা
-                    this.render();
-                }, (error) => console.error("ইউজার ডেটা লোড করতে ব্যর্থ:", error));
 
-                const appQuery = query(collection(this.db, this.COLLECTIONS.applications));
-                onSnapshot(appQuery, (snapshot) => {
-                    const applications = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    this.updateState({ applications });
-                    this.render();
-                }, (error) => console.error("আবেদন ডেটা লোড করতে ব্যর্থ:", error));
-
-                const serviceQuery = query(collection(this.db, this.COLLECTIONS.services));
-                onSnapshot(serviceQuery, (snapshot) => {
-                    const services = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    this.updateState({ services });
-                    this.ensureDefaultServices(services); // ডিফল্ট পরিষেবা নিশ্চিত করা
-                    this.render();
-                }, (error) => console.error("পরিষেবা ডেটা লোড করতে ব্যর্থ:", error));
-            },
-
-            // সুপার অ্যাডমিন ইউজার ডেটা নিশ্চিত করা
-            async ensureSuperAdminExists(users) {
-                const superAdminExists = users.some(u => u.email === this.SUPER_ADMIN_ID && u.role === 'super_admin');
-                if (!superAdminExists) {
-                    try {
-                        const q = query(collection(this.db, this.COLLECTIONS.users), where("email", "==", this.SUPER_ADMIN_ID));
-                        const snapshot = await getDocs(q);
-
-                        if (snapshot.empty) {
-                            await addDoc(collection(this.db, this.COLLECTIONS.users), {
-                                email: this.SUPER_ADMIN_ID,
-                                role: 'super_admin',
-                                name: 'Super Admin',
-                                status: 'active',
-                                createdAt: new Date().toISOString()
-                            });
-                            console.log("সুপার অ্যাডমিন ডেটা তৈরি করা হয়েছে।");
-                        } else {
-                            // যদি ডেটা থাকে কিন্তু রোলে ভুল থাকে, আপডেট করে দেওয়া
-                            const docRef = doc(this.db, this.COLLECTIONS.users, snapshot.docs[0].id);
-                            await updateDoc(docRef, { role: 'super_admin', status: 'active' });
-                        }
-                    } catch (e) {
-                        console.error("সুপার অ্যাডমিন ডেটা নিশ্চিত করতে ব্যর্থ:", e);
-                    }
-                }
-            },
-            
-            // ডিফল্ট সেবা নিশ্চিত করা
-            async ensureDefaultServices(services) {
-                if (services.length === 0) {
-                    try {
-                        await addDoc(collection(this.db, this.COLLECTIONS.services), { name: "ডিজিটাল আবেদন", description: "অনলাইন সেবা আবেদনের প্রাথমিক ধরন", docsRequired: "এনআইডি, ছবি" });
-                        await addDoc(collection(this.db, this.COLLECTIONS.services), { name: "সনদপত্র তৈরি", description: "বিশেষ কোনো প্রকার সনদ তৈরির আবেদন", docsRequired: "ফর্ম, রেকমেন্ডেশন লেটার" });
-                        this.generateDummyApplications(); // ডিফল্ট ডেটার জন্য ডামি অ্যাপ্লিকেশন তৈরি
-                        console.log("ডিফল্ট সেবা ডেটা তৈরি করা হয়েছে।");
-                    } catch (e) {
-                        console.error("ডিফল্ট সেবা ডেটা তৈরি করতে ব্যর্থ:", e);
-                    }
+                } catch (error) {
+                    console.error("Firebase/App Initialization Error:", error);
+                    App.state.isLoading = false;
+                    App.state.loginError = `সিস্টেম ত্রুটি: ${error.message}. ফায়ারবেস কনসোল চেক করুন।`;
+                    App.changeView('login'); // ত্রুটি হলেও লগইন ফর্ম দেখাও
                 }
             },
 
-            // ডামি আবেদন তৈরি করা (যদি ডেটাবেস খালি থাকে)
-            async generateDummyApplications() {
-                if (this.state.applications.length === 0) {
-                    const dummyApps = [
-                        { userId: 'user1', serviceName: 'ডিজিটাল আবেদন', status: 'pending', submittedAt: new Date(Date.now() - 86400000).toISOString(), assignedTo: 'subadmin1', notes: 'প্রাথমিক যাচাই চলছে।' },
-                        { userId: 'user2', serviceName: 'সনদপত্র তৈরি', status: 'approved', submittedAt: new Date(Date.now() - 172800000).toISOString(), approvedBy: 'super_admin' },
-                        { userId: 'user3', serviceName: 'ডিজিটাল আবেদন', status: 'processing', submittedAt: new Date(Date.now() - 43200000).toISOString(), assignedTo: 'subadmin2', notes: 'ডকুমেন্ট ভেরিফিকেশন চলছে।' },
-                    ];
-                    for (const app of dummyApps) {
-                        await addDoc(collection(this.db, this.COLLECTIONS.applications), app);
-                    }
-                }
-            },
+            // ইউজার ইনপুট থেকে লগইন হ্যান্ডেল করা
+            async handleLogin(e) {
+                e.preventDefault();
+                App.state.loginError = null;
+                App.state.isLoading = true;
+                App.render();
 
-            // স্টেট আপডেট করে এবং রেন্ডার ট্রিগার করে
-            updateState(newState) {
-                this.state = { ...this.state, ...newState };
-                // যদি লোডিং শেষ হয় এবং প্রমাণীকরণ প্রস্তুত হয়, তবে মেসেজ ক্লিন করা হয়
-                if (this.state.isAuthReady && !this.state.loading) {
-                   this.state.message = { text: '', type: '' };
-                }
-                this.render();
-            },
-
-            // --- লগইন লজিক (Login Logic) ---
-            async handleLogin(event) {
-                event.preventDefault();
-                const form = event.target;
-                const email = form.userId.value.trim();
-                const password = form.password.value.trim();
+                const email = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
                 
-                this.updateState({ loading: true, message: { text: 'প্রমাণীকরণ চলছে...', type: 'info' } });
-
-                // **সুপার অ্যাডমিন ক্রেডেনশিয়াল যাচাইকরণ (সুরক্ষার জন্য হার্ডকোডেড)**
-                // বাস্তব জগতে এই যাচাইকরণ সার্ভার-সাইডে হওয়া উচিত।
-                if (email === this.SUPER_ADMIN_ID && password === this.SUPER_ADMIN_PASS) {
-                    // লগইন সফল
-                    this.updateState({ 
-                        currentView: 'dashboard', 
-                        isAuthenticated: true, 
-                        loading: false,
-                        message: { text: 'সফলভাবে লগইন হয়েছে! সর্বোচ্চ নিয়ন্ত্রণে প্রবেশাধিকার দেওয়া হলো।', type: 'success' }
-                    });
+                // ডেমো লগইন: হার্ডকোডেড সুপার অ্যাডমিন ক্রেডেনশিয়ালস
+                if (email === App.SUPER_ADMIN_ID && password === App.SUPER_ADMIN_PASS) {
+                    // ডেমো সফল লগইন: ড্যাশবোর্ড দেখাও
+                    App.changeView('dashboard');
+                    App.state.isLoading = false;
+                    App.render();
+                    
                 } else {
-                    // লগইন ব্যর্থ
-                    this.updateState({ 
-                        loading: false, 
-                        message: { text: 'ইউজার আইডি বা পাসওয়ার্ড ভুল। প্রবেশ ব্যর্থ।', type: 'error' } 
-                    });
-                }
-            },
-
-            // লগআউট লজিক
-            handleLogout() {
-                this.updateState({ 
-                    isAuthenticated: false, 
-                    currentView: 'login', 
-                    dashboardView: 'overview',
-                    message: { text: 'সফলভাবে লগআউট হয়েছেন।', type: 'success' } 
-                });
-            },
-
-            // --- CRUD অপারেশনস (Firestore) ---
-
-            // নতুন সাব-অ্যাডমিন তৈরি
-            async createSubAdmin(name, email, tempPassword) {
-                if (!this.db) return this.updateState({ message: { text: 'ডেটাবেস সংযুক্ত নয়।', type: 'error' } });
-                
-                try {
-                    // সাব-অ্যাডমিন ডেটা যোগ করা
-                    await addDoc(collection(this.db, this.COLLECTIONS.users), {
-                        name: name,
-                        email: email,
-                        role: 'sub_admin',
-                        status: 'active',
-                        // Note: বাস্তব জগতে, অস্থায়ী পাসওয়ার্ড সার্ভার-সাইডে হ্যাশ করে সেভ করা হবে।
-                        tempPassword: tempPassword, 
-                        createdAt: new Date().toISOString(),
-                        createdBy: this.SUPER_ADMIN_ID
-                    });
-                    this.updateState({ message: { text: `সাব-অ্যাডমিন "${name}" তৈরি করা হয়েছে।`, type: 'success' } });
-                } catch (e) {
-                    console.error("সাব-অ্যাডমিন তৈরি করতে ব্যর্থ:", e);
-                    this.updateState({ message: { text: `সাব-অ্যাডমিন তৈরি করতে ব্যর্থ: ${e.message}`, type: 'error' } });
-                }
-            },
-
-            // ইউজার স্ট্যাটাস পরিবর্তন করা (অনুমোদন/নিষ্ক্রিয়)
-            async updateUserStatus(userId, status) {
-                if (!this.db) return;
-                try {
-                    const docRef = doc(this.db, this.COLLECTIONS.users, userId);
-                    await updateDoc(docRef, { status: status, updatedAt: new Date().toISOString() });
-                    this.updateState({ message: { text: `ব্যবহারকারী স্ট্যাটাস "${status}" এ আপডেট করা হয়েছে।`, type: 'success' } });
-                } catch (e) {
-                    console.error("ব্যবহারকারী স্ট্যাটাস আপডেট করতে ব্যর্থ:", e);
-                    this.updateState({ message: { text: 'ব্যবহারকারী স্ট্যাটাস আপডেট করতে ব্যর্থ।', type: 'error' } });
+                    App.state.loginError = 'ভুল ইউজার আইডি বা পাসওয়ার্ড।';
+                    App.state.isLoading = false;
+                    App.render();
                 }
             },
             
-            // আবেদন প্রক্রিয়াকরণে সরাসরি হস্তক্ষেপ: সনদ তৈরি (Generate)
-            async generateApplicationCertificate(appId) {
-                if (!this.db) return;
-                try {
-                    const docRef = doc(this.db, this.COLLECTIONS.applications, appId);
-                    await updateDoc(docRef, { 
-                        status: 'generated', 
-                        approvedBy: this.SUPER_ADMIN_ID,
-                        certificateIssued: true,
-                        completionDate: new Date().toISOString(),
-                        notes: `সুপার অ্যাডমিন (${this.SUPER_ADMIN_ID}) দ্বারা সরাসরি সনদ তৈরি ও অনুমোদন করা হয়েছে।`
-                    });
-                    this.updateState({ message: { text: 'সুপার অ্যাডমিন দ্বারা সনদ তৈরি ও অনুমোদন সফল!', type: 'success' } });
-                } catch (e) {
-                    console.error("সনদ তৈরি করতে ব্যর্থ:", e);
-                    this.updateState({ message: { text: 'সনদ তৈরি করতে ব্যর্থ।', type: 'error' } });
-                }
-            },
+            // ডেটা লোড করা (firestore থেকে ডেটা আনার জন্য onSnapshot ব্যবহার করা হয়েছে)
+            async loadInitialData() {
+                if (!App.db || !App.state.userId) return;
 
-            // সেবা যোগ/পরিবর্তন
-            async saveService(serviceId, data) {
-                if (!this.db) return;
-                try {
-                    const docRef = serviceId 
-                        ? doc(this.db, this.COLLECTIONS.services, serviceId) 
-                        : doc(collection(this.db, this.COLLECTIONS.services));
-                        
-                    await setDoc(docRef, { ...data, updatedAt: new Date().toISOString() }, { merge: true });
-                    this.updateState({ message: { text: 'সেবা সফলভাবে সংরক্ষিত হয়েছে।', type: 'success' } });
-                } catch (e) {
-                    console.error("সেবা সংরক্ষণ করতে ব্যর্থ:", e);
-                    this.updateState({ message: { text: 'সেবা সংরক্ষণ করতে ব্যর্থ।', type: 'error' } });
-                }
+                // ডেমো ডেটা লোডিং - আপনি এখানে আপনার আসল Firestore ডেটা লোড করতে পারেন
+                // যেহেতু এই অ্যাপটি ডেমো ডেটা ব্যবহার করছে, এখানে শুধুমাত্র একটি ডামি ফাংশন রাখা হলো
+                console.log("Initial data loading simulated.");
             },
             
-            // সেবা মুছে ফেলা
-            async deleteService(serviceId) {
-                if (!this.db) return;
-                try {
-                    const docRef = doc(this.db, this.COLLECTIONS.services, serviceId);
-                    await deleteDoc(docRef);
-                    this.updateState({ message: { text: 'সেবা সফলভাবে মুছে ফেলা হয়েছে।', type: 'success' } });
-                } catch (e) {
-                    console.error("সেবা মুছে ফেলতে ব্যর্থ:", e);
-                    this.updateState({ message: { text: 'সেবা মুছে ফেলতে ব্যর্থ।', type: 'error' } });
-                }
+            // ভিউ পরিবর্তন করা
+            changeView(view) {
+                App.state.currentView = view;
+                App.render();
             },
-
-            // --- রেন্ডারিং লজিক (Rendering Logic) ---
-
-            // রেন্ডার করে
+            
+            // DOM রেন্ডার করা
             render() {
-                const appDiv = document.getElementById('app');
-                if (!appDiv) return;
-
-                const { currentView, loading, message, isAuthReady } = this.state;
+                const appContainer = document.getElementById('app');
+                const loadingScreen = document.getElementById('loading');
                 
-                // যদি Firebase প্রস্তুত না হয়, তবে লোডিং স্ক্রিন দেখাও
-                if (loading || !isAuthReady) {
-                    appDiv.innerHTML = this.renderLoadingScreen();
+                if(App.state.isLoading && App.state.currentView === 'loading') {
+                    // লোডিং স্ক্রিন দেখাচ্ছে
+                    appContainer.innerHTML = App.renderLoadingScreen();
                     return;
+                } else {
+                    // লোডিং স্ক্রিন মুছে ফেলা
+                    if(loadingScreen) loadingScreen.style.display = 'none';
                 }
 
-                // মেসেজ ডিসপ্লে
-                const msgHtml = message.text ? this.renderMessage(message) : '';
-
-                if (currentView === 'login') {
-                    appDiv.innerHTML = msgHtml + this.renderLoginPanel();
-                    this.attachLoginEvents();
-                } else if (currentView === 'dashboard') {
-                    appDiv.innerHTML = msgHtml + this.renderDashboard();
-                    this.attachDashboardEvents();
+                if (App.state.currentView === 'login') {
+                    appContainer.innerHTML = App.renderLogin();
+                    // ইভেন্ট লিসেনার যোগ করা
+                    document.getElementById('login-form')?.addEventListener('submit', App.handleLogin);
+                } else if (App.state.currentView === 'dashboard') {
+                    appContainer.innerHTML = App.renderDashboard();
+                    // ইভেন্ট লিসেনার যোগ করা
+                    document.getElementById('logout-btn')?.addEventListener('click', App.handleLogout);
                 }
             },
             
-            // লোডিং স্ক্রিন রেন্ডার করে
+            // লগআউট হ্যান্ডেল করা
+            async handleLogout() {
+                try {
+                    await App.auth.signOut();
+                    App.changeView('login');
+                } catch (error) {
+                    console.error("Logout Error:", error);
+                    // একটি বার্তা দেখানো যেতে পারে
+                }
+            },
+            
+            // লোডিং স্ক্রিন রেন্ডার করা
             renderLoadingScreen() {
                 return `
-                    <div class="flex flex-col justify-center items-center h-screen bg-gray-50 text-gray-700">
-                        <svg class="animate-spin h-8 w-8 text-indigo-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <div id="loading" class="flex flex-col justify-center items-center h-screen text-gray-600 bg-white">
+                        <svg class="animate-spin -ml-1 mr-3 h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <p class="text-lg font-semibold">সিস্টেম লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</p>
+                        <p class="mt-4 text-lg">সিস্টেম লোড হচ্ছে... অনুগ্রহ করে অপেক্ষা করুন।</p>
                         <p class="text-sm text-gray-500 mt-1">Firebase ও প্রমাণীকরণ ডেটা প্রস্তুত করা হচ্ছে।</p>
                     </div>
                 `;
             },
+            
+            // লগইন ফর্ম রেন্ডার করা
+            renderLogin() {
+                return `
+                    <div class="flex items-center justify-center min-h-screen bg-gray-100 p-4">
+                        <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border-t-4 border-indigo-600">
+                            <div class="text-center mb-6">
+                                <span class="text-3xl font-extrabold text-red-600">👑</span>
+                                <h2 class="text-2xl font-bold text-gray-800 mt-2">সুপার অ্যাডমিন প্যানেল</h2>
+                                <p class="text-sm text-gray-500 mt-1">সর্বোচ্চ ক্ষমতার অধিকারী, দয়া করে সতর্কতার সাথে প্রবেশ করুন।</p>
+                            </div>
+                            
+                            ${App.state.loginError ? `<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4" role="alert">${App.state.loginError}</div>` : ''}
 
-            // মেসেজ বক্স রেন্ডার করে
-            renderMessage(msg) {
-                const baseClass = "fixed top-0 left-1/2 -translate-x-1/2 mt-4 p-3 rounded-lg shadow-xl z-50 transition-all duration-300 transform";
-                let colorClass = '';
-                if (msg.type === 'success') colorClass = 'bg-green-500 text-white';
-                else if (msg.type === 'error') colorClass = 'bg-red-600 text-white';
-                else colorClass = 'bg-blue-500 text-white';
-
-                // ২ সেকেন্ড পরে মেসেজটি অটোমেটিক সরিয়ে দেওয়া
-                if (msg.text) {
-                     setTimeout(() => this.updateState({ message: { text: '', type: '' } }), 4000);
-                }
-
-                return `<div class="${baseClass} ${colorClass}">${msg.text}</div>`;
+                            <form id="login-form">
+                                <div class="mb-4">
+                                    <label for="username" class="block text-sm font-medium text-gray-700 mb-1">ইউজার আইডি (ইমেইল) *</label>
+                                    <input type="email" id="username" name="username" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="tusharhasnbd@gmail.com" required>
+                                </div>
+                                <div class="mb-6">
+                                    <label for="password" class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
+                                    <input type="password" id="password" name="password" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="••••••••" required>
+                                </div>
+                                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-lg text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150 ease-in-out">
+                                    ${App.state.isLoading ? 
+                                        `<svg class="animate-spin h-5 w-5 mr-3 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>প্রবেশ করা হচ্ছে...` : 
+                                        'প্রবেশ করুন (Super Admin) 🚨'
+                                    }
+                                </button>
+                                <p class="mt-4 text-center text-xs text-gray-400">আপনার ব্যক্তিগত ডেটা গোপন রাখা হবে।</p>
+                            </form>
+                        </div>
+                    </div>
+                `;
             },
             
-            // লগইন প্যানেল রেন্ডার করে
-            renderLoginPanel() {
+            // ড্যাশবোর্ড রেন্ডার করা
+            renderDashboard() {
+                const { dashboardData } = App.state;
+                
                 return `
-                    <div class="flex flex-col justify-center items-center h-screen bg-gray-50">
-                        <div class="w-full max-w-md p-8 bg-white shadow-2xl rounded-xl border border-red-200">
-                            <h2 class="text-3xl font-extrabold text-center text-red-600 mb-2">সুপার অ্যাডমিন লগইন</h2>
-                            <p class="text-center text-sm text-gray-500 mb-6">সর্বোচ্চ নিয়ন্ত্রণে প্রবেশের জন্য প্রমাণীকরণ প্রয়োজন।</p>
-                            
-                            <form id="loginForm" class="space-y-6">
-                                <div>
-                                    <label for="userId" class="block text-sm font-bold text-gray-700 mb-1">ইউজার আইডি</label>
-                                    <input type="email" id="userId" name="userId" required placeholder="ইমেইল দিন"
-                                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition duration-200">
+                    <div class="min-h-screen bg-gray-100">
+                        <!-- নেভিগেশন/হেডার -->
+                        <header class="bg-white shadow-md">
+                            <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                                <h1 class="text-2xl font-bold text-indigo-600">সুপার অ্যাডমিন ড্যাশবোর্ড</h1>
+                                <div class="flex items-center space-x-4">
+                                    <span class="text-sm font-medium text-gray-600">ইউজার: ${App.state.userId.substring(0, 8)}...</span>
+                                    <button id="logout-btn" class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-150">লগআউট</button>
                                 </div>
-                                <div>
-                                    <label for="password" class="block text-sm font-bold text-gray-700 mb-1">পাসওয়ার্ড</label>
-                                    <input type="password" id="password" name="password" required placeholder="••••••••••"
-                                           class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-red-500 focus:border-red-500 transition duration-200">
+                            </div>
+                        </header>
+
+                        <!-- মূল বিষয়বস্তু -->
+                        <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                                <!-- কার্ড ১: মোট ব্যবহারকারী -->
+                                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                                    <div class="flex items-center">
+                                        <div class="p-3 rounded-full bg-indigo-100 text-indigo-600 mr-4">
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H9a1 1 0 01-1-1v-1a4 4 0 014-4h.5M19 19V5a2 2 0 00-2-2h-4.586a1 1 0 00-.707.293L11 6.586a1 1 0 01-.707.293H7a2 2 0 00-2 2v11a1 1 0 001 1h12a1 1 0 001-1z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">মোট ব্যবহারকারী</p>
+                                            <p class="text-2xl font-bold text-gray-900">${dashboardData.totalUsers.toLocaleString('bn-BD')}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- কার্ড ২: সক্রিয় আবেদন -->
+                                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                                    <div class="flex items-center">
+                                        <div class="p-3 rounded-full bg-teal-100 text-teal-600 mr-4">
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">সক্রিয় আবেদন</p>
+                                            <p class="text-2xl font-bold text-gray-900">${dashboardData.activeApplications.toLocaleString('bn-BD')}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- কার্ড ৩: অপেক্ষমান অনুমোদন -->
+                                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                                    <div class="flex items-center">
+                                        <div class="p-3 rounded-full bg-yellow-100 text-yellow-600 mr-4">
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">অপেক্ষমান অনুমোদন</p>
+                                            <p class="text-2xl font-bold text-gray-900">${dashboardData.pendingApprovals.toLocaleString('bn-BD')}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- কার্ড ৪: সিস্টেম স্ট্যাটাস -->
+                                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                                    <div class="flex items-center">
+                                        <div class="p-3 rounded-full bg-green-100 text-green-600 mr-4">
+                                            <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.276a9.006 9.006 0 00-14.726 0l-2.121 2.121a1 1 0 000 1.414l3.536 3.536a1 1 0 001.414 0l7.071-7.071a1 1 0 000-1.414l-3.536-3.536z"></path></svg>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-500">সিস্টেম স্ট্যাটাস</p>
+                                            <p class="text-2xl font-bold text-gray-900 text-green-600">${dashboardData.systemHealth}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                                <!-- সাম্প্রতিক কার্যকলাপ -->
+                                <div class="lg:col-span-2 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                                    <h3 class="text-xl font-bold text-gray-700 mb-4">সাম্প্রতিক কার্যকলাপ</h3>
+                                    <ul class="space-y-4">
+                                        ${dashboardData.recentActivities.map(activity => `
+                                            <li class="flex justify-between items-center p-3 border-b border-gray-100 last:border-b-0">
+                                                <div class="flex items-center space-x-3">
+                                                    <span class="text-sm font-semibold text-gray-700">${activity.user}</span>
+                                                    <span class="text-sm text-gray-500">${activity.action}</span>
+                                                </div>
+                                                <span class="text-xs text-gray-400">${activity.time}</span>
+                                            </li>
+                                        `).join('')}
+                                    </ul>
                                 </div>
                                 
-                                <button type="submit" 
-                                        class="w-full flex justify-center py-3 px-4 rounded-lg shadow-lg text-lg font-bold text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-4 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 transform hover:scale-[1.01] active:scale-[0.99]">
-                                    প্রবেশ করুন
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                `;
-            },
-            
-            // লগইন ইভেন্টগুলো যুক্ত করে
-            attachLoginEvents() {
-                const form = document.getElementById('loginForm');
-                if (form) {
-                    form.addEventListener('submit', (e) => this.handleLogin(e));
-                }
-            },
-
-            // ড্যাশবোর্ড প্যানেল রেন্ডার করে
-            renderDashboard() {
-                const { users, applications, services, dashboardView } = this.state;
-                
-                const totalUsers = users.length;
-                const totalApplications = applications.length;
-                const pendingApplications = applications.filter(app => app.status === 'pending').length;
-                
-                const sidebarItems = [
-                    { key: 'overview', icon: '🏠', label: 'সিস্টেম ওভারভিউ' },
-                    { key: 'user_management', icon: '👥', label: 'ব্যবহারকারী ব্যবস্থাপনা' },
-                    { key: 'app_monitoring', icon: '📝', label: 'আবেদন পর্যবেক্ষণ' },
-                    { key: 'service_management', icon: '🛠️', label: 'সেবা ব্যবস্থাপনা' },
-                    { key: 'settings', icon: '⚙️', label: 'সেটিংস' },
-                    { key: 'reports', icon: '📊', label: 'রিপোর্ট ও অ্যানালিটিক্স' },
-                ];
-
-                return `
-                    <div class="flex h-screen bg-gray-100">
-                        <!-- সাইডবার (Sidebar) -->
-                        <div class="sidebar w-64 bg-gray-800 text-white flex flex-col p-4 overflow-y-auto">
-                            <div class="text-2xl font-bold mb-8 text-red-400">🔥 সুপার অ্যাডমিন</div>
-                            <nav class="flex-grow space-y-2">
-                                ${sidebarItems.map(item => `
-                                    <button data-view="${item.key}" 
-                                            class="w-full text-left flex items-center p-3 rounded-lg transition duration-200 
-                                                   ${dashboardView === item.key ? 'bg-red-600 shadow-md' : 'hover:bg-gray-700'}">
-                                        <span class="mr-3">${item.icon}</span>
-                                        ${item.label}
-                                    </button>
-                                `).join('')}
-                            </nav>
-                            <div class="mt-auto pt-4 border-t border-gray-700">
-                                <button id="logoutBtn" class="w-full flex items-center justify-center p-3 rounded-lg text-sm bg-gray-700 hover:bg-red-700 transition duration-200">
-                                    <span class="mr-2">🚪</span> লগআউট করুন
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- কন্টেন্ট এরিয়া (Content Area) -->
-                        <div class="flex-1 overflow-y-auto p-4 md:p-8">
-                            <header class="flex justify-between items-center mb-6">
-                                <h1 class="text-3xl font-bold text-gray-800">${sidebarItems.find(i => i.key === dashboardView).label}</h1>
-                                <span class="text-sm text-gray-600">ইউজার আইডি: ${this.SUPER_ADMIN_ID}</span>
-                            </header>
-
-                            ${dashboardView === 'overview' ? this.renderOverview(totalUsers, totalApplications, pendingApplications) : ''}
-                            ${dashboardView === 'user_management' ? this.renderUserManagement(users) : ''}
-                            ${dashboardView === 'app_monitoring' ? this.renderApplicationMonitoring(applications) : ''}
-                            ${dashboardView === 'service_management' ? this.renderServiceManagement(services) : ''}
-                            ${dashboardView === 'settings' ? this.renderSettings() : ''}
-                            ${dashboardView === 'reports' ? this.renderReports() : ''}
-
-                        </div>
-                    </div>
-                `;
-            },
-
-            // ড্যাশবোর্ড ইভেন্টগুলো যুক্ত করে
-            attachDashboardEvents() {
-                document.getElementById('logoutBtn')?.addEventListener('click', () => this.handleLogout());
-
-                document.querySelectorAll('nav button').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        this.updateState({ dashboardView: e.currentTarget.dataset.view });
-                    });
-                });
-                
-                // অন্যান্য সেকশনের ইভেন্টগুলো এখানে যুক্ত করা হবে
-                if (this.state.dashboardView === 'user_management') {
-                    this.attachUserManagementEvents();
-                } else if (this.state.dashboardView === 'app_monitoring') {
-                    this.attachApplicationMonitoringEvents();
-                } else if (this.state.dashboardView === 'service_management') {
-                    this.attachServiceManagementEvents();
-                }
-            },
-            
-            // --- ড্যাশবোর্ড সাব-রেন্ডার ফাংশনস ---
-
-            // ওভারভিউ (Overview) রেন্ডার করে
-            renderOverview(totalUsers, totalApplications, pendingApplications) {
-                return `
-                    <div class="space-y-6">
-                        <div class="p-6 bg-red-100 border border-red-300 rounded-xl shadow-lg">
-                            <h3 class="text-xl font-bold text-red-700">সর্বোচ্চ নিয়ন্ত্রণ (Ultimate Control)</h3>
-                            <p class="text-red-600 mt-2">আপনি প্রধান অ্যাডমিন হিসাবে পুরো সিস্টেমের উপর পূর্ণ নিয়ন্ত্রণ রাখেন। যেকোনো ডেটা পরিবর্তন, ব্যবহারকারী ব্যবস্থাপনা, এবং আবেদনের উপর সরাসরি হস্তক্ষেপ আপনার অধীনে থাকবে।</p>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            ${this.renderStatCard("মোট ব্যবহারকারী", totalUsers, '👥', 'blue')}
-                            ${this.renderStatCard("মোট আবেদন", totalApplications, '📝', 'indigo')}
-                            ${this.renderStatCard("পেন্ডিং আবেদন", pendingApplications, '⏳', 'red')}
-                        </div>
-                        <h3 class="text-2xl font-semibold text-gray-700 mt-8 border-b pb-2">সিস্টেম লগ (ডেমো)</h3>
-                        <div class="bg-white p-4 rounded-lg shadow-inner text-sm space-y-2">
-                           <p class="text-gray-600">ইউজার "user123" একটি নতুন আবেদন জমা দিয়েছে।</p>
-                           <p class="text-gray-600">সাব-অ্যাডমিন "SA001" ৫টি আবেদন অনুমোদন করেছে।</p>
-                           <p class="text-red-500">গুরুত্বপূর্ণ: পেমেন্ট গেটওয়েতে সংযোগ ত্রুটি দেখা গেছে (২ ঘন্টা আগে)।</p>
-                        </div>
-                    </div>
-                `;
-            },
-            
-            // ছোট স্ট্যাট কার্ড রেন্ডার করে
-            renderStatCard(title, value, icon, color) {
-                const colorMap = {
-                    blue: { bg: 'bg-blue-500', text: 'text-blue-500', from: 'from-blue-400', to: 'to-blue-600' },
-                    indigo: { bg: 'bg-indigo-500', text: 'text-indigo-500', from: 'from-indigo-400', to: 'to-indigo-600' },
-                    red: { bg: 'bg-red-500', text: 'text-red-500', from: 'from-red-400', to: 'to-red-600' }
-                };
-                const c = colorMap[color] || colorMap.blue;
-                return `
-                    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200 flex items-center justify-between transition duration-300 hover:shadow-xl">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">${title}</p>
-                            <p class="text-4xl font-bold text-gray-800 mt-1">${value}</p>
-                        </div>
-                        <div class="text-3xl p-3 rounded-full bg-gradient-to-br ${c.from} ${c.to} text-white shadow-md">${icon}</div>
-                    </div>
-                `;
-            },
-
-            // ব্যবহারকারী ব্যবস্থাপনা রেন্ডার করে
-            renderUserManagement(users) {
-                const subAdmins = users.filter(u => u.role === 'sub_admin');
-                const regularUsers = users.filter(u => u.role === 'regular');
-                
-                return `
-                    <div class="space-y-8">
-                        <!-- নতুন সাব-অ্যাডমিন তৈরি -->
-                        <div class="bg-white p-6 rounded-xl shadow-lg border border-indigo-200">
-                            <h3 class="text-xl font-bold text-indigo-700 mb-4">নতুন সাব-অ্যাডমিন তৈরি করুন</h3>
-                            <form id="createSubAdminForm" class="space-y-4">
-                                <input type="text" name="name" placeholder="নাম" required class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500">
-                                <input type="email" name="email" placeholder="ইমেইল (লগইন আইডি)" required class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500">
-                                <input type="text" name="tempPassword" placeholder="অস্থায়ী পাসওয়ার্ড সেট করুন" required class="w-full px-4 py-2 border rounded-lg focus:ring-indigo-500">
-                                <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition duration-200">
-                                    সাব-অ্যাডমিন তৈরি
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- সকল ব্যবহারকারী তালিকা -->
-                        <h3 class="text-2xl font-semibold text-gray-700 border-b pb-2">সকল ব্যবহারকারী ও সাব-অ্যাডমিনদের তালিকা</h3>
-                        
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            ${this.renderUserList('সাব-অ্যাডমিন তালিকা', subAdmins, 'admin_list')}
-                            ${this.renderUserList('সাধারণ ব্যবহারকারী তালিকা', regularUsers, 'user_list')}
-                        </div>
-                        
-                    </div>
-                `;
-            },
-            
-            // ব্যবহারকারী তালিকা রেন্ডার করে
-            renderUserList(title, list, listId) {
-                return `
-                    <div class="bg-white p-6 rounded-xl shadow-lg">
-                        <h4 class="text-lg font-bold mb-4 text-gray-800">${title} (${list.length})</h4>
-                        <div class="space-y-3 max-h-96 overflow-y-auto">
-                            ${list.length === 0 ? '<p class="text-gray-500">কোনো ব্যবহারকারী পাওয়া যায়নি।</p>' : ''}
-                            ${list.map(user => `
-                                <div class="flex justify-between items-center p-3 border rounded-lg hover:bg-gray-50 transition duration-150">
-                                    <div>
-                                        <p class="font-semibold">${user.name || 'নাম নেই'}</p>
-                                        <p class="text-sm text-gray-500">ইউজার আইডি: ${user.email || 'N/A'}</p>
-                                        <p class="text-xs text-gray-400">DB ID: ${user.id}</p>
-                                    </div>
-                                    <div class="flex space-x-2">
-                                        <span class="text-xs font-semibold py-1 px-2 rounded-full ${user.status === 'active' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}">${user.status === 'active' ? 'অনুমোদিত' : 'নিষ্ক্রিয়'}</span>
-                                        ${user.role !== 'super_admin' ? `
-                                            <button data-id="${user.id}" data-status="${user.status === 'active' ? 'deactivated' : 'active'}" class="status-toggle-btn text-sm p-1 rounded-md transition duration-150 ${user.status === 'active' ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-green-500 hover:bg-green-600 text-white'}" title="${user.status === 'active' ? 'নিষ্ক্রিয় করুন' : 'অনুমোদন দিন'}">
-                                                ${user.status === 'active' ? '🚫' : '✅'}
-                                            </button>
-                                        ` : ''}
+                                <!-- সর্বাধিক ব্যবহৃত সেবা -->
+                                <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                                    <h3 class="text-xl font-bold text-gray-700 mb-4">সর্বাধিক ব্যবহৃত সেবা</h3>
+                                    <div class="space-y-3">
+                                        <div class="text-lg font-semibold text-indigo-600">১. ডিজিটাল আবেদন (৯২%)</div>
+                                        <div class="text-lg font-semibold text-teal-600">২. সনদপত্র তৈরি (৬৫%)</div>
+                                        <div class="text-lg font-semibold text-yellow-600">৩. লাইসেন্স রিনিউ (৩%)</div>
                                     </div>
                                 </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            },
-            
-            // ব্যবহারকারী ব্যবস্থাপনা ইভেন্টগুলো যুক্ত করে
-            attachUserManagementEvents() {
-                // নতুন সাব-অ্যাডমিন তৈরি ফর্ম
-                document.getElementById('createSubAdminForm')?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const name = e.target.name.value.trim();
-                    const email = e.target.email.value.trim();
-                    const tempPassword = e.target.tempPassword.value.trim();
-                    this.createSubAdmin(name, email, tempPassword);
-                    e.target.reset();
-                });
-                
-                // স্ট্যাটাস টগল বাটন
-                document.querySelectorAll('.status-toggle-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const id = e.currentTarget.dataset.id;
-                        const newStatus = e.currentTarget.dataset.status;
-                        this.updateUserStatus(id, newStatus);
-                    });
-                });
-            },
-
-            // আবেদন পর্যবেক্ষণ রেন্ডার করে
-            renderApplicationMonitoring(applications) {
-                const statusOrder = ['pending', 'processing', 'approved', 'generated', 'rejected'];
-                const sortedApps = applications.sort((a, b) => {
-                    return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status);
-                });
-                
-                return `
-                    <div class="space-y-6">
-                        <h3 class="text-2xl font-semibold text-gray-700 border-b pb-2">আবেদন ট্র‍্যাকিং ও সরাসরি হস্তক্ষেপ</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center text-sm font-medium text-white">
-                            <div class="p-3 rounded-lg bg-red-500">পেন্ডিং: ${applications.filter(a => a.status === 'pending').length}</div>
-                            <div class="p-3 rounded-lg bg-blue-500">প্রক্রিয়াকরণাধীন: ${applications.filter(a => a.status === 'processing').length}</div>
-                            <div class="p-3 rounded-lg bg-green-500">অনুমোদিত: ${applications.filter(a => a.status === 'approved' || a.status === 'generated').length}</div>
-                            <div class="p-3 rounded-lg bg-gray-500">বাতিল: ${applications.filter(a => a.status === 'rejected').length}</div>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-xl shadow-lg">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-50">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">আবেদন আইডি</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">সেবার নাম</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">স্ট্যাটাস</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">দায়িত্বপ্রাপ্ত</th>
-                                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">হস্তক্ষেপ</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    ${sortedApps.map(app => {
-                                        const user = this.state.users.find(u => u.id === app.userId);
-                                        let statusClass = '';
-                                        if (app.status === 'pending') statusClass = 'bg-yellow-100 text-yellow-800';
-                                        else if (app.status === 'processing') statusClass = 'bg-blue-100 text-blue-800';
-                                        else if (app.status === 'approved' || app.status === 'generated') statusClass = 'bg-green-100 text-green-800';
-                                        else if (app.status === 'rejected') statusClass = 'bg-red-100 text-red-800';
-
-                                        const canGenerate = (app.status === 'pending' || app.status === 'processing' || app.status === 'rejected');
-                                        
-                                        return `
-                                            <tr class="hover:bg-gray-50">
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${app.id.substring(0, 6)}...</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${app.serviceName}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap">
-                                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${statusClass}">${app.status}</span>
-                                                </td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${app.assignedTo || 'N/A'}</td>
-                                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                                    ${canGenerate ? `
-                                                        <button data-id="${app.id}" class="generate-cert-btn py-1 px-3 bg-red-600 text-white rounded-lg text-xs hover:bg-red-700 transition duration-150" title="সনদ তৈরি করে ব্যবহারকারীকে দিন">
-                                                            সনদ তৈরি করুন 🚀
-                                                        </button>
-                                                    ` : '<span class="text-green-600">সম্পন্ন</span>'}
-                                                </td>
-                                            </tr>
-                                        `;
-                                    }).join('')}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                `;
-            },
-            
-            // আবেদন পর্যবেক্ষণ ইভেন্টগুলো যুক্ত করে
-            attachApplicationMonitoringEvents() {
-                document.querySelectorAll('.generate-cert-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const appId = e.currentTarget.dataset.id;
-                        // কনফার্মেশন ডায়ালগ বক্স 
-                        if (confirm('আপনি কি নিশ্চিত যে আবেদনটি বাতিল/দেরির কারণে আপনি সরাসরি অনুমোদন ও সনদ তৈরি করতে চান? এই প্রক্রিয়াটি অপরিবর্তনীয়।')) {
-                            this.generateApplicationCertificate(appId);
-                        }
-                    });
-                });
-            },
-
-            // সেবা ব্যবস্থাপনা রেন্ডার করে
-            renderServiceManagement(services) {
-                return `
-                    <div class="space-y-8">
-                        <!-- নতুন সেবা যোগ করুন -->
-                        <div class="bg-white p-6 rounded-xl shadow-lg border border-teal-200">
-                            <h3 class="text-xl font-bold text-teal-700 mb-4">নতুন সেবা যোগ/সম্পাদনা করুন</h3>
-                            <form id="serviceForm" class="space-y-4">
-                                <input type="hidden" name="serviceId" id="editServiceId">
-                                <input type="text" name="name" placeholder="সেবার নাম" required class="w-full px-4 py-2 border rounded-lg focus:ring-teal-500">
-                                <textarea name="description" placeholder="সেবার বিস্তারিত বিবরণ" rows="2" required class="w-full px-4 py-2 border rounded-lg focus:ring-teal-500"></textarea>
-                                <input type="text" name="docsRequired" placeholder="প্রয়োজনীয় ডকুমেন্ট (কমা দিয়ে লিখুন)" required class="w-full px-4 py-2 border rounded-lg focus:ring-teal-500">
-                                <button type="submit" id="serviceSubmitBtn" class="w-full py-2 px-4 bg-teal-600 text-white font-semibold rounded-lg hover:bg-teal-700 transition duration-200">
-                                    সেবা সংরক্ষণ করুন
-                                </button>
-                                <button type="button" id="serviceResetBtn" class="w-full py-1 px-4 text-sm text-gray-600 hover:text-teal-600 transition duration-200">
-                                    ফর্ম রিসেট করুন (নতুন সেবা যোগ)
-                                </button>
-                            </form>
-                        </div>
-
-                        <!-- বিদ্যমান সেবা তালিকা -->
-                        <h3 class="text-2xl font-semibold text-gray-700 border-b pb-2">বিদ্যমান সেবার তালিকা</h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            ${services.map(service => `
-                                <div class="bg-white p-4 rounded-xl shadow border border-gray-100">
-                                    <p class="text-lg font-bold text-gray-800">${service.name}</p>
-                                    <p class="text-sm text-gray-600 mt-1">${service.description}</p>
-                                    <p class="text-xs text-teal-500 mt-2">প্রয়োজনীয় ডকুমেন্ট: ${service.docsRequired}</p>
-                                    <div class="mt-3 flex space-x-2">
-                                        <button data-id="${service.id}" class="edit-service-btn py-1 px-3 bg-blue-500 text-white rounded-lg text-xs hover:bg-blue-600 transition duration-150">
-                                            সম্পাদনা করুন
-                                        </button>
-                                        <button data-id="${service.id}" class="delete-service-btn py-1 px-3 bg-red-500 text-white rounded-lg text-xs hover:bg-red-600 transition duration-150">
-                                            মুছে ফেলুন
-                                        </button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            },
-
-            // সেবা ব্যবস্থাপনা ইভেন্টগুলো যুক্ত করে
-            attachServiceManagementEvents() {
-                const form = document.getElementById('serviceForm');
-                const resetBtn = document.getElementById('serviceResetBtn');
-                
-                // ফর্ম সাবমিট
-                form?.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const serviceId = e.target.serviceId.value || null;
-                    const data = {
-                        name: e.target.name.value.trim(),
-                        description: e.target.description.value.trim(),
-                        docsRequired: e.target.docsRequired.value.trim(),
-                    };
-                    this.saveService(serviceId, data);
-                    e.target.reset(); // সেভ করার পর ফর্ম রিসেট
-                    e.target.serviceId.value = ''; // লুকানো আইডি রিসেট
-                    document.getElementById('serviceSubmitBtn').textContent = 'সেবা সংরক্ষণ করুন';
-                });
-                
-                // ফর্ম রিসেট
-                resetBtn?.addEventListener('click', () => {
-                    form.reset();
-                    form.serviceId.value = '';
-                    document.getElementById('serviceSubmitBtn').textContent = 'সেবা সংরক্ষণ করুন';
-                });
-                
-                // সম্পাদনা বাটন
-                document.querySelectorAll('.edit-service-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const serviceId = e.currentTarget.dataset.id;
-                        const service = this.state.services.find(s => s.id === serviceId);
-                        if (service) {
-                            form.serviceId.value = service.id;
-                            form.name.value = service.name;
-                            form.description.value = service.description;
-                            form.docsRequired.value = service.docsRequired;
-                            document.getElementById('serviceSubmitBtn').textContent = 'সম্পাদনা আপডেট করুন';
-                            window.scrollTo(0, 0); // ফর্মে স্ক্রল করা
-                        }
-                    });
-                });
-                
-                // মুছে ফেলা বাটন
-                document.querySelectorAll('.delete-service-btn').forEach(button => {
-                    button.addEventListener('click', (e) => {
-                        const serviceId = e.currentTarget.dataset.id;
-                        if (confirm('আপনি কি নিশ্চিত যে আপনি এই সেবাটি স্থায়ীভাবে মুছে ফেলতে চান?')) {
-                            this.deleteService(serviceId);
-                        }
-                    });
-                });
-            },
-
-            // সেটিংস রেন্ডার করে
-            renderSettings() {
-                return `
-                    <div class="space-y-6">
-                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                            <h3 class="text-xl font-bold text-gray-700 mb-4">ওয়েবসাইটের সাধারণ সেটিংস</h3>
-                            <div class="space-y-4">
-                                <label class="block">
-                                    <span class="text-gray-700">ওয়েবসাইটের নাম:</span>
-                                    <input type="text" value="Super Admin System" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                </label>
-                                <label class="block">
-                                    <span class="text-gray-700">ডিফল্ট ভাষা:</span>
-                                    <select class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
-                                        <option>বাংলা</option>
-                                        <option>English</option>
-                                    </select>
-                                </label>
-                                <button class="py-2 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">সেটিংস সেভ করুন (ডেমো)</button>
                             </div>
-                        </div>
-                        
-                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                            <h3 class="text-xl font-bold text-gray-700 mb-4">পেমেন্ট গেটওয়ে সেটিংস</h3>
-                            <p class="text-gray-500">পেমেন্ট গেটওয়ে API কী, মার্চেন্ট আইডি ইত্যাদি এখানে কনফিগার করা হবে।</p>
-                            <button class="mt-4 py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700">সংযোগ পরীক্ষা করুন (ডেমো)</button>
-                        </div>
-                    </div>
-                `;
-            },
-            
-            // রিপোর্ট ও অ্যানালিটিক্স রেন্ডার করে
-            renderReports() {
-                const { applications } = this.state;
-                
-                // আবেদনের প্রবণতা বিশ্লেষণ (গত ৭ দিনের ডেটা সিমুলেশন)
-                const trends = {
-                    'পেন্ডিং': 15, 'প্রক্রিয়াকরণাধীন': 22, 'অনুমোদিত': 45, 'বাতিল': 5
-                };
-                
-                return `
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- আবেদন প্রবণতা -->
-                            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                                <h3 class="text-xl font-bold text-gray-700 mb-4">আবেদনের প্রবণতা (গত ৭ দিন)</h3>
-                                ${Object.entries(trends).map(([status, count]) => `
-                                    <div class="flex justify-between items-center py-2 border-b last:border-b-0">
-                                        <span class="text-gray-600">${status} আবেদন</span>
-                                        <span class="font-semibold text-lg">${count}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            
-                            <!-- সর্বাধিক ব্যবহৃত সেবা -->
-                            <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                                <h3 class="text-xl font-bold text-gray-700 mb-4">সর্বাধিক ব্যবহৃত সেবা</h3>
-                                <div class="space-y-3">
-                                    <div class="text-lg font-semibold text-indigo-600">১. ডিজিটাল আবেদন (৯২%)</div>
-                                    <div class="text-lg font-semibold text-teal-600">২. সনদপত্র তৈরি (৬৫%)</div>
-                                    <div class="text-lg font-semibold text-yellow-600">৩. লাইসেন্স রিনিউ (৩%)</div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                            <h3 class="text-xl font-bold text-gray-700 mb-4">সিস্টেম কর্মক্ষমতা রিপোর্ট</h3>
-                            <p class="text-gray-500">এখানে সিস্টেমের লোড টাইম, সার্ভার রেসপন্স টাইম এবং ইউজার অ্যাকটিভিটির গ্রাফিকাল বিশ্লেষণ দেখাবে। (ডেমো)</p>
-                        </div>
+                            <div class="mt-6 bg-white p-6 rounded-xl shadow-lg border border-gray-200">
+                                <h3 class="text-xl font-bold text-gray-700 mb-4">সিস্টেম কর্মক্ষমতা রিপোর্ট</h3>
+                                <p class="text-gray-500">এখানে সিস্টেমের লোড টাইম, সার্ভার রেসপন্স টাইম এবং ইউজার অ্যাকটিভিটির গ্রাফিকাল বিশ্লেষণ দেখাবে। (ডেমো)</p>
+                            </div>
+                        </main>
                     </div>
                 `;
             }
