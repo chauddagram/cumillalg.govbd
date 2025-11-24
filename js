@@ -45,26 +45,46 @@ async function loginSuperAdmin() {
     loginBtn.disabled = true;
     loginBtn.textContent = 'প্রবেশ করা হচ্ছে...';
 
+    let userCredential = null;
+    let isNewUser = false;
+
     try {
-        let userCredential = await auth.signInWithEmailAndPassword(saId, saPassword);
-        
-        if (userCredential.user.email === SUPER_ADMIN_EMAIL) {
-            customAlert("সুপার অ্যাডমিন হিসেবে সফলভাবে প্রবেশ করেছেন!");
-            window.location.href = "super_admin_dashboard.html"; 
-        } else {
-             customAlert("আপনার ইউজার আইডি সুপার অ্যাডমিন নয়।");
-             await auth.signOut();
-        }
+        // ১. সাধারণ লগইন করার চেষ্টা
+        userCredential = await auth.signInWithEmailAndPassword(saId, saPassword);
 
     } catch (error) {
-        // যদি Super Admin অ্যাকাউন্টটি Firebase Auth-এ না থাকে, তবে তৈরি করতে হবে (প্রথমবার)
+        // ২. যদি ইউজার না পাওয়া যায়, তবে প্রথমবার অ্যাকাউন্ট তৈরি করার চেষ্টা
         if (error.code === 'auth/user-not-found') {
              try {
                 // প্রথমবার ইউজার তৈরি করা হচ্ছে
-                const newUserCredential = await auth.createUserWithEmailAndPassword(SUPER_ADMIN_EMAIL, SUPER_ADMIN_PASS);
-                const uid = newUserCredential.user.uid;
+                userCredential = await auth.createUserWithEmailAndPassword(SUPER_ADMIN_EMAIL, SUPER_ADMIN_PASS);
+                isNewUser = true;
+                
+             } catch (createError) {
+                 customAlert("সুপার অ্যাডমিন অ্যাকাউন্ট তৈরি ও লগইন ব্যর্থ: " + createError.message);
+                 console.error("সুপার অ্যাডমিন তৈরি ত্রুটি:", createError);
+                 loginBtn.disabled = false;
+                 loginBtn.textContent = 'প্রবেশ করুন (Super Admin) 🚨';
+                 return;
+             }
 
-                await db.collection("users").doc(uid).set({
+        } else {
+            customAlert("লগইন ব্যর্থ: " + error.message);
+            console.error("লগইন ত্রুটি:", error);
+            loginBtn.disabled = false;
+            loginBtn.textContent = 'প্রবেশ করুন (Super Admin) 🚨';
+            return;
+        }
+    } 
+    
+    // ৩. সফল লগইন বা অ্যাকাউন্ট তৈরির পর ডেটাবেসে স্ট্যাটাস চেক/সেট করা
+    if (userCredential && userCredential.user.email === SUPER_ADMIN_EMAIL) {
+        const uid = userCredential.user.uid;
+        
+        if (isNewUser) {
+            // নতুন ইউজার হলে Firestore-এ ডেটা সেট করা
+            try {
+                 await db.collection("users").doc(uid).set({
                     nameBn: "প্রধান অ্যাডমিন",
                     nameEn: "Super Admin",
                     email: SUPER_ADMIN_EMAIL,
@@ -72,20 +92,20 @@ async function loginSuperAdmin() {
                     status: "Approved",
                     created_at: firebase.firestore.FieldValue.serverTimestamp()
                 });
-
                 customAlert("সুপার অ্যাডমিন অ্যাকাউন্ট তৈরি ও প্রবেশ সফল!");
-                window.location.href = "super_admin_dashboard.html"; 
-
-             } catch (createError) {
-                 customAlert("সুপার অ্যাডমিন অ্যাকাউন্ট তৈরি ও লগইন ব্যর্থ: " + createError.message);
-                 console.error("সুপার অ্যাডমিন তৈরি ত্রুটি:", createError);
-             }
-
+            } catch (dbError) {
+                 customAlert("Firestore-এ ডেটা সংরক্ষণ ব্যর্থ। তবুও লগইন চলছে।");
+                 console.error("Firestore ত্রুটি:", dbError);
+            }
         } else {
-            customAlert("লগইন ব্যর্থ: " + error.message);
-            console.error("লগইন ত্রুটি:", error);
+            customAlert("সুপার অ্যাডমিন হিসেবে সফলভাবে প্রবেশ করেছেন!");
         }
-    } finally {
+
+        // ৪. ড্যাশবোর্ডে রিডাইরেক্ট করা (এই লাইনটি এখন নিশ্চিতভাবে কার্যকর হবে)
+        window.location.href = "super_admin_dashboard.html"; 
+    } else {
+        customAlert("আপনার ইউজার আইডি সুপার অ্যাডমিন নয়।");
+        await auth.signOut();
         loginBtn.disabled = false;
         loginBtn.textContent = 'প্রবেশ করুন (Super Admin) 🚨';
     }
@@ -655,3 +675,4 @@ function submitUserRegistration() {
             }
         });
 }
+
