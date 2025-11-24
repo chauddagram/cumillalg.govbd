@@ -101,135 +101,156 @@
     </div>
 
     <script>
-        // ✅ শুধু existing ইউজার ডেটা লোড করুন - কোনো ডেমো তৈরি করবেন না
-        document.addEventListener('DOMContentLoaded', function() {
-            loadUserData();
-        });
-
-        function loadUserData() {
-            const users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+    // localStorage ক্লিয়ার করে শুধু রিয়েল ইউজার লোড করুন
+    document.addEventListener('DOMContentLoaded', function() {
+        // ডেমো ইউজার remove করার অপশন
+        const clearDemo = confirm('ডেমো ইউজার রিমুভ করতে চান?');
+        if (clearDemo) {
+            let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
             
-            document.getElementById('totalUsers').textContent = users.length;
-            document.getElementById('pendingUsers').textContent = users.filter(u => !u.approved && !u.rejected).length;
-            document.getElementById('approvedUsers').textContent = users.filter(u => u.approved).length;
-            document.getElementById('rejectedUsers').textContent = users.filter(u => u.rejected).length;
+            // ডেমো ইউজারগুলো identify করে remove করুন
+            const realUsers = users.filter(user => {
+                const isDemo = 
+                    user.email?.includes('example.com') ||
+                    user.mobile === '01712345678' || 
+                    user.mobile === '01787654321' ||
+                    user.banglaName === 'রহিম আহমেদ' ||
+                    user.banglaName === 'করিম উদ্দিন';
+                
+                return !isDemo;
+            });
             
-            const pendingUsers = users.filter(u => !u.approved && !u.rejected);
-            const pendingList = document.getElementById('pendingUserList');
-            
-            if (pendingUsers.length === 0) {
-                pendingList.innerHTML = `
-                    <div class="text-center py-8">
-                        <i class="fas fa-inbox text-gray-300 text-4xl mb-3"></i>
-                        <p class="text-gray-500">কোনো অপেক্ষমান ইউজার নেই</p>
-                    </div>
-                `;
-            } else {
-                let pendingHtml = '<div class="space-y-4">';
-                pendingUsers.forEach(user => {
-                    pendingHtml += `
-                        <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <h3 class="font-semibold text-gray-800">${user.banglaName}</h3>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm">
-                                        <p><i class="fas fa-envelope mr-2 text-gray-500"></i>${user.email || 'N/A'}</p>
-                                        <p><i class="fas fa-phone mr-2 text-gray-500"></i>${user.mobile}</p>
-                                        <p><i class="fas fa-id-card mr-2 text-gray-500"></i>${user.nid}</p>
-                                        <p><i class="fas fa-user-tag mr-2 text-gray-500"></i>${user.userType || 'সাধারণ ইউজার'}</p>
-                                    </div>
-                                    <p class="text-xs text-gray-500 mt-2">
-                                        রেজিস্ট্রেশন: ${new Date(user.registrationDate).toLocaleDateString('bn-BD')}
-                                    </p>
-                                </div>
-                                <div class="flex space-x-2 ml-4">
-                                    <button onclick="approveUser(${user.id})" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
-                                        <i class="fas fa-check mr-1"></i>অনুমোদন
-                                    </button>
-                                    <button onclick="rejectUser(${user.id})" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
-                                        <i class="fas fa-times mr-1"></i>বাতিল
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-                pendingHtml += '</div>';
-                pendingList.innerHTML = pendingHtml;
-            }
-            
-            const approvedUsers = users.filter(u => u.approved);
-            const approvedList = document.getElementById('approvedUserList');
-            
-            if (approvedUsers.length === 0) {
-                approvedList.innerHTML = `
-                    <div class="text-center py-8">
-                        <i class="fas fa-users text-gray-300 text-4xl mb-3"></i>
-                        <p class="text-gray-500">কোনো অনুমোদিত ইউজার নেই</p>
-                    </div>
-                `;
-            } else {
-                let approvedHtml = '<div class="space-y-3">';
-                approvedUsers.forEach(user => {
-                    approvedHtml += `
-                        <div class="border border-green-200 rounded-lg p-4 bg-green-50">
-                            <div class="flex justify-between items-center">
-                                <div>
-                                    <h3 class="font-semibold text-gray-800">${user.banglaName}</h3>
-                                    <p class="text-sm text-gray-600">${user.email || 'N/A'} • ${user.mobile}</p>
-                                    <p class="text-xs text-gray-500">
-                                        অনুমোদিত: ${new Date(user.approvedDate || user.registrationDate).toLocaleDateString('bn-BD')}
-                                    </p>
-                                </div>
-                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
-                                    <i class="fas fa-check mr-1"></i>অনুমোদিত
-                                </span>
-                            </div>
-                        </div>
-                    `;
-                });
-                approvedHtml += '</div>';
-                approvedList.innerHTML = approvedHtml;
-            }
+            localStorage.setItem('portalUsers', JSON.stringify(realUsers));
+            alert('ডেমো ইউজার রিমুভ করা হয়েছে!');
         }
+        
+        loadUserData();
+    });
 
-        function approveUser(userId) {
+    function loadUserData() {
+        const users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+        
+        document.getElementById('totalUsers').textContent = users.length;
+        document.getElementById('pendingUsers').textContent = users.filter(u => !u.approved && !u.rejected).length;
+        document.getElementById('approvedUsers').textContent = users.filter(u => u.approved).length;
+        document.getElementById('rejectedUsers').textContent = users.filter(u => u.rejected).length;
+        
+        const pendingUsers = users.filter(u => !u.approved && !u.rejected);
+        const pendingList = document.getElementById('pendingUserList');
+        
+        if (pendingUsers.length === 0) {
+            pendingList.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-inbox text-gray-300 text-4xl mb-3"></i>
+                    <p class="text-gray-500">কোনো অপেক্ষমান ইউজার নেই</p>
+                </div>
+            `;
+        } else {
+            let pendingHtml = '<div class="space-y-4">';
+            pendingUsers.forEach(user => {
+                pendingHtml += `
+                    <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                        <div class="flex justify-between items-start">
+                            <div class="flex-1">
+                                <h3 class="font-semibold text-gray-800">${user.banglaName}</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm">
+                                    <p><i class="fas fa-envelope mr-2 text-gray-500"></i>${user.email || 'N/A'}</p>
+                                    <p><i class="fas fa-phone mr-2 text-gray-500"></i>${user.mobile}</p>
+                                    <p><i class="fas fa-id-card mr-2 text-gray-500"></i>${user.nid}</p>
+                                    <p><i class="fas fa-user-tag mr-2 text-gray-500"></i>${user.userType || 'সাধারণ ইউজার'}</p>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">
+                                    রেজিস্ট্রেশন: ${new Date(user.registrationDate).toLocaleDateString('bn-BD')}
+                                </p>
+                            </div>
+                            <div class="flex space-x-2 ml-4">
+                                <button onclick="approveUser(${user.id})" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-check mr-1"></i>অনুমোদন
+                                </button>
+                                <button onclick="rejectUser(${user.id})" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                    <i class="fas fa-times mr-1"></i>বাতিল
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            pendingHtml += '</div>';
+            pendingList.innerHTML = pendingHtml;
+        }
+        
+        const approvedUsers = users.filter(u => u.approved);
+        const approvedList = document.getElementById('approvedUserList');
+        
+        if (approvedUsers.length === 0) {
+            approvedList.innerHTML = `
+                <div class="text-center py-8">
+                    <i class="fas fa-users text-gray-300 text-4xl mb-3"></i>
+                    <p class="text-gray-500">কোনো অনুমোদিত ইউজার নেই</p>
+                </div>
+            `;
+        } else {
+            let approvedHtml = '<div class="space-y-3">';
+            approvedUsers.forEach(user => {
+                approvedHtml += `
+                    <div class="border border-green-200 rounded-lg p-4 bg-green-50">
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="font-semibold text-gray-800">${user.banglaName}</h3>
+                                <p class="text-sm text-gray-600">${user.email || 'N/A'} • ${user.mobile}</p>
+                                <p class="text-xs text-gray-500">
+                                    অনুমোদিত: ${new Date(user.approvedDate || user.registrationDate).toLocaleDateString('bn-BD')}
+                                </p>
+                            </div>
+                            <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
+                                <i class="fas fa-check mr-1"></i>অনুমোদিত
+                            </span>
+                        </div>
+                    </div>
+                `;
+            });
+            approvedHtml += '</div>';
+            approvedList.innerHTML = approvedHtml;
+        }
+    }
+
+    function approveUser(userId) {
+        let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+        const userIndex = users.findIndex(u => u.id === userId);
+        
+        if (userIndex !== -1) {
+            users[userIndex].approved = true;
+            users[userIndex].approvedDate = new Date().toISOString();
+            users[userIndex].approvedBy = "সুপার অ্যাডমিন";
+            
+            localStorage.setItem('portalUsers', JSON.stringify(users));
+            alert('ইউজার সফলভাবে অনুমোদিত হয়েছে!');
+            loadUserData();
+        }
+    }
+
+    function rejectUser(userId) {
+        if (confirm('আপনি কি নিশ্চিত এই ইউজারকে বাতিল করতে চান?')) {
             let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
             const userIndex = users.findIndex(u => u.id === userId);
             
             if (userIndex !== -1) {
-                users[userIndex].approved = true;
-                users[userIndex].approvedDate = new Date().toISOString();
-                users[userIndex].approvedBy = "সুপার অ্যাডমিন";
+                users[userIndex].rejected = true;
+                users[userIndex].rejectedDate = new Date().toISOString();
+                users[userIndex].rejectedBy = "সুপার অ্যাডমিন";
                 
                 localStorage.setItem('portalUsers', JSON.stringify(users));
-                alert('ইউজার সফলভাবে অনুমোদিত হয়েছে!');
+                alert('ইউজার বাতিল করা হয়েছে!');
                 loadUserData();
             }
         }
+    }
 
-        function rejectUser(userId) {
-            if (confirm('আপনি কি নিশ্চিত এই ইউজারকে বাতিল করতে চান?')) {
-                let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
-                const userIndex = users.findIndex(u => u.id === userId);
-                
-                if (userIndex !== -1) {
-                    users[userIndex].rejected = true;
-                    users[userIndex].rejectedDate = new Date().toISOString();
-                    users[userIndex].rejectedBy = "সুপার অ্যাডমিন";
-                    
-                    localStorage.setItem('portalUsers', JSON.stringify(users));
-                    alert('ইউজার বাতিল করা হয়েছে!');
-                    loadUserData();
-                }
-            }
+    function logoutSuperAdmin() {
+        if (confirm('আপনি কি নিশ্চিত লগআউট করতে চান?')) {
+            window.location.href = 'super_admin_login.html';
         }
-
-        function logoutSuperAdmin() {
-            if (confirm('আপনি কি নিশ্চিত লগআউট করতে চান?')) {
-                window.location.href = 'super_admin_login.html';
-            }
-        }
+    }
     </script>
 </body>
 </html>
