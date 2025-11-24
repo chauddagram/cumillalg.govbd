@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সুপার অ্যাডমিন লগইন - কুমিল্লা সেবা পোর্টাল</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gradient-to-br from-red-50 to-orange-50 min-h-screen flex items-center justify-center py-8">
+    <div class="container mx-auto px-4 max-w-md">
+        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
+            <div class="bg-gradient-to-r from-red-600 to-orange-600 text-white p-8 text-center">
+                <i class="fas fa-user-shield text-5xl mb-4"></i>
+                <h1 class="text-2xl font-bold">সুপার অ্যাডমিন লগইন</h1>
+                <p class="text-orange-100 mt-2">কুমিল্লা স্থানীয় সরকার সেবা পোর্টাল</p>
+            </div>
+
+            <div class="p-8">
+                <form id="superAdminLoginForm" class="space-y-6">
+                    <div>
+                        <label for="adminUsername" class="block text-gray-700 mb-2 font-medium">
+                            <i class="fas fa-user mr-2"></i>অ্যাডমিন ইউজারনেম
+                        </label>
+                        <input type="text" id="adminUsername" name="adminUsername" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-200"
+                               placeholder="সুপার অ্যাডমিন ইউজারনেম" required>
+                    </div>
+                    
+                    <div>
+                        <label for="adminPassword" class="block text-gray-700 mb-2 font-medium">
+                            <i class="fas fa-lock mr-2"></i>পাসওয়ার্ড
+                        </label>
+                        <input type="password" id="adminPassword" name="adminPassword" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-200"
+                               placeholder="সুপার অ্যাডমিন পাসওয়ার্ড" required>
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-300 transform hover:scale-105">
+                        <i class="fas fa-sign-in-alt mr-2"></i>সুপার অ্যাডমিন লগইন
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-6 border-t border-gray-200 text-center">
+                    <a href="index.html" class="text-gray-600 hover:text-gray-800 font-medium">
+                        <i class="fas fa-arrow-left mr-2"></i>সাধারণ লগইনে ফিরে যান
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('superAdminLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            if (username === "superadmin" && password === "admin123") {
+                // ✅ কোনো ডেমো ডেটা তৈরি করবে না
+                localStorage.setItem('superAdminLoggedIn', 'true');
+                alert('সুপার অ্যাডমিন লগইন সফল! প্যানেলে নিয়ে যাওয়া হচ্ছে...');
+                window.location.href = 'super_admin_panel.html';
+            } else {
+                alert('ভুল ইউজারনেম বা পাসওয়ার্ড।');
+            }
+        });
+    </script>
+</body>
+</html>
