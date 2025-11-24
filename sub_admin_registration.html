@@ -6,7 +6,6 @@
     <title>সাব-অ্যাডমিন নিবন্ধন - কুমিল্লা সেবা পোর্টাল</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
     <!-- হেডার -->
@@ -338,16 +337,39 @@
             step2Form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                const banglaName = document.getElementById('banglaName').value.trim();
+                // ফর্ম ডেটা collect করুন
+                const userData = {
+                    id: Date.now(),
+                    banglaName: document.getElementById('banglaName').value.trim(),
+                    englishName: document.getElementById('englishName').value.trim(),
+                    mobile: document.getElementById('mobile').value.trim(),
+                    nid: document.getElementById('nid').value.trim(),
+                    accountType: document.getElementById('accountType').value,
+                    district: document.getElementById('district').value,
+                    upazila: document.getElementById('upazila').value,
+                    office: document.getElementById('office').value,
+                    currentAddress: document.getElementById('currentAddress').value,
+                    permanentAddress: document.getElementById('permanentAddress').value,
+                    password: 'admin123', // ডিফল্ট পাসওয়ার্ড
+                    userType: 'সাব-অ্যাডমিন',
+                    approved: false,
+                    rejected: false,
+                    registrationDate: new Date().toISOString()
+                };
                 
+                // ✅ localStorage-এ save করুন
+                let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+                users.push(userData);
+                localStorage.setItem('portalUsers', JSON.stringify(userData));
+
                 // ফর্ম হাইড করুন
                 step2Form.classList.add('hidden');
                 
                 // সফলতা বার্তা দেখান
-                successUserName.textContent = `✨ অভিনন্দন! ${banglaName} ✨`;
+                successUserName.textContent = `✨ অভিনন্দন! ${userData.banglaName} ✨`;
                 successMessage.classList.remove('hidden');
             });
         });
     </script>
 </body>
-</html>
+                                </html>
