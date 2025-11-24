@@ -204,23 +204,37 @@
 
         // লগইন ফর্ম সাবমিশন
         // নতুন কোড (এটি paste করুন):
+// লগইন ফর্ম সাবমিশন
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
     
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value.trim();
     
-    // ডেমো ইউজার credentials
-    const demoUsers = [
-        { username: "user", password: "user123", name: "সাধারণ ইউজার" },
-        { username: "admin", password: "admin123", name: "অ্যাডমিন" },
-        { username: "demo", password: "demo123", name: "ডেমো একাউন্ট" }
-    ];
+    // localStorage থেকে ইউজার ডেটা
+    let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
     
     if (!username || !password) {
         showAlert('দয়া করে ইউজারনেম এবং পাসওয়ার্ড প্রদান করুন।', 'error');
         return;
     }
+    
+    // শুধু APPROVED ইউজাররা লগইন করতে পারবে
+    const user = users.find(u => 
+        (u.email === username || u.mobile === username) && 
+        u.password === password && 
+        u.approved === true
+    );
+    
+    if (user) {
+        showAlert(`লগইন সফল! স্বাগতম ${user.banglaName}।`, 'success');
+        setTimeout(() => {
+            window.location.href = 'dashboard.html';
+        }, 2000);
+    } else {
+        showAlert('আপনার অ্যাকাউন্টটি এখনও অনুমোদিত হয়নি। দয়া করে অপেক্ষা করুন অথবা অ্যাডমিনের সাথে যোগাযোগ করুন।', 'warning');
+    }
+});
     
     // ইউজার ভেরিফিকেশন
     const user = demoUsers.find(u => u.username === username && u.password === password);
