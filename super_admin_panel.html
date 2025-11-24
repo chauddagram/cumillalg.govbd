@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
+    <!-- হেডার -->
     <header class="bg-red-700 text-white shadow-lg">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
@@ -22,6 +23,9 @@
                     <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm">
                         <i class="fas fa-user-shield mr-1"></i>সুপার অ্যাডমিন
                     </span>
+                    <button onclick="clearAllData()" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded transition duration-200">
+                        <i class="fas fa-trash mr-2"></i>ডেটা রিসেট
+                    </button>
                     <button onclick="logoutSuperAdmin()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
                         <i class="fas fa-sign-out-alt mr-2"></i>লগআউট
                     </button>
@@ -30,7 +34,9 @@
         </div>
     </header>
 
+    <!-- মেইন কন্টেন্ট -->
     <div class="container mx-auto px-4 py-8">
+        <!-- স্ট্যাটিসটিক্স -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-lg shadow p-6 text-center">
                 <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -65,6 +71,7 @@
             </div>
         </div>
 
+        <!-- অপেক্ষমান ইউজার লিস্ট -->
         <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
             <div class="px-6 py-4 border-b border-gray-200 bg-yellow-50">
                 <h2 class="text-xl font-bold text-gray-800">
@@ -75,6 +82,7 @@
             </div>
             
             <div id="pendingUserList" class="p-6">
+                <!-- ইউজার লিস্ট এখানে লোড হবে -->
                 <div class="text-center py-8">
                     <i class="fas fa-inbox text-gray-300 text-4xl mb-3"></i>
                     <p class="text-gray-500">কোনো অপেক্ষমান ইউজার নেই</p>
@@ -82,6 +90,7 @@
             </div>
         </div>
 
+        <!-- অনুমোদিত ইউজার লিস্ট -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
                 <h2 class="text-xl font-bold text-gray-800">
@@ -92,6 +101,7 @@
             </div>
             
             <div id="approvedUserList" class="p-6">
+                <!-- অনুমোদিত ইউজার লিস্ট -->
                 <div class="text-center py-8">
                     <i class="fas fa-users text-gray-300 text-4xl mb-3"></i>
                     <p class="text-gray-500">কোনো অনুমোদিত ইউজার নেই</p>
@@ -149,10 +159,10 @@
                                     </p>
                                 </div>
                                 <div class="flex space-x-2 ml-4">
-                                    <button onclick="approveUser(${user.id})" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
+                                    <button onclick="approveUser('${user.id}')" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
                                         <i class="fas fa-check mr-1"></i>অনুমোদন
                                     </button>
-                                    <button onclick="rejectUser(${user.id})" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                    <button onclick="rejectUser('${user.id}')" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
                                         <i class="fas fa-times mr-1"></i>বাতিল
                                     </button>
                                 </div>
@@ -201,7 +211,7 @@
 
         function approveUser(userId) {
             let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
-            const userIndex = users.findIndex(u => u.id === userId);
+            const userIndex = users.findIndex(u => u.id == userId);
             
             if (userIndex !== -1) {
                 users[userIndex].approved = true;
@@ -217,7 +227,7 @@
         function rejectUser(userId) {
             if (confirm('আপনি কি নিশ্চিত এই ইউজারকে বাতিল করতে চান?')) {
                 let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
-                const userIndex = users.findIndex(u => u.id === userId);
+                const userIndex = users.findIndex(u => u.id == userId);
                 
                 if (userIndex !== -1) {
                     users[userIndex].rejected = true;
@@ -228,6 +238,14 @@
                     alert('ইউজার বাতিল করা হয়েছে!');
                     loadUserData();
                 }
+            }
+        }
+
+        function clearAllData() {
+            if (confirm('আপনি কি নিশ্চিত সব ডেটা ডিলিট করতে চান? এটি irreversible!')) {
+                localStorage.removeItem('portalUsers');
+                alert('সব ডেটা ডিলিট করা হয়েছে!');
+                loadUserData();
             }
         }
 
