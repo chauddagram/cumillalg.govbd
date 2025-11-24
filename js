@@ -24,10 +24,12 @@ console.log("Firebase App Initialized!");
 function goToStep2() {
     // ফর্ম ভ্যালিডেশন
     const nameBn = document.getElementById('nameBn').value;
+    const nameEn = document.getElementById('nameEn').value;
     const mobile = document.getElementById('mobile').value;
     const password = document.getElementById('password').value;
     const nid = document.getElementById('nid').value;
-    
+    const accountType = document.getElementById('accountType').value; // <-- নতুন ভ্যালিডেশন
+
     // NID এবং মোবাইল নম্বরের দৈর্ঘ্য পরীক্ষা
     if (nid.length !== 10 && nid.length !== 17) {
         alert("জাতীয় পরিচয়পত্র নম্বর অবশ্যই ১০ বা ১৭ ডিজিটের হতে হবে।");
@@ -41,8 +43,13 @@ function goToStep2() {
         alert("পাসওয়ার্ড ন্যূনতম ৬ অক্ষরের হতে হবে।");
         return;
     }
+    if (accountType === "") { // <-- যদি কোনো ধরন নির্বাচন করা না হয়
+        alert("অনুগ্রহ করে অ্যাকাউন্টের ধরন নির্বাচন করুন।");
+        return;
+    }
 
-    if (nameBn && mobile && nid && password) {
+    // সমস্ত প্রয়োজনীয় ফিল্ড পূরণ হয়েছে কিনা তা পরীক্ষা করা
+    if (nameBn && nameEn && mobile && nid && password && accountType) {
         document.getElementById('step1').style.display = 'none';
         document.getElementById('step2').style.display = 'block';
     } else {
@@ -117,3 +124,4 @@ function submitSubAdminRegistration() {
             submitBtn.textContent = 'নিবন্ধন করুন ✅';
         });
 }
+
