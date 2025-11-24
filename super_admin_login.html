@@ -36,11 +36,11 @@
     <script type="module">
         // Firebase মডিউল আমদানি (Imports)
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        // প্রয়োজনীয় Auth ফাংশন আমদানি করা হয়েছে
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // IMPORTANT: Firebase Console থেকে প্রাপ্ত কনফিগারেশন সরাসরি এখানে সেট করা হলো
-        // কারণ GitHub Pages-এ __firebase_config গ্লোবাল ভ্যারিয়েবলটি অ্যাক্সেস করা যায় না।
+        // IMPORTANT: Firebase Console থেকে প্রাপ্ত কনফিগারেশন
         const firebaseConfig = {
           apiKey: "AIzaSyDSjhi_l5fec76l8gbZjWea9qYIF8PyfgM",
           authDomain: "chauddagram-cumillalg-govbd.firebaseapp.com",
@@ -51,9 +51,12 @@
           measurementId: "G-G7T4CDR07Q"
         };
         
-        // Canvas গ্লোবাল ভ্যারিয়েবল সেট করা (যদি Canvas-এ না থাকে তবে ডিফল্ট মান ব্যবহার করা হবে)
+        // Canvas গ্লোবাল ভ্যারিয়েবল সেট করা
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'super-admin-default-app-id';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // লোকাল স্টোরেজে সুপার অ্যাডমিন লগইন স্ট্যাটাস চেক করার জন্য কি (এটি এখন আর ব্যবহার করা হবে না, FirebaseAuthState ব্যবহার করা হবে)
+        // const IS_SUPER_ADMIN_LOGGED_IN_KEY = 'isSuperAdminLoggedIn';
 
 
         // কোর অ্যাপ্লিকেশন লজিক (Core Application logic)
@@ -62,8 +65,9 @@
             auth: null,
             state: {
                 userId: null,
-                isAuthenticated: false,
-                currentView: 'loading', // 'loading', 'login', 'dashboard'
+                isFirebaseReady: false, 
+                // isSuperAdmin এখন Firebase Auth state থেকে নির্ধারিত হবে
+                currentView: 'loading', 
                 loginError: null,
                 isLoading: true,
                 
@@ -80,10 +84,6 @@
                     ]
                 }
             },
-
-            // প্রমাণীকরণের জন্য সুপার অ্যাডমিন ক্রেডেনশিয়ালস (ডেমো)
-            SUPER_ADMIN_ID: 'tusharhasnbd@gmail.com',
-            SUPER_ADMIN_PASS: 'SuperAdmin', // এটি পরিবর্তন করা উচিত
 
             // ফায়ারস্টোর কালেকশন রেফারেন্স
             COLLECTIONS: {
@@ -105,28 +105,28 @@
                     
                     // প্রমাণীকরণ অবস্থা শোনা
                     onAuthStateChanged(App.auth, async (user) => {
-                        if (user) {
-                            App.state.userId = user.uid;
-                            App.state.isAuthenticated = true;
-                            // লগইন সফল হলে ড্যাশবোর্ড দেখাও
-                            await App.loadInitialData(); // ডেটা লোড করার চেষ্টা করুন
-                            App.changeView('dashboard');
+                        App.state.userId = user ? user.uid : null;
+                        App.state.isFirebaseReady = true; 
+                        
+                        App.state.isLoading = false;
 
+                        // যদি user থাকে এবং সেটি Anonymous না হয়, তবেই ড্যাশবোর্ডে যাবে।
+                        // ফায়ারবেস Email/Password ব্যবহার করলে user.isAnonymous = false হবে
+                        if (user && !user.isAnonymous) {
+                            await App.loadInitialData();
+                            App.changeView('dashboard');
                         } else {
-                            App.state.userId = null;
-                            App.state.isAuthenticated = false;
-                            App.state.isLoading = false;
+                            // Anonymous user বা Logout করা user হলে লগইন ফর্ম দেখাবে
                             App.changeView('login');
                         }
                     });
 
-                    // প্রমাণীকরণ শুরু করা
+                    // প্রমাণীকরণ শুরু করা (ডেটাবেস রুলসের জন্য একটি বৈধ ইউজার দরকার)
                     if (initialAuthToken) {
-                        // কাস্টম টোকেন ব্যবহার করে সাইন ইন
                         await signInWithCustomToken(App.auth, initialAuthToken);
                     } else {
-                        // বেনামী সাইন ইন (Anonymous Sign In) ব্যবহার করে প্রমাণীকরণ শুরু
-                        // এটি ডেটা অ্যাক্সেসের অনুমতি পেতে প্রয়োজন
+                        // বেনামী সাইন ইন (Anonymous Sign In) ব্যবহার করে শুরু করা
+                        // এটি ডেটা অ্যাক্সেসের অনুমতি পেতে প্রয়োজন, কিন্তু ড্যাশবোর্ড দেখানোর জন্য যথেষ্ট নয়
                         await signInAnonymously(App.auth);
                     }
 
@@ -135,11 +135,11 @@
                     console.error("Firebase/App Initialization Error:", error);
                     App.state.isLoading = false;
                     App.state.loginError = `সিস্টেম ত্রুটি: ${error.message}. ফায়ারবেস কনসোল চেক করুন।`;
-                    App.changeView('login'); // ত্রুটি হলেও লগইন ফর্ম দেখাও
+                    App.changeView('login'); 
                 }
             },
 
-            // ইউজার ইনপুট থেকে লগইন হ্যান্ডেল করা
+            // ইউজার ইনপুট থেকে লগইন হ্যান্ডেল করা (Email/Password ব্যবহার করা হচ্ছে)
             async handleLogin(e) {
                 e.preventDefault();
                 App.state.loginError = null;
@@ -149,27 +149,36 @@
                 const email = document.getElementById('username').value;
                 const password = document.getElementById('password').value;
                 
-                // ডেমো লগইন: হার্ডকোডেড সুপার অ্যাডমিন ক্রেডেনশিয়ালস
-                if (email === App.SUPER_ADMIN_ID && password === App.SUPER_ADMIN_PASS) {
-                    // ডেমো সফল লগইন: ড্যাশবোর্ড দেখাও
-                    App.changeView('dashboard');
-                    App.state.isLoading = false;
-                    App.render();
+                try {
+                    // Firebase Email/Password Authentication ব্যবহার করা হচ্ছে
+                    const userCredential = await signInWithEmailAndPassword(App.auth, email, password);
                     
-                } else {
-                    App.state.loginError = 'ভুল ইউজার আইডি বা পাসওয়ার্ড।';
+                    // প্রমাণীকরণ সফল হলে, onAuthStateChanged listener ড্যাশবোর্ডে নিয়ে যাবে।
+                    App.state.isLoading = false;
+                    
+                } catch (error) {
+                    let errorMessage = 'ভুল ইউজার আইডি বা পাসওয়ার্ড।';
+                    // Firebase ত্রুটির মেসেজ অনুযায়ী কাস্টম মেসেজ দেখানো
+                    if (error.code === 'auth/user-not-found') {
+                        errorMessage = 'এই ইমেইল আইডিটি রেজিস্টার করা নেই।';
+                    } else if (error.code === 'auth/wrong-password') {
+                        errorMessage = 'পাসওয়ার্ডটি ভুল দেওয়া হয়েছে।';
+                    } else if (error.code === 'auth/invalid-email') {
+                        errorMessage = 'দয়া করে একটি বৈধ ইমেইল আইডি দিন।';
+                    }
+                    
+                    App.state.loginError = errorMessage;
                     App.state.isLoading = false;
                     App.render();
                 }
             },
             
-            // ডেটা লোড করা (firestore থেকে ডেটা আনার জন্য onSnapshot ব্যবহার করা হয়েছে)
+            // ডেটা লোড করা 
             async loadInitialData() {
                 if (!App.db || !App.state.userId) return;
 
-                // ডেমো ডেটা লোডিং - আপনি এখানে আপনার আসল Firestore ডেটা লোড করতে পারেন
-                // যেহেতু এই অ্যাপটি ডেমো ডেটা ব্যবহার করছে, এখানে শুধুমাত্র একটি ডামি ফাংশন রাখা হলো
-                console.log("Initial data loading simulated.");
+                // এখানে আপনি আপনার Firebase Firestore থেকে ড্যাশবোর্ডের আসল ডেটা লোড করতে পারেন
+                console.log("Initial data loading from Firestore/API simulated.");
             },
             
             // ভিউ পরিবর্তন করা
@@ -181,15 +190,11 @@
             // DOM রেন্ডার করা
             render() {
                 const appContainer = document.getElementById('app');
-                const loadingScreen = document.getElementById('loading');
                 
                 if(App.state.isLoading && App.state.currentView === 'loading') {
                     // লোডিং স্ক্রিন দেখাচ্ছে
                     appContainer.innerHTML = App.renderLoadingScreen();
                     return;
-                } else {
-                    // লোডিং স্ক্রিন মুছে ফেলা
-                    if(loadingScreen) loadingScreen.style.display = 'none';
                 }
 
                 if (App.state.currentView === 'login') {
@@ -206,11 +211,11 @@
             // লগআউট হ্যান্ডেল করা
             async handleLogout() {
                 try {
-                    await App.auth.signOut();
+                    await signOut(App.auth); // Firebase থেকে সাইন আউট করা হচ্ছে
                     App.changeView('login');
                 } catch (error) {
                     console.error("Logout Error:", error);
-                    // একটি বার্তা দেখানো যেতে পারে
+                    // কাস্টম নোটিফিকেশন দেখানো যেতে পারে
                 }
             },
             
@@ -244,7 +249,7 @@
                             <form id="login-form">
                                 <div class="mb-4">
                                     <label for="username" class="block text-sm font-medium text-gray-700 mb-1">ইউজার আইডি (ইমেইল) *</label>
-                                    <input type="email" id="username" name="username" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="tusharhasnbd@gmail.com" required>
+                                    <input type="email" id="username" name="username" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" placeholder="আপনার রেজিস্টার করা ইমেইল দিন" required>
                                 </div>
                                 <div class="mb-6">
                                     <label for="password" class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
@@ -256,7 +261,7 @@
                                         'প্রবেশ করুন (Super Admin) 🚨'
                                     }
                                 </button>
-                                <p class="mt-4 text-center text-xs text-gray-400">আপনার ব্যক্তিগত ডেটা গোপন রাখা হবে।</p>
+                                <p class="mt-4 text-center text-xs text-gray-400">এই লগইনটি সরাসরি Firebase-এর মাধ্যমে সুরক্ষিত।</p>
                             </form>
                         </div>
                     </div>
@@ -274,7 +279,7 @@
                             <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
                                 <h1 class="text-2xl font-bold text-indigo-600">সুপার অ্যাডমিন ড্যাশবোর্ড</h1>
                                 <div class="flex items-center space-x-4">
-                                    <span class="text-sm font-medium text-gray-600">ইউজার: ${App.state.userId.substring(0, 8)}...</span>
+                                    <span class="text-sm font-medium text-gray-600">Firebase ID: ${App.state.userId ? App.state.userId : 'N/A'}</span>
                                     <button id="logout-btn" class="px-4 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600 transition duration-150">লগআউট</button>
                                 </div>
                             </div>
