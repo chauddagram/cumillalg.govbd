@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সুপার অ্যাডমিন প্যানেল - কুমিল্লা সেবা পোর্টাল</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-red-700 text-white shadow-lg">
+        <div class="container mx-auto px-4 py-4">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-crown text-2xl"></i>
+                    <div>
+                        <h1 class="text-xl font-bold">সুপার অ্যাডমিন প্যানেল</h1>
+                        <p class="text-red-100 text-sm">কুমিল্লা স্থানীয় সরকার সেবা পোর্টাল</p>
+                    </div>
+                </div>
+                <div class="flex space-x-4">
+                    <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm">
+                        <i class="fas fa-user-shield mr-1"></i>সুপার অ্যাডমিন
+                    </span>
+                    <button onclick="logoutSuperAdmin()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-4 rounded transition duration-200">
+                        <i class="fas fa-sign-out-alt mr-2"></i>লগআউট
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800" id="totalUsers">0</h3>
+                <p class="text-gray-600">মোট রেজিস্ট্রেশন</p>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800" id="pendingUsers">0</h3>
+                <p class="text-gray-600">অপেক্ষমান অনুমোদন</p>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800" id="approvedUsers">0</h3>
+                <p class="text-gray-600">অনুমোদিত ইউজার</p>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow p-6 text-center">
+                <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i class="fas fa-times-circle text-red-600 text-xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-800" id="rejectedUsers">0</h3>
+                <p class="text-gray-600">বাতিলকৃত</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
+            <div class="px-6 py-4 border-b border-gray-200 bg-yellow-50">
+                <h2 class="text-xl font-bold text-gray-800">
+                    <i class="fas fa-clock text-yellow-600 mr-2"></i>
+                    অনুমোদনের জন্য অপেক্ষমান ইউজার
+                </h2>
+                <p class="text-gray-600 text-sm">নতুন রেজিস্ট্রেশন করা ইউজারদের manually approve করুন</p>
+            </div>
+            
+            <div id="pendingUserList" class="p-6">
+                <div class="text-center py-8">
+                    <i class="fas fa-inbox text-gray-300 text-4xl mb-3"></i>
+                    <p class="text-gray-500">কোনো অপেক্ষমান ইউজার নেই</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
+                <h2 class="text-xl font-bold text-gray-800">
+                    <i class="fas fa-check-circle text-green-600 mr-2"></i>
+                    অনুমোদিত ইউজার তালিকা
+                </h2>
+                <p class="text-gray-600 text-sm">সকল অনুমোদিত ইউজারদের তালিকা</p>
+            </div>
+            
+            <div id="approvedUserList" class="p-6">
+                <div class="text-center py-8">
+                    <i class="fas fa-users text-gray-300 text-4xl mb-3"></i>
+                    <p class="text-gray-500">কোনো অনুমোদিত ইউজার নেই</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ✅ Authentication check - কোনো ডেমো ডেটা নেই
+        document.addEventListener('DOMContentLoaded', function() {
+            const isLoggedIn = localStorage.getItem('superAdminLoggedIn');
+            if (!isLoggedIn) {
+                window.location.href = 'super_admin_login.html';
+                return;
+            }
+            
+            loadUserData();
+        });
+
+        function loadUserData() {
+            const users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+            
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('pendingUsers').textContent = users.filter(u => !u.approved && !u.rejected).length;
+            document.getElementById('approvedUsers').textContent = users.filter(u => u.approved).length;
+            document.getElementById('rejectedUsers').textContent = users.filter(u => u.rejected).length;
+            
+            const pendingUsers = users.filter(u => !u.approved && !u.rejected);
+            const pendingList = document.getElementById('pendingUserList');
+            
+            if (pendingUsers.length === 0) {
+                pendingList.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-inbox text-gray-300 text-4xl mb-3"></i>
+                        <p class="text-gray-500">কোনো অপেক্ষমান ইউজার নেই</p>
+                    </div>
+                `;
+            } else {
+                let pendingHtml = '<div class="space-y-4">';
+                pendingUsers.forEach(user => {
+                    pendingHtml += `
+                        <div class="border border-yellow-200 rounded-lg p-4 bg-yellow-50">
+                            <div class="flex justify-between items-start">
+                                <div class="flex-1">
+                                    <h3 class="font-semibold text-gray-800">${user.banglaName}</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2 text-sm">
+                                        <p><i class="fas fa-envelope mr-2 text-gray-500"></i>${user.email || 'N/A'}</p>
+                                        <p><i class="fas fa-phone mr-2 text-gray-500"></i>${user.mobile}</p>
+                                        <p><i class="fas fa-id-card mr-2 text-gray-500"></i>${user.nid}</p>
+                                        <p><i class="fas fa-user-tag mr-2 text-gray-500"></i>${user.userType || 'সাধারণ ইউজার'}</p>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-2">
+                                        রেজিস্ট্রেশন: ${new Date(user.registrationDate).toLocaleDateString('bn-BD')}
+                                    </p>
+                                </div>
+                                <div class="flex space-x-2 ml-4">
+                                    <button onclick="approveUser(${user.id})" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg text-sm">
+                                        <i class="fas fa-check mr-1"></i>অনুমোদন
+                                    </button>
+                                    <button onclick="rejectUser(${user.id})" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm">
+                                        <i class="fas fa-times mr-1"></i>বাতিল
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                pendingHtml += '</div>';
+                pendingList.innerHTML = pendingHtml;
+            }
+            
+            const approvedUsers = users.filter(u => u.approved);
+            const approvedList = document.getElementById('approvedUserList');
+            
+            if (approvedUsers.length === 0) {
+                approvedList.innerHTML = `
+                    <div class="text-center py-8">
+                        <i class="fas fa-users text-gray-300 text-4xl mb-3"></i>
+                        <p class="text-gray-500">কোনো অনুমোদিত ইউজার নেই</p>
+                    </div>
+                `;
+            } else {
+                let approvedHtml = '<div class="space-y-3">';
+                approvedUsers.forEach(user => {
+                    approvedHtml += `
+                        <div class="border border-green-200 rounded-lg p-4 bg-green-50">
+                            <div class="flex justify-between items-center">
+                                <div>
+                                    <h3 class="font-semibold text-gray-800">${user.banglaName}</h3>
+                                    <p class="text-sm text-gray-600">${user.email || 'N/A'} • ${user.mobile}</p>
+                                    <p class="text-xs text-gray-500">
+                                        অনুমোদিত: ${new Date(user.approvedDate || user.registrationDate).toLocaleDateString('bn-BD')}
+                                    </p>
+                                </div>
+                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm">
+                                    <i class="fas fa-check mr-1"></i>অনুমোদিত
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                });
+                approvedHtml += '</div>';
+                approvedList.innerHTML = approvedHtml;
+            }
+        }
+
+        function approveUser(userId) {
+            let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+            const userIndex = users.findIndex(u => u.id === userId);
+            
+            if (userIndex !== -1) {
+                users[userIndex].approved = true;
+                users[userIndex].approvedDate = new Date().toISOString();
+                users[userIndex].approvedBy = "সুপার অ্যাডমিন";
+                
+                localStorage.setItem('portalUsers', JSON.stringify(users));
+                alert('ইউজার সফলভাবে অনুমোদিত হয়েছে!');
+                loadUserData();
+            }
+        }
+
+        function rejectUser(userId) {
+            if (confirm('আপনি কি নিশ্চিত এই ইউজারকে বাতিল করতে চান?')) {
+                let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+                const userIndex = users.findIndex(u => u.id === userId);
+                
+                if (userIndex !== -1) {
+                    users[userIndex].rejected = true;
+                    users[userIndex].rejectedDate = new Date().toISOString();
+                    users[userIndex].rejectedBy = "সুপার অ্যাডমিন";
+                    
+                    localStorage.setItem('portalUsers', JSON.stringify(users));
+                    alert('ইউজার বাতিল করা হয়েছে!');
+                    loadUserData();
+                }
+            }
+        }
+
+        function logoutSuperAdmin() {
+            localStorage.removeItem('superAdminLoggedIn');
+            window.location.href = 'super_admin_login.html';
+        }
+    </script>
+</body>
+</html>
