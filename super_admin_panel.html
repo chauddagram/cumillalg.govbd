@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-gray-100 min-h-screen">
-    <!-- হেডার -->
     <header class="bg-red-700 text-white shadow-lg">
         <div class="container mx-auto px-4 py-4">
             <div class="flex justify-between items-center">
@@ -31,9 +30,7 @@
         </div>
     </header>
 
-    <!-- মেইন কন্টেন্ট -->
     <div class="container mx-auto px-4 py-8">
-        <!-- স্ট্যাটিসটিক্স -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-lg shadow p-6 text-center">
                 <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -68,7 +65,6 @@
             </div>
         </div>
 
-        <!-- অপেক্ষমান ইউজার লিস্ট -->
         <div class="bg-white rounded-lg shadow overflow-hidden mb-8">
             <div class="px-6 py-4 border-b border-gray-200 bg-yellow-50">
                 <h2 class="text-xl font-bold text-gray-800">
@@ -79,7 +75,6 @@
             </div>
             
             <div id="pendingUserList" class="p-6">
-                <!-- ইউজার লিস্ট এখানে লোড হবে -->
                 <div class="text-center py-8">
                     <i class="fas fa-inbox text-gray-300 text-4xl mb-3"></i>
                     <p class="text-gray-500">কোনো অপেক্ষমান ইউজার নেই</p>
@@ -87,7 +82,6 @@
             </div>
         </div>
 
-        <!-- অনুমোদিত ইউজার লিস্ট -->
         <div class="bg-white rounded-lg shadow overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-200 bg-green-50">
                 <h2 class="text-xl font-bold text-gray-800">
@@ -98,7 +92,6 @@
             </div>
             
             <div id="approvedUserList" class="p-6">
-                <!-- অনুমোদিত ইউজার লিস্ট -->
                 <div class="text-center py-8">
                     <i class="fas fa-users text-gray-300 text-4xl mb-3"></i>
                     <p class="text-gray-500">কোনো অনুমোদিত ইউজার নেই</p>
@@ -108,55 +101,19 @@
     </div>
 
     <script>
-        // localStorage-এ ডেমো ডেটা তৈরি (যদি না থাকে)
+        // ✅ শুধু existing ইউজার ডেটা লোড করুন - কোনো ডেমো তৈরি করবেন না
         document.addEventListener('DOMContentLoaded', function() {
-            let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
-            
-            // যদি কোনো ইউজার না থাকে, কিছু ডেমো ইউজার তৈরি করুন
-            if (users.length === 0) {
-                users = [
-                    {
-                        id: 1,
-                        banglaName: "রহিম আহমেদ",
-                        email: "rahim@example.com",
-                        mobile: "01712345678",
-                        nid: "1234567890",
-                        password: "password123",
-                        userType: "সাধারণ ইউজার",
-                        approved: false,
-                        rejected: false,
-                        registrationDate: new Date().toISOString()
-                    },
-                    {
-                        id: 2,
-                        banglaName: "করিম উদ্দিন",
-                        email: "karim@example.com", 
-                        mobile: "01787654321",
-                        nid: "9876543210",
-                        password: "password123",
-                        userType: "সাব-অ্যাডমিন",
-                        approved: true,
-                        rejected: false,
-                        registrationDate: new Date().toISOString(),
-                        approvedDate: new Date().toISOString()
-                    }
-                ];
-                localStorage.setItem('portalUsers', JSON.stringify(users));
-            }
-            
             loadUserData();
         });
 
         function loadUserData() {
             const users = JSON.parse(localStorage.getItem('portalUsers')) || [];
             
-            // স্ট্যাটিসটিক্স আপডেট
             document.getElementById('totalUsers').textContent = users.length;
             document.getElementById('pendingUsers').textContent = users.filter(u => !u.approved && !u.rejected).length;
             document.getElementById('approvedUsers').textContent = users.filter(u => u.approved).length;
             document.getElementById('rejectedUsers').textContent = users.filter(u => u.rejected).length;
             
-            // অপেক্ষমান ইউজার লিস্ট
             const pendingUsers = users.filter(u => !u.approved && !u.rejected);
             const pendingList = document.getElementById('pendingUserList');
             
@@ -201,7 +158,6 @@
                 pendingList.innerHTML = pendingHtml;
             }
             
-            // অনুমোদিত ইউজার লিস্ট
             const approvedUsers = users.filter(u => u.approved);
             const approvedList = document.getElementById('approvedUserList');
             
