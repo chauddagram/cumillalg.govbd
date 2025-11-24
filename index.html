@@ -159,51 +159,49 @@
 
     <script>
         // সুপার অ্যাডমিন লগইন (লোগোতে ৩ বার ক্লিক)
-        let clickCount = 0;
-        let clickTimer;
-        
-        document.getElementById('logo').addEventListener('click', function() {
-            clickCount++;
-            
-            if (clickCount === 1) {
-                clickTimer = setTimeout(() => {
-                    clickCount = 0;
-                }, 1000);
-            } else if (clickCount === 3) {
-                clearTimeout(clickTimer);
-                window.location.href = 'super_admin_login.html';
-                clickCount = 0;
-            }
-        });
+let clickCount = 0;
+let clickTimer;
 
-        // নিবন্ধন মোডাল
-        document.getElementById('registerBtn').addEventListener('click', function() {
-            document.getElementById('registrationModal').classList.remove('hidden');
-            setTimeout(() => {
-                document.getElementById('registrationModal').classList.add('scale-100');
-            }, 10);
-        });
+document.getElementById('logo').addEventListener('click', function() {
+    clickCount++;
+    
+    if (clickCount === 1) {
+        clickTimer = setTimeout(() => {
+            clickCount = 0;
+        }, 1000);
+    } else if (clickCount === 3) {
+        clearTimeout(clickTimer);
+        window.location.href = 'super_admin_login.html';
+        clickCount = 0;
+    }
+});
 
-        document.getElementById('closeRegistrationModal').addEventListener('click', function() {
-            document.getElementById('registrationModal').classList.add('hidden');
-            document.getElementById('registrationModal').classList.remove('scale-100');
-        });
+// নিবন্ধন মোডাল
+document.getElementById('registerBtn').addEventListener('click', function() {
+    document.getElementById('registrationModal').classList.remove('hidden');
+    setTimeout(() => {
+        document.getElementById('registrationModal').classList.add('scale-100');
+    }, 10);
+});
 
-        // লগইন মোডাল
-        document.getElementById('loginBtn').addEventListener('click', function() {
-            document.getElementById('loginModal').classList.remove('hidden');
-            setTimeout(() => {
-                document.getElementById('loginModal').classList.add('scale-100');
-            }, 10);
-        });
+document.getElementById('closeRegistrationModal').addEventListener('click', function() {
+    document.getElementById('registrationModal').classList.add('hidden');
+    document.getElementById('registrationModal').classList.remove('scale-100');
+});
 
-        document.getElementById('closeLoginModal').addEventListener('click', function() {
-            document.getElementById('loginModal').classList.add('hidden');
-            document.getElementById('loginModal').classList.remove('scale-100');
-        });
+// লগইন মোডাল
+document.getElementById('loginBtn').addEventListener('click', function() {
+    document.getElementById('loginModal').classList.remove('hidden');
+    setTimeout(() => {
+        document.getElementById('loginModal').classList.add('scale-100');
+    }, 10);
+});
 
-        // লগইন ফর্ম সাবমিশন
-        // নতুন কোড (এটি paste করুন):
+document.getElementById('closeLoginModal').addEventListener('click', function() {
+    document.getElementById('loginModal').classList.add('hidden');
+    document.getElementById('loginModal').classList.remove('scale-100');
+});
+
 // লগইন ফর্ম সাবমিশন
 document.getElementById('loginForm').addEventListener('submit', function(e) {
     e.preventDefault();
@@ -257,6 +255,20 @@ function showAlert(message, type = 'info') {
         alertDiv.remove();
     }, 4000);
 }
+
+// মোডাল বাইরে ক্লিক করলে বন্ধ
+document.getElementById('registrationModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.classList.add('hidden');
+        this.classList.remove('scale-100');
+    }
+});
+
+document.getElementById('loginModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        this.classList.add('hidden');
+        this.classList.remove('scale-100');
+    }
 });
     </script>
 </body>
