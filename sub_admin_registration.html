@@ -3,373 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>সাব-অ্যাডমিন নিবন্ধন - কুমিল্লা সেবা পোর্টাল</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>কন্ট্রোল/সাব-অ্যাডমিন নিবন্ধন</title>
+    
+    <!-- আপনার নিজস্ব CSS ফাইল লোড করা হয়েছে -->
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* ফন্টের জন্য বেসিক স্টাইল */
+        body { font-family: sans-serif; background-color: #f7f7f7; }
+        /* ফর্মটিকে মাঝখানে আনার জন্য অতিরিক্ত স্টাইল */
+        .registration-container {
+            max-width: 500px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        /* ইনপুট, বাটন এবং লেবেলের জন্য বেসিক স্টাইল, যা style.css-এ ওভাররাইড হতে পারে */
+        label { display: block; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: bold; color: #333; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { 
+            padding: 10px; margin-top: 1.5rem; background-color: #007bff; color: white; border: none; 
+            border-radius: 5px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;
+        }
+        button:hover:enabled { background-color: #0056b3; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+    </style>
+
+    <!-- Firebase SDKs (Compat Version) -->
+    <!-- এটি সবথেকে গুরুত্বপূর্ণ: এগুলি অবশ্যই লোড করতে হবে -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- আপনার নিজস্ব জাভাস্ক্রিপ্ট -->
+    <script src="js/script.js" defer></script>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
-    <!-- হেডার -->
-    <header class="bg-white shadow-sm">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <a href="index.html" class="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                        <i class="fas fa-arrow-left text-white"></i>
-                    </a>
-                    <div>
-                        <h1 class="text-xl font-bold text-gray-800">কুমিল্লা স্থানীয় সরকার</h1>
-                        <p class="text-gray-600 text-sm">সাব-অ্যাডমিন নিবন্ধন</p>
-                    </div>
-                </div>
+<body>
+    <div class="registration-container">
+        <h2 style="text-align: center; font-size: 24px; color: #333;">🏢 সাব-অ্যাডমিন নিবন্ধন</h2>
+        <p style="text-align: center; color: red; font-size: 14px;">❗️ তারকা (*) চিহ্নিত ফিল্ডগুলো পূরণ করা বাধ্যতামূলক।</p>
+        
+        <form id="subAdminRegForm">
+            <!-- ধাপ ১: সাধারণ তথ্য -->
+            <div id="step1">
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">ধাপ ১: সাধারণ তথ্য পূরণ 📝</h3>
+                
+                <label for="nameBn">নাম (বাংলায়) *</label>
+                <input type="text" id="nameBn" required>
+
+                <label for="nameEn">নাম (ইংরেজিতে) *</label>
+                <input type="text" id="nameEn" required>
+                
+                <label for="nid">জাতীয় পরিচয়পত্র নম্বর (১০ বা ১৭ ডিজিট) * 🆔</label>
+                <input type="number" id="nid" required minlength="10" maxlength="17" placeholder="NID Number">
+                
+                <label for="mobile">মোবাইল নম্বর (১১ ডিজিট) * 📱</label>
+                <input type="tel" id="mobile" required pattern="[0-9]{11}" placeholder="01XXXXXXXXX">
+
+                <label for="accountType">অ্যাকাউন্ট ধরন * 🔽</label>
+                <select id="accountType" required>
+                    <option value="">নির্বাচন করুন</option>
+                    <option value="Sub-Admin">সাব-অ্যাডমিন</option>
+                    <option value="Control-Admin">কন্ট্রোল অ্যাডমিন</option>
+                </select>
+
+                <label for="password">পাসওয়ার্ড তৈরি করুন * 🔒</label>
+                <input type="password" id="password" required minlength="6" placeholder="ন্যূনতম ৬ অক্ষর">
+                
+                <button type="button" onclick="goToStep2()">পরবর্তী 👉</button>
             </div>
-        </div>
-    </header>
+            
+            <!-- ধাপ ২: অন্যান্য তথ্য (শুরুতে লুকানো থাকবে) -->
+            <div id="step2" style="display:none;">
+                <h3 style="border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-bottom: 15px;">ধাপ ২: অফিসের ঠিকানা 🏢</h3>
 
-    <!-- মূল কন্টেন্ট -->
-    <main class="container mx-auto px-4 py-8">
-        <div class="max-w-2xl mx-auto">
-            <!-- হেডার -->
-            <div class="text-center mb-8">
-                <div class="w-20 h-20 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-user-tie text-white text-3xl"></i>
+                <label for="office">অফিস * 💼</label>
+                <input type="text" id="office" required placeholder="কর্মক্ষেত্রের নাম">
+
+                <label for="currentAddress">বর্তমান ঠিকানা *</label>
+                <input type="text" id="currentAddress" required placeholder="পূর্ণাঙ্গ বর্তমান ঠিকানা">
+
+                <div style="display: flex; align-items: center; margin-top: 15px;">
+                    <input type="checkbox" id="sameAsCurrent" checked onchange="togglePermanentAddress()" style="width: auto; margin-right: 5px;">
+                    <label for="sameAsCurrent" style="margin: 0; font-weight: normal; font-size: 14px;">বর্তমান ও স্থায়ী ঠিকানা একই √</label>
                 </div>
-                <h2 class="text-3xl font-bold text-gray-800 mb-2">কন্ট্রোল/সাব-অ্যাডমিন অ্যাকাউন্ট তৈরি করুন</h2>
-                <p class="text-gray-600">লাল তারা (<span class="text-red-500">*</span>) চিহ্নিত ফিল্ডগুলো বাধ্যতামূলক</p>
+
+                <div id="permanentAddressFields" style="display:none;">
+                    <label for="permanentAddress">স্থায়ী ঠিকানা *</label>
+                    <input type="text" id="permanentAddress" placeholder="পূর্ণাঙ্গ স্থায়ী ঠিকানা">
+                </div>
+                
+                <p style="margin-top: 20px; font-weight: bold;">ঠিকানা নির্বাচন: 📍</p>
+                
+                <label for="district">জেলা</label>
+                <input type="text" id="district" value="কুমিল্লা" readonly style="background-color: #eee;">
+                
+                <label for="upazila">উপজেলা/পৌরসভা * 🔽</label>
+                <select id="upazila" required>
+                    <option value="">নির্বাচন করুন</option>
+                    <optgroup label="পৌরসভা">
+                        <option value="দেবিদ্বার">দেবিদ্বার</option>
+                        <option value="হোমনা">হোমনা</option>
+                        <option value="চৌদ্দগ্রাম">চৌদ্দগ্রাম</option>
+                    </optgroup>
+                    <optgroup label="উপজেলা">
+                        <option value="আদর্শ সদর">আদর্শ সদর</option>
+                        <option value="লালমাই">লালমাই</option>
+                    </optgroup>
+                </select>
+
+                <button type="button" onclick="submitSubAdminRegistration()">নিবন্ধন করুন ✅</button>
             </div>
-
-            <!-- প্রোগ্রেস বার -->
-            <div class="bg-white rounded-2xl p-6 shadow-lg mb-8">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold">1</div>
-                        <span class="ml-3 font-semibold">সাধারণ তথ্য</span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center font-bold">2</div>
-                        <span class="ml-3 font-semibold text-gray-500">অন্যান্য তথ্য</span>
-                    </div>
-                </div>
-                <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-blue-600 h-2 rounded-full w-1/2"></div>
-                </div>
-            </div>
-
-            <!-- ফর্ম -->
-            <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
-                <!-- ধাপ ১: সাধারণ তথ্য -->
-                <form id="step1Form" class="p-8">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- নাম (বাংলায়) -->
-                        <div>
-                            <label for="banglaName" class="block text-gray-700 mb-2 font-medium">
-                                নাম (বাংলায়) 🇧🇩 <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="banglaName" name="banglaName" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                   placeholder="বাংলায় নাম লিখুন" required>
-                        </div>
-                        
-                        <!-- নাম (ইংরেজিতে) -->
-                        <div>
-                            <label for="englishName" class="block text-gray-700 mb-2 font-medium">
-                                নাম (ইংরেজিতে) 🇬🇧 <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="englishName" name="englishName" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                   placeholder="ইংরেজিতে নাম লিখুন" required>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <!-- জাতীয় পরিচয়পত্র নম্বর -->
-                        <div>
-                            <label for="nid" class="block text-gray-700 mb-2 font-medium">
-                                জাতীয় পরিচয়পত্র নম্বর 🔢 <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="nid" name="nid" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                   placeholder="১০ বা ১৭ ডিজিট" required
-                                   pattern="[0-9]{10}|[0-9]{17}">
-                            <p class="text-sm text-gray-500 mt-1">১০ অথবা ১৭ ডিজিট</p>
-                        </div>
-                        
-                        <!-- মোবাইল নম্বর -->
-                        <div>
-                            <label for="mobile" class="block text-gray-700 mb-2 font-medium">
-                                মোবাইল নম্বর 📞 <span class="text-red-500">*</span>
-                            </label>
-                            <input type="tel" id="mobile" name="mobile" 
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                   placeholder="০১XXXXXXXXX" required
-                                   pattern="[0-9]{11}">
-                            <p class="text-sm text-gray-500 mt-1">১১ ডিজিট</p>
-                        </div>
-                    </div>
-
-                    <!-- অ্যাকাউন্ট ধরন -->
-                    <div class="mt-6">
-                        <label for="accountType" class="block text-gray-700 mb-2 font-medium">
-                            অ্যাকাউন্ট ধরন 🔽 <span class="text-red-500">*</span>
-                        </label>
-                        <select id="accountType" name="accountType" 
-                                class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" required>
-                            <option value="">নির্বাচন করুন</option>
-                            <option value="প্রধান কার্যালয়">প্রধান কার্যালয়</option>
-                            <option value="উপজেলা অফিস">উপজেলা অফিস</option>
-                            <option value="পৌরসভা অফিস">পৌরসভা অফিস</option>
-                            <option value="ইউনিয়ন পরিষদ">ইউনিয়ন পরিষদ</option>
-                            <option value="অন্যান্য">অন্যান্য</option>
-                        </select>
-                    </div>
-
-                    <!-- বাটন -->
-                    <div class="mt-8 flex justify-end">
-                        <button type="button" id="nextStep" class="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-8 rounded-xl transition duration-300 transform hover:scale-105">
-                            পরবর্তী 👉
-                        </button>
-                    </div>
-                </form>
-
-                <!-- ধাপ ২: অন্যান্য তথ্য -->
-                <form id="step2Form" class="p-8 hidden">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- জেলা -->
-                        <div>
-                            <label for="district" class="block text-gray-700 mb-2 font-medium">
-                                জেলা <span class="text-red-500">*</span>
-                            </label>
-                            <select id="district" name="district" 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" required>
-                                <option value="কুমিল্লা" selected>কুমিল্লা</option>
-                            </select>
-                        </div>
-                        
-                        <!-- উপজেলা/পৌরসভা -->
-                        <div>
-                            <label for="upazila" class="block text-gray-700 mb-2 font-medium">
-                                উপজেলা/পৌরসভা <span class="text-red-500">*</span>
-                            </label>
-                            <select id="upazila" name="upazila" 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" required>
-                                <option value="">নির্বাচন করুন</option>
-                                <optgroup label="উপজেলা">
-                                    <option value="কুমিল্লা সদর">কুমিল্লা সদর</option>
-                                    <option value="চৌদ্দগ্রাম">চৌদ্দগ্রাম</option>
-                                    <option value="লাকসাম">লাকসাম</option>
-                                    <option value="মনোহরগঞ্জ">মনোহরগঞ্জ</option>
-                                    <option value="সদর দক্ষিণ">সদর দক্ষিণ</option>
-                                    <option value="তিতাস">তিতাস</option>
-                                    <option value="বুড়িচং">বুড়িচং</option>
-                                    <option value="ব্রাহ্মণপাড়া">ব্রাহ্মণপাড়া</option>
-                                    <option value="চান্দিনা">চান্দিনা</option>
-                                    <option value="দাউদকান্দি">দাউদকান্দি</option>
-                                    <option value="হোমনা">হোমনা</option>
-                                    <option value="মুরাদনগর">মুরাদনগর</option>
-                                    <option value="নাঙ্গলকোট">নাঙ্গলকোট</option>
-                                    <option value="মেঘনা">মেঘনা</option>
-                                    <option value="মুন্সীগঞ্জ">মুন্সীগঞ্জ</option>
-                                    <option value="লাঙ্গলকোট">লাঙ্গলকোট</option>
-                                    <option value="সদর উত্তর">সদর উত্তর</option>
-                                </optgroup>
-                                <optgroup label="পৌরসভা">
-                                    <option value="কুমিল্লা পৌরসভা">কুমিল্লা পৌরসভা</option>
-                                    <option value="চৌদ্দগ্রাম পৌরসভা">চৌদ্দগ্রাম পৌরসভা</option>
-                                    <option value="লাকসাম পৌরসভা">লাকসাম পৌরসভা</option>
-                                    <option value="মনোহরগঞ্জ পৌরসভা">মনোহরগঞ্জ পৌরসভা</option>
-                                    <option value="বুড়িচং পৌরসভা">বুড়িচং পৌরসভা</option>
-                                    <option value="ব্রাহ্মণপাড়া পৌরসভা">ব্রাহ্মণপাড়া পৌরসভা</option>
-                                    <option value="চান্দিনা পৌরসভা">চান্দিনা পৌরসভা</option>
-                                    <option value="দাউদকান্দি পৌরসভা">দাউদকান্দি পৌরসভা</option>
-                                </optgroup>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-                        <!-- অফিস -->
-                        <div>
-                            <label for="office" class="block text-gray-700 mb-2 font-medium">
-                                অফিস 💼 <span class="text-red-500">*</span>
-                            </label>
-                            <select id="office" name="office" 
-                                    class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200" required>
-                                <option value="">নির্বাচন করুন</option>
-                                <option value="স্থানীয় সরকার প্রকৌশল অধিদপ্তর">স্থানীয় সরকার প্রকৌশল অধিদপ্তর</option>
-                                <option value="স্বাস্থ্য বিভাগ">স্বাস্থ্য বিভাগ</option>
-                                <option value="শিক্ষা বিভাগ">শিক্ষা বিভাগ</option>
-                                <option value="কৃষি বিভাগ">কৃষি বিভাগ</option>
-                                <option value="সামাজিক সেবা">সামাজিক সেবা</option>
-                                <option value="অন্যান্য">অন্যান্য</option>
-                            </select>
-                        </div>
-                        
-                        <!-- বর্তমান ঠিকানা -->
-                        <div>
-                            <label for="currentAddress" class="block text-gray-700 mb-2 font-medium">
-                                বর্তমান ঠিকানা <span class="text-red-500">*</span>
-                            </label>
-                            <textarea id="currentAddress" name="currentAddress" rows="3"
-                                      class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                      placeholder="বর্তমান ঠিকানা লিখুন" required></textarea>
-                        </div>
-                    </div>
-
-                    <!-- স্থায়ী ঠিকানা -->
-                    <div class="mt-6">
-                        <label for="permanentAddress" class="block text-gray-700 mb-2 font-medium">
-                            স্থায়ী ঠিকানা <span class="text-red-500">*</span>
-                        </label>
-                        <textarea id="permanentAddress" name="permanentAddress" rows="3"
-                                  class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-                                  placeholder="স্থায়ী ঠিকানা লিখুন" required></textarea>
-                    </div>
-
-                    <!-- চেক বক্স -->
-                    <div class="mt-4">
-                        <label class="flex items-center">
-                            <input type="checkbox" id="sameAddress" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
-                            <span class="ml-2 text-gray-700">বর্তমান ও স্থায়ী ঠিকানা একই</span>
-                        </label>
-                    </div>
-
-                    <!-- বাটন -->
-                    <div class="mt-8 flex justify-between">
-                        <button type="button" id="prevStep" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-3 px-8 rounded-xl transition duration-300">
-                            👈 পূর্ববর্তী
-                        </button>
-                        <button type="submit" class="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-8 rounded-xl transition duration-300 transform hover:scale-105">
-                            নিবন্ধন করুন ✅
-                        </button>
-                    </div>
-                </form>
-
-                <!-- সফলতা বার্তা -->
-                <div id="successMessage" class="p-8 text-center hidden">
-                    <div class="w-20 h-20 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                        <i class="fas fa-check-circle text-green-600 text-3xl"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4" id="successUserName"></h3>
-                    <div class="bg-green-50 border border-green-200 rounded-xl p-6 mb-6">
-                        <p class="text-green-800 mb-4">
-                            <strong>✨ অভিনন্দন! ✨</strong>
-                        </p>
-                        <p class="text-green-700">
-                            আপনার আবেদন এখন 🧑‍💻 M²H. TUSAR _ COMPUTECH 💻 কর্তৃপক্ষের নিকট অনুমোদনের জন্য অপেক্ষা করছে। অ্যাকাউন্টটি অনুমোদিত/সক্রিয় হলে আপনাকে ইমেল বা মোবাইল নম্বরে মেসেজ পেরন করা হবে।
-                        </p>
-                    </div>
-                    <a href="index.html" class="inline-block bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-xl transition duration-300">
-                        হোমপেজে ফিরে যান
-                    </a>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const step1Form = document.getElementById('step1Form');
-            const step2Form = document.getElementById('step2Form');
-            const successMessage = document.getElementById('successMessage');
-            const nextStepBtn = document.getElementById('nextStep');
-            const prevStepBtn = document.getElementById('prevStep');
-            const sameAddressCheckbox = document.getElementById('sameAddress');
-            const currentAddress = document.getElementById('currentAddress');
-            const permanentAddress = document.getElementById('permanentAddress');
-            const successUserName = document.getElementById('successUserName');
-
-            // পরবর্তী ধাপে যান
-            nextStepBtn.addEventListener('click', function() {
-                // সহজ ভ্যালিডেশন
-                const banglaName = document.getElementById('banglaName').value.trim();
-                const nid = document.getElementById('nid').value.trim();
-                const mobile = document.getElementById('mobile').value.trim();
-                
-                if (!banglaName || !nid || !mobile) {
-                    alert('দয়া করে সকল প্রয়োজনীয় ফিল্ড পূরণ করুন।');
-                    return;
-                }
-
-                // NID ভ্যালিডেশন
-                if (!/^\d{10}$|^\d{17}$/.test(nid)) {
-                    alert('জাতীয় পরিচয়পত্র নম্বর ১০ বা ১৭ ডিজিট হতে হবে।');
-                    return;
-                }
-
-                // মোবাইল ভ্যালিডেশন
-                if (!/^\d{11}$/.test(mobile)) {
-                    alert('মোবাইল নম্বর ১১ ডিজিট হতে হবে।');
-                    return;
-                }
-
-                step1Form.classList.add('hidden');
-                step2Form.classList.remove('hidden');
-                
-                // প্রোগ্রেস বার আপডেট
-                document.querySelector('.bg-blue-600').classList.add('w-full');
-                document.querySelectorAll('.flex.items-center')[1].querySelector('div').classList.replace('bg-gray-300', 'bg-blue-600');
-                document.querySelectorAll('.flex.items-center')[1].querySelector('div').classList.replace('text-gray-600', 'text-white');
-                document.querySelectorAll('.flex.items-center')[1].querySelector('span').classList.replace('text-gray-500', 'text-gray-800');
-            });
-
-            // পূর্ববর্তী ধাপে যান
-            prevStepBtn.addEventListener('click', function() {
-                step2Form.classList.add('hidden');
-                step1Form.classList.remove('hidden');
-                
-                // প্রোগ্রেস বার আপডেট
-                document.querySelector('.bg-blue-600').classList.remove('w-full');
-                document.querySelectorAll('.flex.items-center')[1].querySelector('div').classList.replace('bg-blue-600', 'bg-gray-300');
-                document.querySelectorAll('.flex.items-center')[1].querySelector('div').classList.replace('text-white', 'text-gray-600');
-                document.querySelectorAll('.flex.items-center')[1].querySelector('span').classList.replace('text-gray-800', 'text-gray-500');
-            });
-
-            // একই ঠিকানা চেক বক্স
-            sameAddressCheckbox.addEventListener('change', function() {
-                if (this.checked) {
-                    permanentAddress.value = currentAddress.value;
-                    permanentAddress.readOnly = true;
-                } else {
-                    permanentAddress.readOnly = false;
-                }
-            });
-
-            // ধাপ ২ ফর্ম সাবমিশন
-            step2Form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // ফর্ম ডেটা collect করুন
-                const userData = {
-                    id: Date.now(),
-                    banglaName: document.getElementById('banglaName').value.trim(),
-                    englishName: document.getElementById('englishName').value.trim(),
-                    mobile: document.getElementById('mobile').value.trim(),
-                    nid: document.getElementById('nid').value.trim(),
-                    accountType: document.getElementById('accountType').value,
-                    district: document.getElementById('district').value,
-                    upazila: document.getElementById('upazila').value,
-                    office: document.getElementById('office').value,
-                    currentAddress: document.getElementById('currentAddress').value,
-                    permanentAddress: document.getElementById('permanentAddress').value,
-                    password: 'admin123', // ডিফল্ট পাসওয়ার্ড
-                    userType: 'সাব-অ্যাডমিন',
-                    approved: false,
-                    rejected: false,
-                    registrationDate: new Date().toISOString()
-                };
-                
-                // ✅ localStorage-এ save করুন
-                let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
-                users.push(userData);
-                localStorage.setItem('portalUsers', JSON.stringify(userData));
-
-                // ফর্ম হাইড করুন
-                step2Form.classList.add('hidden');
-                
-                // সফলতা বার্তা দেখান
-                successUserName.textContent = `✨ অভিনন্দন! ${userData.banglaName} ✨`;
-                successMessage.classList.remove('hidden');
-            });
-        });
-    </script>
+        </form>
+    </div>
 </body>
-                                </html>
+</html>
+
