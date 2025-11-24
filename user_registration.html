@@ -6,7 +6,6 @@
     <title>সাধারণ ব্যবহারকারী নিবন্ধন - কুমিল্লা সেবা পোর্টাল</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-gradient-to-br from-green-50 to-teal-50 min-h-screen">
     <!-- হেডার -->
@@ -193,39 +192,55 @@
             userForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                // সহজ ভ্যালিডেশন
-                const nid = document.getElementById('userNid').value.trim();
-                const mobile = document.getElementById('userMobile').value.trim();
-                const banglaName = document.getElementById('userBanglaName').value.trim();
-                const birthYear = document.getElementById('birthYear').value;
-                const birthMonth = document.getElementById('birthMonth').value;
-                const birthDay = document.getElementById('birthDay').value;
+                // ফর্ম ডেটা collect করুন
+                const userData = {
+                    id: Date.now(),
+                    banglaName: document.getElementById('userBanglaName').value.trim(),
+                    englishName: document.getElementById('userEnglishName').value.trim(),
+                    email: document.getElementById('userEmail').value.trim(),
+                    mobile: document.getElementById('userMobile').value.trim(),
+                    nid: document.getElementById('userNid').value.trim(),
+                    birthYear: document.getElementById('birthYear').value,
+                    birthMonth: document.getElementById('birthMonth').value,
+                    birthDay: document.getElementById('birthDay').value,
+                    password: 'user123', // ডিফল্ট পাসওয়ার্ড
+                    userType: 'সাধারণ ব্যবহারকারী',
+                    approved: false,
+                    rejected: false,
+                    registrationDate: new Date().toISOString()
+                };
                 
-                if (!nid || !mobile || !banglaName || !birthYear || !birthMonth || !birthDay) {
+                // ভ্যালিডেশন
+                if (!userData.nid || !userData.mobile || !userData.banglaName || !userData.birthYear || !userData.birthMonth || !userData.birthDay) {
                     alert('দয়া করে সকল প্রয়োজনীয় ফিল্ড পূরণ করুন।');
                     return;
                 }
 
                 // NID ভ্যালিডেশন
-                if (!/^\d{10}$|^\d{17}$/.test(nid)) {
+                if (!/^\d{10}$|^\d{17}$/.test(userData.nid)) {
                     alert('জাতীয় পরিচয়পত্র নম্বর ১০ বা ১৭ ডিজিট হতে হবে।');
                     return;
                 }
 
                 // মোবাইল ভ্যালিডেশন
-                if (!/^\d{11}$/.test(mobile)) {
+                if (!/^\d{11}$/.test(userData.mobile)) {
                     alert('মোবাইল নম্বর ১১ ডিজিট হতে হবে।');
                     return;
                 }
+
+                // ✅ localStorage-এ save করুন
+                let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+                users.push(userData);
+                localStorage.setItem('portalUsers', JSON.stringify(users));
 
                 // ফর্ম হাইড করুন
                 userForm.classList.add('hidden');
                 
                 // সফলতা বার্তা দেখান
-                successUserName.textContent = `✨ অভিনন্দন! ${banglaName} ✨`;
+                successUserName.textContent = `✨ অভিনন্দন! ${userData.banglaName} ✨`;
                 successMessage.classList.remove('hidden');
             });
         });
     </script>
 </body>
-</html>
+    </html>
