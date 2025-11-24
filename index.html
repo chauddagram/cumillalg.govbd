@@ -235,32 +235,19 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
         showAlert('আপনার অ্যাকাউন্টটি এখনও অনুমোদিত হয়নি। দয়া করে অপেক্ষা করুন অথবা অ্যাডমিনের সাথে যোগাযোগ করুন।', 'warning');
     }
 });
-    
-    // ইউজার ভেরিফিকেশন
-    const user = demoUsers.find(u => u.username === username && u.password === password);
-    
-    if (user) {
-        showAlert(`লগইন সফল! স্বাগতম ${user.name}। ড্যাশবোর্ডে নিয়ে যাওয়া হচ্ছে...`, 'success');
-        setTimeout(() => {
-            window.location.href = 'dashboard.html';
-        }, 2000);
-    } else {
-        showAlert('ভুল ইউজারনেম বা পাসওয়ার্ড। দয়া করে আবার চেষ্টা করুন।', 'error');
-    }
-});
 
-// অ্যালার্ট ফাংশন (যদি না থাকে)
+// showAlert ফাংশন
 function showAlert(message, type = 'info') {
-    // সরলীকৃত অ্যালার্ট
     const alertDiv = document.createElement('div');
     alertDiv.className = `fixed top-4 right-4 z-50 p-4 rounded-xl text-white max-w-sm ${
         type === 'success' ? 'bg-green-500' : 
         type === 'error' ? 'bg-red-500' : 
+        type === 'warning' ? 'bg-yellow-500' : 
         'bg-blue-500'
     }`;
     alertDiv.innerHTML = `
         <div class="flex items-center">
-            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle'} mr-2"></i>
+            <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} mr-2"></i>
             <span>${message}</span>
         </div>
     `;
@@ -270,21 +257,6 @@ function showAlert(message, type = 'info') {
         alertDiv.remove();
     }, 4000);
 }
-
-        // মোডাল বাইরে ক্লিক করলে বন্ধ
-        document.getElementById('registrationModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.add('hidden');
-                this.classList.remove('scale-100');
-            }
-        });
-
-        document.getElementById('loginModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.classList.add('hidden');
-                this.classList.remove('scale-100');
-            }
-        });
     </script>
 </body>
 </html>
