@@ -32,7 +32,6 @@
     </style>
 
     <!-- Firebase SDKs (Compat Version) -->
-    <!-- এটি সবথেকে গুরুত্বপূর্ণ: এগুলি অবশ্যই লোড করতে হবে -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script> 
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -63,6 +62,7 @@
                 <input type="tel" id="mobile" required pattern="[0-9]{11}" placeholder="01XXXXXXXXX">
 
                 <label for="accountType">অ্যাকাউন্ট ধরন * 🔽</label>
+                <!-- এখানে "নির্বাচন করুন" অপশনটির value="" রাখা হয়েছে, যা goToStep2 ফাংশনে ভ্যালিডেট হবে -->
                 <select id="accountType" required>
                     <option value="">নির্বাচন করুন</option>
                     <option value="Sub-Admin">সাব-অ্যাডমিন</option>
@@ -120,4 +120,3 @@
     </div>
 </body>
 </html>
-
