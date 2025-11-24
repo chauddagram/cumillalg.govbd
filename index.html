@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>কুমিল্লা স্থানীয় সরকার পোর্টাল</title>
+    <title>✨ কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক 🌐</title>
+    
     <!-- আপনার নিজস্ব CSS -->
     <link rel="stylesheet" href="style.css">
     
+    <!-- Tailwind CSS লোড করা হয়েছে, যা UI এবং মোডালের জন্য ব্যবহার করা হবে -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <style>
-        /* Tailwind এর বদলে আপনার style.css ব্যবহার করা হয়েছে। 
-           এখানে কিছু টেম্পোরারি স্টাইল যুক্ত করা হলো যা style.css-এ ওভাররাইড করতে পারেন। */
+        /* ফন্টের জন্য বেসিক স্টাইল */
+        body { font-family: sans-serif; }
+        /* Tailwind এর সাথে সামঞ্জস্য বজায় রেখে কিছু কাস্টম স্টাইল */
         .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
         .header { background-color: #007bff; color: white; padding: 15px 0; text-align: center; }
         .action-button { 
@@ -21,53 +26,137 @@
         .login-btn:hover { background-color: #1e7e34; }
         .register-btn { background-color: #ffc107; color: #333; }
         .register-btn:hover { background-color: #e0a800; }
+
+        /* মোডাল স্টাইল */
+        .modal {
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(2px);
+        }
     </style>
-    
-    <!-- Firebase SDKs: এই অংশটি নতুনভাবে যুক্ত করা হয়েছে -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script> 
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <!-- আপনার নতুন জাভাস্ক্রিপ্ট ফাইল -->
-    <script src="js/script.js" defer></script> 
 </head>
 <body>
 
     <header class="header">
         <div class="container">
-            <h1 style="font-size: 28px;">কুমিল্লা স্থানীয় সরকার পোর্টাল</h1>
+            <h1 style="font-size: 28px;">✨ কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক 🌐</h1>
         </div>
     </header>
 
     <main class="container" style="text-align: center; padding-top: 50px;">
-        <h2 style="font-size: 32px; color: #333; margin-bottom: 20px;">স্বাগতম! আপনার ডিজিটাল সেবা প্ল্যাটফর্মে।</h2>
+        <h2 style="font-size: 32px; color: #333; margin-bottom: 20px;">স্বাগতম! ✨ কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্কে 🌐 💡 ডিজিটাল সেবায় কুমিল্লার নতুন সম্ভাবনা 🚀
+
+🤝 সহজ সেবা — সবার জন্য, সবসময় ✨</h2>
         <p style="font-size: 18px; color: #666; margin-bottom: 40px;">নিবন্ধিত ব্যবহারকারীরা লগইন করুন অথবা নতুন অ্যাকাউন্ট তৈরি করুন।</p>
         
         <!-- লগইন এবং নিবন্ধন বাটন -->
         <div style="display: flex; justify-content: center; flex-wrap: wrap;">
 
-            <!-- লগইন বাটন (এখনও তৈরি হয়নি) -->
-            <a href="admin_login.html" class="action-button login-btn">
-                🔑 অ্যাডমিন লগইন
-            </a>
+            <!-- লগইন বাটন (মোডাল ট্রিগার করবে) -->
+            <button id="openLoginModal" class="action-button login-btn">
+                🔑 লগইন
+            </button>
 
-            <!-- নিবন্ধন বাটন (সাব-অ্যাডমিন ফর্মে লিংক করা হয়েছে) -->
-            <a href="sub_admin_registration.html" class="action-button register-btn">
-                📝 নতুন অ্যাকাউন্ট নিবন্ধন
-            </a>
+            <!-- নিবন্ধন বাটন (মোডাল ট্রিগার করবে) -->
+            <button id="openRegModal" class="action-button register-btn">
+                ✍️ নিবন্ধন
+            </button>
             
         </div>
         
         <div style="margin-top: 80px; border-top: 1px solid #ddd; padding-top: 30px;">
-            <h3 style="font-size: 22px; color: #444; margin-bottom: 15px;">স্থানীয় সরকারের সেবা</h3>
+            <h3 style="font-size: 22px; color: #444; margin-bottom: 15px;">⚡ দ্রুত, সহজ, নির্ভরযোগ্য অনলাইন সহায়তা 🛡️</h3>
             <p style="color: #666;">আপনার ওয়েবসাইটের মূল তথ্য, সেবা এবং যোগাযোগ সম্পর্কিত বিবরণ এখানে যুক্ত করুন।</p>
         </div>
         
     </main>
 
     <footer style="background-color: #eee; padding: 20px; text-align: center; color: #666; margin-top: 50px;">
-        <p>&copy; 2024 কুমিল্লা স্থানীয় সরকার। সর্বস্বত্ব সংরক্ষিত।</p>
+        <p>&copy; 2024 ✨ Comilla District Unit – Online Service Helpdesk 🌐 সর্বস্বত্ব সংরক্ষিত।</p>
     </footer>
 
+    <!-- ১. নিবন্ধন নির্বাচন মোডাল (Registration Modal) -->
+    <div id="registrationModal" class="modal fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-sm m-4">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-xl font-bold text-gray-800">📋 নিবন্ধন নির্বাচন করুন</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-800 text-2xl leading-none" data-modal="registrationModal">&times;</button>
+            </div>
+            
+            <p class="text-gray-600 mb-6">আপনার অ্যাকাউন্টের ধরন নির্বাচন করুন:</p>
+
+            <div class="space-y-4">
+                <!-- কন্ট্রোল/সাব-অ্যাডমিন নিবন্ধন -->
+                <a href="sub_admin_registration.html" class="block p-4 border border-blue-500 rounded-lg text-center bg-blue-50 hover:bg-blue-100 transition duration-200">
+                    <span class="text-lg font-semibold block">🏢 কন্ট্রোল/সাব-অ্যাডমিন: নিবন্ধন</span>
+                    <span class="text-sm text-gray-600">সনদ তৈরি ও বিতরণের জন্য</span>
+                </a>
+
+                <!-- সাধারণ ব্যবহারকারী নিবন্ধন -->
+                <a href="user_registration.html" class="block p-4 border border-green-500 rounded-lg text-center bg-green-50 hover:bg-green-100 transition duration-200">
+                    <span class="text-lg font-semibold block">🧑‍🤝‍🧑 সাধারণ ব্যবহারকারী: নিবন্ধন</span>
+                    <span class="text-sm text-gray-600">বিভিন্ন সেবার জন্য আবেদনের জন্য</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- ২. লগইন নির্বাচন মোডাল (Login Modal) -->
+    <div id="loginModal" class="modal fixed inset-0 z-50 hidden flex items-center justify-center">
+        <div class="bg-white p-6 rounded-xl shadow-2xl w-full max-w-sm m-4">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h3 class="text-xl font-bold text-gray-800">🔑 লগইন নির্বাচন করুন</h3>
+                <button class="close-modal text-gray-500 hover:text-gray-800 text-2xl leading-none" data-modal="loginModal">&times;</button>
+            </div>
+            
+            <p class="text-gray-600 mb-6">আপনার অ্যাকাউন্টের ধরন নির্বাচন করে লগইন করুন:</p>
+
+            <div class="space-y-4">
+                <!-- কন্ট্রোল/সাব-অ্যাডমিন লগইন -->
+                <a href="admin_login.html" class="block p-4 border border-blue-500 rounded-lg text-center bg-blue-50 hover:bg-blue-100 transition duration-200">
+                    <span class="text-lg font-semibold block">🏢 কন্ট্রোল/সাব-অ্যাডমিন: লগইন</span>
+                    <span class="text-sm text-gray-600">ইউজার আইডি এবং পাসওয়ার্ড দিয়ে প্রবেশ</span>
+                </a>
+
+                <!-- সাধারণ ব্যবহারকারী লগইন -->
+                <a href="user_login.html" class="block p-4 border border-green-500 rounded-lg text-center bg-green-50 hover:bg-green-100 transition duration-200">
+                    <span class="text-lg font-semibold block">🧑‍🤝‍🧑 সাধারণ ব্যবহারকারী: লগইন</span>
+                    <span class="text-sm text-gray-600">মোবাইল বা ইমেইল এবং পাসওয়ার্ড দিয়ে প্রবেশ</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // মোডাল লজিক: সব মোডাল হ্যান্ডেল করার জন্য একটি ফাংশন
+        function setupModal(openButtonId, modalId) {
+            const openBtn = document.getElementById(openButtonId);
+            const modal = document.getElementById(modalId);
+            
+            if (openBtn && modal) {
+                // বাটন ক্লিক করলে মোডাল খোলে
+                openBtn.onclick = function() {
+                    modal.classList.remove('hidden');
+                }
+
+                // বন্ধ করার বাটন এবং ব্যাকগ্রাউন্ড ক্লিক করলে মোডাল বন্ধ হয়
+                modal.addEventListener('click', function(event) {
+                    // ক্লোজ বাটন
+                    if (event.target.classList.contains('close-modal') && event.target.getAttribute('data-modal') === modalId) {
+                        modal.classList.add('hidden');
+                    }
+                    // ব্যাকগ্রাউন্ড ক্লিক
+                    if (event.target === modal) {
+                        modal.classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        // রেজিস্ট্রেশন মোডাল সেটআপ
+        setupModal('openRegModal', 'registrationModal');
+
+        // লগইন মোডাল সেটআপ
+        setupModal('openLoginModal', 'loginModal');
+    </script>
 </body>
 </html>
-
