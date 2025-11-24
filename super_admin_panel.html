@@ -34,6 +34,13 @@
     </header>
 
     <div class="container mx-auto px-4 py-8">
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">সিস্টেম ক্লিনআপ</h2>
+            <button onclick="removeDemoUsers()" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-200">
+                <i class="fas fa-broom mr-2"></i>সব ডেমো ইউজার ডিলিট করুন
+            </button>
+        </div>
+
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div class="bg-white rounded-lg shadow p-6 text-center">
                 <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -106,11 +113,13 @@
     <script>
         // ✅ কোনো ডেমো ইউজার তৈরি করবে না - শুধু existing ডেটা দেখাবে
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔄 লোড হচ্ছে...');
             loadUserData();
         });
 
         function loadUserData() {
             const users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+            console.log('📊 মোট ইউজার:', users.length);
             
             // শুধু রিয়েল ইউজারগুলো count করুন
             const realUsers = users.filter(user => {
@@ -121,10 +130,17 @@
                     user.mobile === '01787654321' ||
                     user.banglaName === 'রহিম আহমেদ' ||
                     user.banglaName === 'করিম উদ্দিন' ||
-                    user.password === 'password123';
+                    user.password === 'password123' ||
+                    user.id === 1 ||
+                    user.id === 2;
                 
+                if (isDemo) {
+                    console.log('❌ ডেমো ইউজার:', user.banglaName);
+                }
                 return !isDemo;
             });
+            
+            console.log('✅ রিয়েল ইউজার:', realUsers.length);
             
             document.getElementById('totalUsers').textContent = realUsers.length;
             document.getElementById('pendingUsers').textContent = realUsers.filter(u => !u.approved && !u.rejected).length;
@@ -207,6 +223,30 @@
                 });
                 approvedHtml += '</div>';
                 approvedList.innerHTML = approvedHtml;
+            }
+        }
+
+        function removeDemoUsers() {
+            if (confirm('আপনি কি নিশ্চিত সব ডেমো ইউজার ডিলিট করতে চান?')) {
+                let users = JSON.parse(localStorage.getItem('portalUsers')) || [];
+                
+                const realUsers = users.filter(user => {
+                    const isDemo = 
+                        user.email?.includes('example.com') ||
+                        user.mobile === '01712345678' || 
+                        user.mobile === '01787654321' ||
+                        user.banglaName === 'রহিম আহমেদ' ||
+                        user.banglaName === 'করিম উদ্দিন' ||
+                        user.password === 'password123' ||
+                        user.id === 1 ||
+                        user.id === 2;
+                    
+                    return !isDemo;
+                });
+                
+                localStorage.setItem('portalUsers', JSON.stringify(realUsers));
+                alert('সব ডেমো ইউজার ডিলিট করা হয়েছে!');
+                loadUserData();
             }
         }
 
