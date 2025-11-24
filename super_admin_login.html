@@ -3,68 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>সুপার অ্যাডমিন লগইন - কুমিল্লা সেবা পোর্টাল</title>
+    <title>প্রধান অ্যাডমিন লগইন (গোপন)</title>
+    
+    <!-- Tailwind CSS লোড করা হয়েছে -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* ফন্ট এবং কেন্দ্রীয় বিন্যাস */
+        body { font-family: sans-serif; background-color: #f0f4f8; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+        .login-card {
+            max-width: 450px;
+            width: 100%;
+            padding: 2.5rem;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(45, 55, 72, 0.1);
+        }
+        label { display: block; margin-top: 1rem; margin-bottom: 0.5rem; font-weight: 600; color: #1a202c; }
+        input { 
+            width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; 
+            transition: border-color 0.3s;
+        }
+        input:focus { border-color: #4c51bf; outline: none; }
+        button { 
+            padding: 12px; margin-top: 2rem; background-color: #c53030; color: white; border: none; 
+            border-radius: 8px; font-weight: bold; cursor: pointer; transition: background-color 0.3s;
+        }
+        button:hover:enabled { background-color: #9b2c2c; }
+    </style>
+    
+    <!-- Firebase SDKs (Compat Version) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script> 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    
+    <!-- আপনার নিজস্ব জাভাস্ক্রিপ্ট -->
+    <script src="js/script.js" defer></script>
 </head>
-<body class="bg-gradient-to-br from-red-50 to-orange-50 min-h-screen flex items-center justify-center py-8">
-    <div class="container mx-auto px-4 max-w-md">
-        <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-            <div class="bg-gradient-to-r from-red-600 to-orange-600 text-white p-8 text-center">
-                <i class="fas fa-user-shield text-5xl mb-4"></i>
-                <h1 class="text-2xl font-bold">সুপার অ্যাডমিন লগইন</h1>
-                <p class="text-orange-100 mt-2">কুমিল্লা স্থানীয় সরকার সেবা পোর্টাল</p>
-            </div>
-
-            <div class="p-8">
-                <form id="superAdminLoginForm" class="space-y-6">
-                    <div>
-                        <label for="adminUsername" class="block text-gray-700 mb-2 font-medium">
-                            <i class="fas fa-user mr-2"></i>অ্যাডমিন ইউজারনেম
-                        </label>
-                        <input type="text" id="adminUsername" name="adminUsername" 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-200"
-                               placeholder="সুপার অ্যাডমিন ইউজারনেম" required>
-                    </div>
-                    
-                    <div>
-                        <label for="adminPassword" class="block text-gray-700 mb-2 font-medium">
-                            <i class="fas fa-lock mr-2"></i>পাসওয়ার্ড
-                        </label>
-                        <input type="password" id="adminPassword" name="adminPassword" 
-                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition duration-200"
-                               placeholder="সুপার অ্যাডমিন পাসওয়ার্ড" required>
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-semibold py-3 px-6 rounded-xl transition duration-300 transform hover:scale-105">
-                        <i class="fas fa-sign-in-alt mr-2"></i>সুপার অ্যাডমিন লগইন
-                    </button>
-                </form>
-
-                <div class="mt-6 pt-6 border-t border-gray-200 text-center">
-                    <a href="index.html" class="text-gray-600 hover:text-gray-800 font-medium">
-                        <i class="fas fa-arrow-left mr-2"></i>সাধারণ লগইনে ফিরে যান
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('superAdminLoginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
+<body>
+    <div class="login-card">
+        <h2 class="text-center text-3xl font-extrabold text-red-700 mb-4">✨ Comilla District Unit – Online Service Helpdesk 🌐
+সুপার অ্যাডমিন প্যানেল</h2>
+        <p class="text-center text-gray-500 mb-8">✨ Planned and Executed by ✨
+👨‍💼 Md. Muhsinul Hasan Tusar 👨‍💼
+🏢 Chief Executive Officer –🏢
+✨ Comilla District Unit – Online Service Helpdesk 🌐</p>
+        
+        <form id="superAdminLoginForm">
+            <label for="saId">ইউজার আইডি (ইমেইল) *</label>
+            <input type="email" id="saId" required placeholder="superadmin@comilla.gov" value="superadmin@comilla.gov">
             
-            if (username === "superadmin" && password === "admin123") {
-                // ✅ কোনো ডেমো ডেটা তৈরি করবে না
-                localStorage.setItem('superAdminLoggedIn', 'true');
-                alert('সুপার অ্যাডমিন লগইন সফল! প্যানেলে নিয়ে যাওয়া হচ্ছে...');
-                window.location.href = 'super_admin_panel.html';
-            } else {
-                alert('ভুল ইউজারনেম বা পাসওয়ার্ড।');
-            }
-        });
-    </script>
+            <label for="saPassword">পাসওয়ার্ড *</label>
+            <input type="password" id="saPassword" required placeholder="SuperAdmin123" value="SuperAdmin123">
+            
+            <button type="button" onclick="loginSuperAdmin()">প্রবেশ করুন (Super Admin) 🚨</button>
+        </form>
+    </div>
 </body>
 </html>
