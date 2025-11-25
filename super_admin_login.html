@@ -140,9 +140,25 @@
                 App.state.isLoading = true;
                 App.render();
 
-                // **গুরুত্বপূর্ণ পরিবর্তন:** .trim() ব্যবহার করে ইমেইল ইনপুট থেকে অতিরিক্ত স্পেস মুছে ফেলা হলো
+                // 1. ইনপুট থেকে অতিরিক্ত স্পেস মুছে ফেলা হলো
                 const email = document.getElementById('username').value.trim(); 
                 const password = document.getElementById('password').value;
+
+                // **DEBUGGING:** সাবমিট করার ঠিক আগে ইনপুটগুলি কনসোলে প্রিন্ট করা হলো
+                console.log("Attempting login with Email:", `"${email}"`);
+                console.log("Password length:", password.length);
+                
+                // 2. অতিরিক্ত ক্লায়েন্ট-সাইড ইমেইল ফরম্যাট ভ্যালিডেশন
+                // একটি সাধারণ ইমেইল রেজেক্স চেক যা 'auth/invalid-email' ত্রুটি এড়াতে সাহায্য করে
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+                
+                if (!emailRegex.test(email)) {
+                    App.state.loginError = 'ইমেইল ফরম্যাট সঠিক নয়। (উদাহরণ: user@domain.com)';
+                    App.state.isLoading = false;
+                    App.render();
+                    console.error("Client-side validation failed: Invalid email format.");
+                    return; // যদি ভ্যালিডেশন ব্যর্থ হয় তবে Firebase কল করা হবে না
+                }
                 
                 try {
                     // Firebase Email/Password Authentication ব্যবহার করা হচ্ছে
@@ -162,6 +178,7 @@
                     } else if (error.code === 'auth/wrong-password') {
                         errorMessage = 'পাসওয়ার্ডটি ভুল দেওয়া হয়েছে। (টাইপো বা ক্যাপস লক চেক করুন)';
                     } else if (error.code === 'auth/invalid-email') {
+                        // যদি ক্লায়েন্ট-সাইড চেক পাস করার পরেও এটি আসে, তার মানে ইমেইলে এমন কোনো ক্যারেক্টার আছে যা Firebase গ্রহণ করছে না।
                         errorMessage = 'দয়া করে একটি বৈধ ইমেইল আইডি দিন। (ইমেইল ফরম্যাট @ এবং . সহ ঠিক আছে কিনা চেক করুন)';
                     } else if (error.code === 'auth/operation-not-allowed') {
                         errorMessage = 'প্রমাণীকরণ পদ্ধতি (Email/Password) Firebase Console-এ সক্রিয় করা নেই। এটি সক্রিয় করুন।';
