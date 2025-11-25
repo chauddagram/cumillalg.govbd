@@ -4,16 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>কুমিল্লা অনলাইন সেবা হেল্পডেস্ক</title>
-    <!-- Tailwind CSS লোড করা হচ্ছে -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Heroicons ব্যবহারের জন্য CDN (SVG icons) -->
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#6B46C1', // গাঢ় বেগুনী/Indigo রং
-                        secondary: '#D6BCFA', // হালকা বেগুনী
+                        primary: '#6B46C1',
+                        secondary: '#D6BCFA',
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
@@ -23,7 +22,6 @@
         }
     </script>
     <style>
-        /* মোবাইল-প্রথম ডিজাইন নিশ্চিত করতে */
         body { font-family: 'Inter', sans-serif; background-color: #f4f7fc; }
         .hero-bg {
             background: linear-gradient(135deg, #8B5CF6 0%, #6B46C1 100%);
@@ -35,19 +33,13 @@
         .sidebar { transform: translateX(-100%); transition: transform 0.3s ease-in-out; position: fixed; z-index: 50; }
         .sidebar.open { transform: translateX(0); }
         .menu-overlay { z-index: 40; }
-        /* কাস্টম Scrollbar স্টাইল */
         .log-container { scrollbar-width: none; }
         .log-container::-webkit-scrollbar { display: none; }
-
-        /* Heroicons - SVG */
         .icon-lg { width: 1.5rem; height: 1.5rem; }
     </style>
 </head>
 <body>
-
-    <!-- প্রধান অ্যাপ্লিকেশন কন্টেইনার -->
     <div id="app" class="min-h-screen">
-        <!-- লোডিং স্ক্রিন -->
         <div id="loading" class="flex flex-col justify-center items-center h-screen text-gray-600">
             <svg class="animate-spin h-8 w-8 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -57,11 +49,377 @@
         </div>
     </div>
 
-    <!-- টোস্ট/নোটিফিকেশন কন্টেইনার -->
     <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
     
-    <!-- Firebase এবং অ্যাপ লজিক লোড -->
-    <script type="module" src="assets/js/firebase-config.js"></script>
-    <script type="module" src="assets/js/app.js"></script>
+    <!-- সরাসরি সব কোড এক ফাইলে -->
+    <script type="module">
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSjhi_l5fec76l8gbZjWea9qYIF8PyfgM",
+            authDomain: "chauddagram-cumillalg-govbd.firebaseapp.com",
+            projectId: "chauddagram-cumillalg-govbd",
+            storageBucket: "chauddagram-cumillalg-govbd.firebasestorage.app",
+            messagingSenderId: "190893923606",
+            appId: "1:190893923606:web:4b862bd2a7bcd63df5c437",
+            measurementId: "G-G7T4CDR07Q"
+        };
+
+        // Service List
+        const serviceList = [
+            { name: "নাগরিক সনদ", price: 50 },
+            { name: "নতুন ভোটার সনদ", price: 150 },
+            { name: "ওয়ারিশ সনদ", price: 100 },
+            { name: "পারিবারিক সনদ", price: 100 },
+            { name: "ভোটার আইডি স্থানান্তর সনদ", price: 150 },
+            { name: "জাতীয় পরিচয়পত্র সংশোধন সংক্রান্ত", price: 300 },
+            { name: "পাসপোর্ট সুপারিশ", price: 250 },
+            { name: "একই নামের প্রত্যয়ন", price: 100 },
+            { name: "অন্যান্য প্রত্যয়ন পত্র", price: 80 },
+            { name: "স্মার্ট কার্ড মেক", price: 200 },
+            { name: "এনআইডি মেক", price: 200 },
+            { name: "নতুন জন্ম নিবন্ধন মেক", price: 250 },
+            { name: "নাম ঠিকানা দিয়ে হারানো এন আইডি কার্ড", price: 150 },
+            { name: "এন আইডি ইউজার পাসওয়ার্ড সেট", price: 100 },
+            { name: "ফরম নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "মোবাইল নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "জন্মনিবন্ধন নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "১০/১৭ ডিজিটের আইডি দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "পিডিএফ ফাইল টু web url link create", price: 50 },
+            { name: "Web url link to qr code scanner create", price: 50 },
+        ];
+
+        // Main Application
+        const App = {
+            db: null,
+            auth: null,
+            state: {
+                userId: null,
+                isAuthReady: false,
+                currentView: 'loading',
+                isLoading: false,
+                error: null,
+                userProfile: null,
+                orders: [],
+                notice: "সিস্টেম নোটিশ লোড হচ্ছে...",
+                isSidebarOpen: false,
+                registrationData: { email: null, name: null }
+            },
+
+            COLLECTIONS: {
+                USER_PROFILES: (uid) => ({ path: `user_profiles/${uid}` }),
+                ORDERS: (uid) => ({ path: `users/${uid}/orders` }),
+                CONFIG: { path: 'config/site_notice' }
+            },
+
+            // Show Toast Notification
+            showToast(message, type = 'success') {
+                const toastContainer = document.getElementById('toast-container');
+                const colorMap = { success: 'bg-green-500', error: 'bg-red-500', warning: 'bg-yellow-500', info: 'bg-blue-500' };
+                const toast = document.createElement('div');
+                toast.className = `${colorMap[type]} text-white px-4 py-3 rounded-lg shadow-xl mb-2 transition-all duration-300 transform translate-x-full opacity-0`;
+                toast.textContent = message;
+                toastContainer.appendChild(toast);
+                
+                setTimeout(() => toast.classList.remove('translate-x-full', 'opacity-0'), 10);
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full', 'opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, 4000);
+            },
+
+            // Initialize App
+            async init() {
+                try {
+                    console.log("Firebase লোড হচ্ছে...");
+                    
+                    // Dynamic imports for Firebase
+                    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js");
+                    const { getAuth, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                    const { getFirestore, doc, getDoc, setDoc, addDoc, updateDoc, onSnapshot, collection, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+
+                    const app = initializeApp(firebaseConfig);
+                    App.db = getFirestore(app);
+                    App.auth = getAuth(app);
+
+                    console.log("Firebase initialized successfully");
+
+                    // Try anonymous sign-in
+                    try {
+                        await signInAnonymously(App.auth);
+                    } catch (authError) {
+                        console.warn("Anonymous auth failed:", authError);
+                        App.state.isAuthReady = true;
+                        App.changeView('home');
+                        return;
+                    }
+
+                    // Auth state listener
+                    onAuthStateChanged(App.auth, (user) => {
+                        console.log("Auth state changed:", user);
+                        App.state.userId = user ? user.uid : null;
+                        App.state.isAuthReady = true;
+                        
+                        if (user && !user.isAnonymous) {
+                            App.loadUserProfile(user.uid);
+                        } else {
+                            App.changeView('home');
+                        }
+                    });
+
+                } catch (error) {
+                    console.error("Initialization Error:", error);
+                    App.state.error = 'সিস্টেম লোড করতে সমস্যা হচ্ছে।';
+                    App.state.isAuthReady = true;
+                    App.changeView('home');
+                }
+            },
+
+            // Load User Profile
+            async loadUserProfile(uid) {
+                try {
+                    const userDocRef = doc(App.db, 'user_profiles', uid);
+                    const docSnap = await getDoc(userDocRef);
+                    
+                    if (docSnap.exists()) {
+                        App.state.userProfile = docSnap.data();
+                        if (App.state.userProfile.status === 'Active') {
+                            App.changeView('dashboard');
+                        } else {
+                            App.showToast("আপনার অ্যাকাউন্টটি এখনও সক্রিয় করা হয়নি।", 'warning');
+                            await signOut(App.auth);
+                            App.changeView('login');
+                        }
+                    } else {
+                        App.changeView('home');
+                    }
+                } catch (e) {
+                    console.error("Profile load error:", e);
+                    App.changeView('home');
+                }
+            },
+
+            // Change View
+            changeView(view) {
+                App.state.currentView = view;
+                App.state.error = null;
+                App.state.isLoading = false;
+                App.render();
+            },
+
+            // Render
+            render() {
+                const appContainer = document.getElementById('app');
+                
+                if (!App.state.isAuthReady) {
+                    return; // Keep loading screen
+                }
+
+                let viewHtml = '';
+                switch(App.state.currentView) {
+                    case 'home':
+                        viewHtml = App.renderHome();
+                        break;
+                    case 'login':
+                        viewHtml = App.renderLogin();
+                        break;
+                    case 'register':
+                        viewHtml = App.renderRegister();
+                        break;
+                    default:
+                        viewHtml = App.renderHome();
+                }
+
+                appContainer.innerHTML = viewHtml;
+                App.attachEventListeners();
+            },
+
+            // Attach Event Listeners
+            attachEventListeners() {
+                document.getElementById('login-form')?.addEventListener('submit', (e) => App.handleLogin(e));
+                document.getElementById('register-form')?.addEventListener('submit', (e) => App.handleRegister(e));
+                
+                // Navigation buttons
+                document.querySelectorAll('[data-view]').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        App.changeView(e.target.dataset.view);
+                    });
+                });
+            },
+
+            // Handle Login
+            async handleLogin(e) {
+                e.preventDefault();
+                App.state.isLoading = true;
+                App.render();
+
+                const form = e.target;
+                const email = form.username.value;
+                const password = form.password.value;
+                
+                try {
+                    const { signInWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                    await signInWithEmailAndPassword(App.auth, email, password);
+                } catch (error) {
+                    console.error("Login error:", error);
+                    App.state.error = 'লগইন ব্যর্থ। ইমেইল/পাসওয়ার্ড চেক করুন।';
+                    App.state.isLoading = false;
+                    App.render();
+                }
+            },
+
+            // Handle Register
+            async handleRegister(e) {
+                e.preventDefault();
+                App.state.isLoading = true;
+                App.render();
+
+                const form = e.target;
+                const email = form.email.value;
+                const password = form.password.value;
+                const fullNameBn = form.fullNameBn.value;
+                
+                try {
+                    const { createUserWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js");
+                    const { setDoc, doc, serverTimestamp } = await import("https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js");
+                    
+                    const userCredential = await createUserWithEmailAndPassword(App.auth, email, password);
+                    const user = userCredential.user;
+
+                    await setDoc(doc(App.db, 'user_profiles', user.uid), {
+                        fullNameBn,
+                        email,
+                        status: 'Pending',
+                        balance: 0,
+                        createdAt: serverTimestamp()
+                    });
+
+                    App.showToast("নিবন্ধন সফল! অনুমোদনের জন্য অপেক্ষা করুন।", 'success');
+                    App.changeView('home');
+                    
+                } catch (error) {
+                    console.error("Registration error:", error);
+                    App.state.error = 'নিবন্ধন ব্যর্থ। আবার চেষ্টা করুন।';
+                    App.state.isLoading = false;
+                    App.render();
+                }
+            },
+
+            // Render Home
+            renderHome() {
+                return `
+                    <div class="min-h-screen">
+                        <div class="hero-bg text-center rounded-b-3xl shadow-xl">
+                            <h1 class="text-3xl font-extrabold mb-2 leading-tight">
+                                ✨ কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক 🌐
+                            </h1>
+                            <p class="text-lg font-medium text-secondary mb-4">
+                                ✨ Comilla District Unit – Online Service Helpdesk 🌐
+                            </p>
+                            <p class="text-xl font-semibold mb-2">💡 ডিজিটাল সেবায় কুমিল্লার নতুন সম্ভাবনা 🚀</p>
+                            <div class="mt-6 flex justify-center space-x-4">
+                                <button data-view="register" class="px-6 py-3 bg-white text-primary font-bold rounded-full shadow-lg hover:bg-gray-100 transition duration-150">
+                                    নিবন্ধন ✍️
+                                </button>
+                                <button data-view="login" class="px-6 py-3 bg-primary text-white font-bold rounded-full shadow-lg hover:bg-purple-700 transition duration-150">
+                                    লগইন 🔑
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">সেবা সমূহ</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                ${serviceList.slice(0, 6).map(service => `
+                                    <div class="card bg-white p-4 rounded-xl shadow-md border-t-2 border-primary">
+                                        <p class="font-bold text-lg text-primary">${service.name}</p>
+                                        <p class="text-sm text-gray-600">মূল্য: ৳ ${service.price}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        ${App.state.error ? `
+                            <div class="fixed bottom-4 left-4 right-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                                <strong>ত্রুটি:</strong> ${App.state.error}
+                                <button onclick="App.state.error=null; App.render();" class="float-right font-bold">✕</button>
+                            </div>
+                        ` : ''}
+
+                        <footer class="text-center py-4 text-xs text-gray-500 bg-white border-t mt-4">
+                            <p>© MD. MUHSINUL HASAN TUSAR. ${new Date().getFullYear()}</p>
+                        </footer>
+                    </div>
+                `;
+            },
+
+            // Render Login
+            renderLogin() {
+                return `
+                    <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+                        <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border-t-4 border-primary">
+                            <h2 class="text-2xl font-bold text-primary mb-6 text-center">লগইন 🔑</h2>
+                            
+                            <form id="login-form">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল</label>
+                                    <input type="email" name="username" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" required>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড</label>
+                                    <input type="password" name="password" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" required>
+                                </div>
+
+                                <button type="submit" class="w-full py-3 px-4 rounded-lg shadow-lg text-lg font-medium text-white bg-primary hover:bg-purple-700 transition duration-150">
+                                    ${App.state.isLoading ? 'লগইন হচ্ছে...' : 'লগইন'}
+                                </button>
+                            </form>
+
+                            <button onclick="App.changeView('home')" class="w-full mt-4 py-2 text-gray-600 hover:text-gray-800">
+                                ← ফিরে যান
+                            </button>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Render Register
+            renderRegister() {
+                return `
+                    <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
+                        <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-2xl border-t-4 border-primary">
+                            <h2 class="text-2xl font-bold text-primary mb-6 text-center">নিবন্ধন ✍️</h2>
+                            
+                            <form id="register-form">
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">পূর্ণ নাম (বাংলা)</label>
+                                    <input type="text" name="fullNameBn" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" required>
+                                </div>
+                                <div class="mb-4">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল</label>
+                                    <input type="email" name="email" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" required>
+                                </div>
+                                <div class="mb-6">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড</label>
+                                    <input type="password" name="password" class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-primary" required>
+                                </div>
+
+                                <button type="submit" class="w-full py-3 px-4 rounded-lg shadow-lg text-lg font-medium text-white bg-primary hover:bg-purple-700 transition duration-150">
+                                    ${App.state.isLoading ? 'নিবন্ধন হচ্ছে...' : 'নিবন্ধন করুন'}
+                                </button>
+                            </form>
+
+                            <button onclick="App.changeView('home')" class="w-full mt-4 py-2 text-gray-600 hover:text-gray-800">
+                                ← ফিরে যান
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        };
+
+        // Start the app
+        window.App = App;
+        App.init();
+    </script>
 </body>
 </html>
