@@ -55,9 +55,6 @@
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'super-admin-default-app-id';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-        // লোকাল স্টোরেজে সুপার অ্যাডমিন লগইন স্ট্যাটাস চেক করার জন্য কি (এটি এখন আর ব্যবহার করা হবে না, FirebaseAuthState ব্যবহার করা হবে)
-        // const IS_SUPER_ADMIN_LOGGED_IN_KEY = 'isSuperAdminLoggedIn';
-
 
         // কোর অ্যাপ্লিকেশন লজিক (Core Application logic)
         const App = {
@@ -66,7 +63,6 @@
             state: {
                 userId: null,
                 isFirebaseReady: false, 
-                // isSuperAdmin এখন Firebase Auth state থেকে নির্ধারিত হবে
                 currentView: 'loading', 
                 loginError: null,
                 isLoading: true,
@@ -87,7 +83,7 @@
 
             // ফায়ারস্টোর কালেকশন রেফারেন্স
             COLLECTIONS: {
-                USERS: `/artifacts/${appId}/public/data/users`, // পাবলিক ডেটা পাথ ব্যবহার করা হচ্ছে
+                USERS: `/artifacts/${appId}/public/data/users`, 
                 APPLICATIONS: `/artifacts/${appId}/public/data/applications`,
                 SERVICES: `/artifacts/${appId}/public/data/services`,
             },
@@ -111,7 +107,6 @@
                         App.state.isLoading = false;
 
                         // যদি user থাকে এবং সেটি Anonymous না হয়, তবেই ড্যাশবোর্ডে যাবে।
-                        // ফায়ারবেস Email/Password ব্যবহার করলে user.isAnonymous = false হবে
                         if (user && !user.isAnonymous) {
                             await App.loadInitialData();
                             App.changeView('dashboard');
@@ -125,8 +120,7 @@
                     if (initialAuthToken) {
                         await signInWithCustomToken(App.auth, initialAuthToken);
                     } else {
-                        // বেনামী সাইন ইন (Anonymous Sign In) ব্যবহার করে শুরু করা
-                        // এটি ডেটা অ্যাক্সেসের অনুমতি পেতে প্রয়োজন, কিন্তু ড্যাশবোর্ড দেখানোর জন্য যথেষ্ট নয়
+                        // বেনামী সাইন ইন ব্যবহার করে শুরু করা
                         await signInAnonymously(App.auth);
                     }
 
@@ -146,7 +140,7 @@
                 App.state.isLoading = true;
                 App.render();
 
-                const email = document.getElementById('username').value;
+                const email = document.getElementById('username').value.trim(); // অতিরিক্ত স্পেস ট্রিম করা হলো
                 const password = document.getElementById('password').value;
                 
                 try {
@@ -157,14 +151,19 @@
                     App.state.isLoading = false;
                     
                 } catch (error) {
+                    // **DEBUGGING:** আসল Firebase ত্রুটি ব্রাউজার কনসোলে প্রিন্ট করা হলো
+                    console.error("Firebase Auth Error:", error.message); 
+                    
                     let errorMessage = 'ভুল ইউজার আইডি বা পাসওয়ার্ড।';
                     // Firebase ত্রুটির মেসেজ অনুযায়ী কাস্টম মেসেজ দেখানো
                     if (error.code === 'auth/user-not-found') {
-                        errorMessage = 'এই ইমেইল আইডিটি রেজিস্টার করা নেই।';
+                        errorMessage = 'এই ইমেইল আইডিটি রেজিস্টার করা নেই। (Firebase Console-এ ইউজারটি তৈরি হয়েছে কিনা চেক করুন)';
                     } else if (error.code === 'auth/wrong-password') {
-                        errorMessage = 'পাসওয়ার্ডটি ভুল দেওয়া হয়েছে।';
+                        errorMessage = 'পাসওয়ার্ডটি ভুল দেওয়া হয়েছে। (টাইপো বা ক্যাপস লক চেক করুন)';
                     } else if (error.code === 'auth/invalid-email') {
                         errorMessage = 'দয়া করে একটি বৈধ ইমেইল আইডি দিন।';
+                    } else if (error.code === 'auth/operation-not-allowed') {
+                        errorMessage = 'প্রমাণীকরণ পদ্ধতি (Email/Password) Firebase Console-এ সক্রিয় করা নেই। এটি সক্রিয় করুন।';
                     }
                     
                     App.state.loginError = errorMessage;
@@ -177,7 +176,6 @@
             async loadInitialData() {
                 if (!App.db || !App.state.userId) return;
 
-                // এখানে আপনি আপনার Firebase Firestore থেকে ড্যাশবোর্ডের আসল ডেটা লোড করতে পারেন
                 console.log("Initial data loading from Firestore/API simulated.");
             },
             
@@ -215,7 +213,6 @@
                     App.changeView('login');
                 } catch (error) {
                     console.error("Logout Error:", error);
-                    // কাস্টম নোটিফিকেশন দেখানো যেতে পারে
                 }
             },
             
@@ -382,3 +379,4 @@
     </script>
 </body>
 </html>
+
