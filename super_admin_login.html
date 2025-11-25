@@ -140,7 +140,8 @@
                 App.state.isLoading = true;
                 App.render();
 
-                const email = document.getElementById('username').value.trim(); // অতিরিক্ত স্পেস ট্রিম করা হলো
+                // **গুরুত্বপূর্ণ পরিবর্তন:** .trim() ব্যবহার করে ইমেইল ইনপুট থেকে অতিরিক্ত স্পেস মুছে ফেলা হলো
+                const email = document.getElementById('username').value.trim(); 
                 const password = document.getElementById('password').value;
                 
                 try {
@@ -152,7 +153,7 @@
                     
                 } catch (error) {
                     // **DEBUGGING:** আসল Firebase ত্রুটি ব্রাউজার কনসোলে প্রিন্ট করা হলো
-                    console.error("Firebase Auth Error:", error.message); 
+                    console.error("Firebase Auth Error:", error.message, error.code); 
                     
                     let errorMessage = 'ভুল ইউজার আইডি বা পাসওয়ার্ড।';
                     // Firebase ত্রুটির মেসেজ অনুযায়ী কাস্টম মেসেজ দেখানো
@@ -161,7 +162,7 @@
                     } else if (error.code === 'auth/wrong-password') {
                         errorMessage = 'পাসওয়ার্ডটি ভুল দেওয়া হয়েছে। (টাইপো বা ক্যাপস লক চেক করুন)';
                     } else if (error.code === 'auth/invalid-email') {
-                        errorMessage = 'দয়া করে একটি বৈধ ইমেইল আইডি দিন।';
+                        errorMessage = 'দয়া করে একটি বৈধ ইমেইল আইডি দিন। (ইমেইল ফরম্যাট @ এবং . সহ ঠিক আছে কিনা চেক করুন)';
                     } else if (error.code === 'auth/operation-not-allowed') {
                         errorMessage = 'প্রমাণীকরণ পদ্ধতি (Email/Password) Firebase Console-এ সক্রিয় করা নেই। এটি সক্রিয় করুন।';
                     }
@@ -379,4 +380,3 @@
     </script>
 </body>
 </html>
-
