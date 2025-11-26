@@ -1,13 +1,90 @@
-/* কাস্টম সিএসএস ফাইল */
+/* কাস্টম স্টাইলস */
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
 
-/* বাংলা ফন্ট সাপোর্ট */
-@import url('https://fonts.maateen.me/kalpurush/font.css');
-
-body {
-    font-family: 'Kalpurush', Arial, sans-serif !important;
+.font-hind {
+    font-family: 'Hind Siliguri', sans-serif;
 }
 
-/* স্ক্রলবার স্টাইল */
+/* Floating Animation */
+@keyframes float {
+    0% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0px);
+    }
+}
+
+/* Gradient Text */
+.gradient-text {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Custom Button Styles */
+.btn-primary {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #48bb78, #38a169);
+    transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(72, 187, 120, 0.3);
+}
+
+/* Glass Morphism Effect */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* Loading Spinner */
+.loading-spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #667eea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .mobile-stack {
+        flex-direction: column;
+    }
+    
+    .mobile-center {
+        text-align: center;
+    }
+    
+    .mobile-padding {
+        padding: 1rem;
+    }
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -18,135 +95,10 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
+    background: linear-gradient(45deg, #667eea, #764ba2);
     border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
-
-/* ফোকাস স্টাইল */
-input:focus, select:focus, textarea:focus {
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-}
-
-/* মোডাল অ্যানিমেশন */
-.modal-enter {
-    transform: scale(0.95);
-    opacity: 0;
-}
-
-.modal-enter-active {
-    transform: scale(1);
-    opacity: 1;
-    transition: all 0.3s ease;
-}
-
-/* বাটন হোভার ইফেক্ট */
-.btn-hover {
-    transition: all 0.3s ease;
-}
-
-.btn-hover:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-/* লোডিং এনিমেশন */
-.loading-spinner {
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #3498db;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* রেসপন্সিভ টেবিল */
-@media (max-width: 768px) {
-    .responsive-table {
-        display: block;
-        width: 100%;
-        overflow-x: auto;
-    }
-}
-
-/* কার্ড শ্যাডো */
-.card-shadow {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-}
-
-.card-shadow:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
-
-/* গ্রেডিয়েন্ট টেক্সট */
-.gradient-text {
-    background: linear-gradient(135deg, #10B981 0%, #3B82F6 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* কাস্টম ইনপুট গ্রুপ */
-.input-group {
-    position: relative;
-}
-
-.input-group .prefix {
-    position: absolute;
-    left: 12px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6B7280;
-}
-
-.input-group input {
-    padding-left: 40px;
-}
-
-/* প্রোগ্রেস বার */
-.progress-bar {
-    transition: width 0.5s ease-in-out;
-}
-
-/* টুলটিপ */
-.tooltip {
-    position: relative;
-}
-
-.tooltip:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #1F2937;
-    color: white;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: nowrap;
-    z-index: 1000;
-}
-
-/* প্লেসহোল্ডার স্টাইল */
-::placeholder {
-    color: #9CA3AF;
-    opacity: 1;
-}
-
-:-ms-input-placeholder {
-    color: #9CA3AF;
-}
-
-::-ms-input-placeholder {
-    color: #9CA3AF;
-}
+    background: linear-gradient(45deg, #5a6fd8, #6a4190);
+        }
