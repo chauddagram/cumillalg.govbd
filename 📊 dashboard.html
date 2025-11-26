@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 ড্যাশবোর্ড | কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক</title>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/firebase-config.js"></script>
+    <script src="assets/js/auth.js"></script>
+    <script src="assets/js/app.js" defer></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="header text-white p-4 shadow-lg fixed top-0 w-full z-40">
+        <div class="flex justify-between items-center max-w-5xl mx-auto px-4">
+            <h1 class="text-xl font-bold" id="dashboard-title">স্বাগতম, ইউজার! | ড্যাশবোর্ড 📊</h1>
+            <button onclick="handleLogout()" class="bg-red-500 hover:bg-red-700 text-white text-sm px-3 py-1 rounded-lg font-semibold">
+                লগআউট
+            </button>
+        </div>
+    </header>
+
+    <main class="pt-20 pb-4 max-w-5xl mx-auto px-4 flex-grow w-full">
+        <div class="flex flex-col md:flex-row gap-4">
+            
+            <div class="w-full md:w-64 flex-shrink-0 bg-white p-4 rounded-xl shadow-lg border border-gray-100 h-fit">
+                <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">ড্যাশবোর্ড মেনু</h2>
+                <ul class="space-y-4" id="dashboard-menu">
+                    <li><button onclick="loadDashboardContent('orders')" class="menu-item active">📋 অর্ডার করুন</button></li>
+                    <li><button onclick="loadDashboardContent('recharge')" class="menu-item">৳ রিচার্জ</button></li>
+                    <li><button onclick="loadDashboardContent('support')" class="menu-item">💬 সাপোর্ট</button></li>
+                    <li><button onclick="loadDashboardContent('account')" class="menu-item">👤 অ্যাকাউন্ট</button></li>
+                    <li><button onclick="loadDashboardContent('filelist')" class="menu-item">📁 ফাইল লিস্ট</button></li>
+                </ul>
+            </div>
+            
+            <div id="dashboard-main-content" class="flex-grow bg-white p-6 rounded-xl shadow-lg border border-purple-100 min-h-[600px]">
+                </div>
+        </div>
+    </main>
+    
+    <footer class="text-center text-sm text-gray-500 py-3 mt-auto border-t border-gray-200">
+        <p>© প্রধান অ্যাডমিন (Super Admin/Owner). সর্বস্বত্ব সংরক্ষিত।</p>
+    </footer>
+</body>
+</html>
