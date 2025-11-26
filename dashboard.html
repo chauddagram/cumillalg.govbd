@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ড্যাশবোর্ড - কুমিল্লা অনলাইন সেবা হেল্পডেস্ক</title>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body class="bg-gray-50 font-hind">
+    <!-- হেডার -->
+    <header class="bg-white shadow-sm border-b">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center space-x-4">
+                    <a href="index.html" class="text-purple-600 hover:text-purple-800">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-xl font-bold text-gray-800">ব্যবহারকারী ড্যাশবোর্ড</h1>
+                        <p class="text-sm text-gray-600" id="userName">স্বাগতম, ব্যবহারকারী!</p>
+                    </div>
+                </div>
+                <button onclick="logout()" 
+                        class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600 transition duration-200">
+                    লগআউট
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- নোটিশ বক্স -->
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8 rounded-lg">
+            <div class="flex items-start space-x-3">
+                <span class="text-yellow-500 text-xl">📢</span>
+                <div>
+                    <p class="font-semibold text-yellow-800">গুরুত্বপূর্ণ নোটিশ</p>
+                    <p class="text-yellow-700 mt-1" id="noticeText">
+                        সার্ভার আপগ্রেড করা হয়েছে। সকল সেবা এখন সচল রয়েছে।
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- অ্যাকাউন্ট স্ট্যাটাস -->
+        <div class="bg-green-50 border-l-4 border-green-400 p-6 rounded-lg mb-8">
+            <div class="flex items-center space-x-4">
+                <span class="text-green-500 text-3xl">✅</span>
+                <div>
+                    <h2 class="text-xl font-bold text-green-800">অ্যাকাউন্ট ভেরিফাইড ও সুরক্ষিত</h2>
+                    <p class="text-green-700 mt-1">আপনার অ্যাকাউন্ট ১০০% ভেরিফাইড এবং সক্রিয় আছে। এখন থেকে সকল অর্ডারের আপডেট এবং ডেলিভারি সরাসরি এই ড্যাশবোর্ড থেকে দেখতে পারবেন।</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- স্ট্যাটাস কার্ড -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-yellow-500">
+                <div class="text-2xl font-bold text-yellow-600" id="pendingCount">০</div>
+                <div class="text-sm text-gray-600 mt-2">বিচারাধীন</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-blue-500">
+                <div class="text-2xl font-bold text-blue-600" id="receivedCount">০</div>
+                <div class="text-sm text-gray-600 mt-2">গ্রহণ করা হয়েছে</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-green-500">
+                <div class="text-2xl font-bold text-green-600" id="deliveredCount">০</div>
+                <div class="text-sm text-gray-600 mt-2">সরবরাহ করা হয়েছে</div>
+            </div>
+            <div class="bg-white p-6 rounded-xl shadow-md text-center border-t-4 border-red-500">
+                <div class="text-2xl font-bold text-red-600" id="refundedCount">০</div>
+                <div class="text-sm text-gray-600 mt-2">ফেরত দেওয়া হয়েছে</div>
+            </div>
+        </div>
+
+        <!-- সার্ভিস তালিকা -->
+        <div class="bg-white rounded-xl shadow-lg mb-8">
+            <div class="p-6 border-b">
+                <h2 class="text-2xl font-bold text-gray-800">সেবা ও রেট তালিকা</h2>
+                <p class="text-gray-600 mt-1">আপনার প্রয়োজনীয় সেবাটি নির্বাচন করুন</p>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4" id="serviceList">
+                    <!-- সার্ভিস লিস্ট এখানে লোড হবে -->
+                </div>
+                <div class="mt-6 text-center text-sm text-gray-500">
+                    <p>** মূল্য দাম 🔴 সময় সাপেক্ষ পরিবর্তন</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- সাম্প্রতিক অর্ডার -->
+        <div class="bg-white rounded-xl shadow-lg">
+            <div class="p-6 border-b">
+                <h2 class="text-2xl font-bold text-gray-800">সাম্প্রতিক অর্ডার</h2>
+            </div>
+            <div class="p-6">
+                <div id="recentOrders" class="space-y-4">
+                    <!-- অর্ডার লিস্ট এখানে লোড হবে -->
+                    <p class="text-center text-gray-500 py-8">কোনো অর্ডার নেই</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ফুটার -->
+    <footer class="bg-gray-800 text-white text-center py-6 mt-12">
+        <p class="text-sm">© MD. MUHSINUL HASAN TUSAR. ২০২৪ সকল স্বত্ব সংরক্ষিত।</p>
+        <p class="text-xs mt-1 opacity-75">প্রধান অ্যাডমিন (Super Admin/Owner): MD. MUHSINUL HASAN TUSAR</p>
+    </footer>
+
+    <script>
+        // সার্ভিস তালিকা
+        const serviceList = [
+            { name: "নাগরিক সনদ", price: 50 },
+            { name: "নতুন ভোটার সনদ", price: 150 },
+            { name: "ওয়ারিশ সনদ", price: 100 },
+            { name: "পারিবারিক সনদ", price: 100 },
+            { name: "ভোটার আইডি স্থানান্তর সনদ", price: 150 },
+            { name: "জাতীয় পরিচয়পত্র সংশোধন সংক্রান্ত", price: 300 },
+            { name: "পাসপোর্ট সুপারিশ", price: 250 },
+            { name: "একই নামের প্রত্যয়ন", price: 100 },
+            { name: "অন্যান্য প্রত্যয়ন পত্র", price: 80 },
+            { name: "স্মার্ট কার্ড মেক", price: 200 },
+            { name: "এনআইডি মেক", price: 200 },
+            { name: "নতুন জন্ম নিবন্ধন মেক", price: 250 },
+            { name: "নাম ঠিকানা দিয়ে হারানো এন আইডি কার্ড", price: 150 },
+            { name: "এন আইডি ইউজার পাসওয়ার্ড সেট", price: 100 },
+            { name: "ফরম নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "মোবাইল নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "জন্মনিবন্ধন নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "১০/১৭ ডিজিটের আইডি দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "পিডিএফ ফাইল টু web url link create", price: 50 },
+            { name: "Web url link to qr code scanner create", price: 50 },
+        ];
+
+        // ড্যাশবোর্ড লোড
+        function loadDashboard() {
+            // ইউজার তথ্য
+            const userName = localStorage.getItem('userName') || 'ব্যবহারকারী';
+            document.getElementById('userName').textContent = `স্বাগতম, ${userName}!`;
+
+            // সার্ভিস তালিকা লোড
+            const serviceListHTML = serviceList.map((service, index) => `
+                <div class="flex justify-between items-center p-4 border rounded-lg hover:bg-gray-50 transition duration-200">
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-800">${index + 1}. ${service.name}</p>
+                        <p class="text-sm text-gray-600 mt-1">মূল্য: ৳ ${service.price}</p>
+                    </div>
+                    <button onclick="orderService('${service.name}', ${service.price})" 
+                            class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-700 transition duration-200">
+                        অর্ডার করুন
+                    </button>
+                </div>
+            `).join('');
+
+            document.getElementById('serviceList').innerHTML = serviceListHTML;
+        }
+
+        // সেবা অর্ডার
+        function orderService(serviceName, price) {
+            if(confirm(`আপনি কি "${serviceName}" সেবাটি অর্ডার করতে চান? মূল্য: ৳ ${price}`)) {
+                alert(`✅ "${serviceName}" সেবার অর্ডার সফলভাবে জমা হয়েছে!`);
+                // এখানে Firebase দিয়ে অর্ডার সেভ করতে হবে
+            }
+        }
+
+        // লগআউট
+        function logout() {
+            if(confirm('আপনি কি লগআউট করতে চান?')) {
+                localStorage.removeItem('userName');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // পেইজ লোড হলে ড্যাশবোর্ড লোড করুন
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+              </html>
