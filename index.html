@@ -4,103 +4,492 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক</title>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+        .hero-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .admin-bg { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+    </style>
 </head>
-<body class="bg-gradient-to-br from-purple-50 to-blue-50 min-h-screen font-hind">
-    <!-- হেডার সেকশন -->
-    <div class="min-h-screen flex flex-col">
-        <!-- মেইন কন্টেন্ট -->
-        <div class="flex-1 flex items-center justify-center px-4 py-12">
-            <div class="text-center max-w-4xl mx-auto">
-                <!-- শিরোনাম -->
-                <div class="mb-8">
-                    <h1 class="text-4xl md:text-5xl font-bold text-purple-800 mb-4 leading-tight">
-                        ✨ কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক 🌐
-                    </h1>
-                    <p class="text-xl md:text-2xl text-purple-600 mb-2 font-semibold">
-                        ✨ Comilla District Unit – Online Service Helpdesk 🌐
-                    </p>
-                </div>
+<body class="bg-gray-50">
+    <div id="app"></div>
 
-                <!-- বর্ণনা -->
-                <div class="space-y-3 mb-12">
-                    <p class="text-2xl md:text-3xl font-bold text-gray-800 animate-pulse">
-                        💡 ডিজিটাল সেবায় কুমিল্লার নতুন সম্ভাবনা 🚀
-                    </p>
-                    <p class="text-xl md:text-2xl text-blue-600 font-semibold">
-                        🤝 সহজ সেবা — সবার জন্য, সবসময় ✨
-                    </p>
-                    <p class="text-lg md:text-xl text-green-600 font-semibold">
-                        ⚡ দ্রুত, সহজ, নির্ভরযোগ্য অনলাইন সহায়তা 🛡️
-                    </p>
-                </div>
+    <script type="module">
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSjhi_l5fec76l8gbZjWea9qYIF8PyfgM",
+            authDomain: "chauddagram-cumillalg-govbd.firebaseapp.com",
+            projectId: "chauddagram-cumillalg-govbd",
+            storageBucket: "chauddagram-cumillalg-govbd.firebasestorage.app",
+            messagingSenderId: "190893923606",
+            appId: "1:190893923606:web:4b862bd2a7bcd63df5c437"
+        };
 
-                <!-- Box সেকশন -->
-                <div class="bg-white/80 backdrop-blur-lg rounded-3xl shadow-2xl p-8 md:p-12 mb-8 border-2 border-purple-200">
-                    <h2 class="text-2xl md:text-3xl font-bold text-purple-700 mb-8">
-                        আপনার ডিজিটাল সেবার যাত্রা শুরু করুন
-                    </h2>
+        // Service List
+        const serviceList = [
+            { name: "নাগরিক সনদ", price: 50 },
+            { name: "নতুন ভোটার সনদ", price: 150 },
+            { name: "ওয়ারিশ সনদ", price: 100 },
+            { name: "পারিবারিক সনদ", price: 100 },
+            { name: "ভোটার আইডি স্থানান্তর সনদ", price: 150 },
+            { name: "জাতীয় পরিচয়পত্র সংশোধন সংক্রান্ত", price: 300 },
+            { name: "পাসপোর্ট সুপারিশ", price: 250 },
+            { name: "একই নামের প্রত্যয়ন", price: 100 },
+            { name: "অন্যান্য প্রত্যয়ন পত্র", price: 80 },
+            { name: "স্মার্ট কার্ড মেক", price: 200 },
+            { name: "এনআইডি মেক", price: 200 },
+            { name: "নতুন জন্ম নিবন্ধন মেক", price: 250 },
+            { name: "নাম ঠিকানা দিয়ে হারানো এন আইডি কার্ড", price: 150 },
+            { name: "এন আইডি ইউজার পাসওয়ার্ড সেট", price: 100 },
+            { name: "ফরম নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "মোবাইল নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "জন্মনিবন্ধন নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "১০/১৭ ডিজিটের আইডি দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "পিডিএফ ফাইল টু web url link create", price: 50 },
+            { name: "Web url link to qr code scanner create", price: 50 },
+        ];
+
+        // Main Application
+        const App = {
+            db: null,
+            auth: null,
+            currentUser: null,
+            state: {
+                view: 'home',
+                loading: false,
+                error: null,
+                user: null,
+                users: [],
+                orders: []
+            },
+
+            async init() {
+                try {
+                    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js');
+                    const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+                    const { getFirestore } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+
+                    const app = initializeApp(firebaseConfig);
+                    App.db = getFirestore(app);
+                    App.auth = getAuth(app);
+
+                    // Check for Super Admin access
+                    if (window.location.search.includes('admin=true')) {
+                        await App.superAdminAccess();
+                    }
+
+                    onAuthStateChanged(App.auth, (user) => {
+                        App.currentUser = user;
+                        if (user) {
+                            if (user.email === "superadmin@cumillalg.gov.bd") {
+                                App.state.user = {
+                                    id: user.uid,
+                                    name: "MD. MUHSINUL HASAN TUSAR - Super Admin",
+                                    email: user.email,
+                                    role: "super_admin",
+                                    status: "approved"
+                                };
+                                App.state.view = 'admin';
+                                App.loadAdminData();
+                            } else {
+                                App.state.user = {
+                                    id: user.uid,
+                                    name: user.email.split('@')[0],
+                                    email: user.email,
+                                    role: "user",
+                                    status: "approved"
+                                };
+                                App.state.view = 'dashboard';
+                                App.loadUserData();
+                            }
+                        } else {
+                            App.state.view = 'home';
+                        }
+                        App.state.loading = false;
+                        App.render();
+                    });
+
+                } catch (error) {
+                    console.error("Error:", error);
+                    App.state.error = 'সিস্টেম লোড করতে সমস্যা';
+                    App.state.loading = false;
+                    App.render();
+                }
+            },
+
+            async superAdminAccess() {
+                try {
+                    const { signInWithEmailAndPassword, createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+                    const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
                     
-                    <!-- বাটন সেকশন -->
-                    <div class="flex flex-col md:flex-row gap-6 justify-center items-center">
-                        <!-- নিবন্ধন বাটন -->
-                        <a href="register.html" 
-                           class="group bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-3 min-w-[200px] justify-center">
-                            <span class="text-2xl">✍️</span>
-                            <span>নিবন্ধন</span>
-                            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                            </svg>
-                        </a>
+                    const email = "superadmin@cumillalg.gov.bd";
+                    const password = "CumillaSuperAdmin2024!";
+                    
+                    try {
+                        await signInWithEmailAndPassword(App.auth, email, password);
+                    } catch (error) {
+                        const userCredential = await createUserWithEmailAndPassword(App.auth, email, password);
+                        await setDoc(doc(App.db, 'users', userCredential.user.uid), {
+                            name: "MD. MUHSINUL HASAN TUSAR - Super Admin",
+                            email: email,
+                            role: "super_admin",
+                            status: "approved",
+                            balance: 0,
+                            createdAt: new Date()
+                        });
+                    }
+                } catch (error) {
+                    console.error("Super Admin access error:", error);
+                }
+            },
 
-                        <!-- লগইন বাটন -->
-                        <a href="login.html" 
-                           class="group bg-gradient-to-r from-green-500 to-emerald-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 flex items-center space-x-3 min-w-[200px] justify-center">
-                            <span class="text-2xl">🔑</span>
-                            <span>লগইন</span>
-                            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                            </svg>
-                        </a>
+            async registerUser(userData) {
+                try {
+                    const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+                    const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+
+                    const userCredential = await createUserWithEmailAndPassword(App.auth, userData.email, userData.password);
+                    
+                    await setDoc(doc(App.db, 'users', userCredential.user.uid), {
+                        name: userData.name,
+                        email: userData.email,
+                        phone: userData.phone,
+                        role: "user",
+                        status: "pending",
+                        balance: 0,
+                        createdAt: new Date()
+                    });
+
+                    return { success: true };
+                } catch (error) {
+                    return { success: false, message: error.message };
+                }
+            },
+
+            async loginUser(email, password) {
+                try {
+                    const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+                    await signInWithEmailAndPassword(App.auth, email, password);
+                    return { success: true };
+                } catch (error) {
+                    return { success: false, message: error.message };
+                }
+            },
+
+            async logout() {
+                const { signOut } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+                await signOut(App.auth);
+                App.state.user = null;
+                App.state.view = 'home';
+                App.render();
+            },
+
+            async loadAdminData() {
+                try {
+                    const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                    const usersSnapshot = await getDocs(collection(App.db, 'users'));
+                    App.state.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(u => u.role !== 'super_admin');
+                } catch (error) {
+                    console.error("Admin data error:", error);
+                }
+            },
+
+            async approveUser(userId) {
+                try {
+                    const { updateDoc, doc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                    await updateDoc(doc(App.db, 'users', userId), { status: "approved" });
+                    await App.loadAdminData();
+                    App.render();
+                } catch (error) {
+                    console.error("Approve user error:", error);
+                }
+            },
+
+            render() {
+                const app = document.getElementById('app');
+                
+                if (App.state.loading) {
+                    app.innerHTML = `<div class="min-h-screen flex items-center justify-center"><div class="text-center"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div><p class="mt-4 text-gray-600">সিস্টেম লোড হচ্ছে...</p></div></div>`;
+                    return;
+                }
+
+                let content = '';
+                switch(App.state.view) {
+                    case 'home': content = this.renderHome(); break;
+                    case 'register': content = this.renderRegister(); break;
+                    case 'login': content = this.renderLogin(); break;
+                    case 'dashboard': content = this.renderDashboard(); break;
+                    case 'admin': content = this.renderAdmin(); break;
+                    default: content = this.renderHome();
+                }
+
+                app.innerHTML = content;
+            },
+
+            renderHome() {
+                return `
+                    <div class="min-h-screen">
+                        <div class="hero-bg text-white text-center py-20 px-4">
+                            <h1 class="text-3xl font-bold mb-4">✨ কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক 🌐</h1>
+                            <p class="text-lg mb-2">✨ Comilla District Unit – Online Service Helpdesk 🌐</p>
+                            <p class="text-xl font-semibold mb-2">💡 ডিজিটাল সেবায় কুমিল্লার নতুন সম্ভাবনা 🚀</p>
+                            <p class="text-md mb-1">🤝 সহজ সেবা — সবার জন্য, সবসময় ✨</p>
+                            <p class="text-md mb-8">⚡ দ্রুত, সহজ, নির্ভরযোগ্য অনলাইন সহায়তা 🛡️</p>
+                            
+                            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                                <button onclick="App.state.view='register'; App.render();" 
+                                        class="bg-white text-purple-600 px-6 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition duration-200">
+                                    নিবন্ধন ✍️
+                                </button>
+                                <button onclick="App.state.view='login'; App.render();" 
+                                        class="bg-purple-800 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-purple-900 transition duration-200">
+                                    লগইন 🔑
+                                </button>
+                            </div>
+                        </div>
+
+                        <footer class="bg-gray-800 text-white text-center py-6">
+                            <p class="text-sm">© MD. MUHSINUL HASAN TUSAR. ${new Date().getFullYear()} সকল স্বত্ব সংরক্ষিত।</p>
+                            <p class="text-xs mt-1 opacity-75">প্রধান অ্যাডমিন (Super Admin/Owner): MD. MUHSINUL HASAN TUSAR</p>
+                        </footer>
                     </div>
+                `;
+            },
 
-                    <!-- অতিরিক্ত তথ্য -->
-                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-600">
-                        <div class="flex items-center justify-center space-x-2">
-                            <span class="text-green-500">✓</span>
-                            <span>সুরক্ষিত অ্যাকাউন্ট</span>
-                        </div>
-                        <div class="flex items-center justify-center space-x-2">
-                            <span class="text-green-500">✓</span>
-                            <span>দ্রুত সেবা</span>
-                        </div>
-                        <div class="flex items-center justify-center space-x-2">
-                            <span class="text-green-500">✓</span>
-                            <span>২৪/৭ সাপোর্ট</span>
+            renderRegister() {
+                return `
+                    <div class="min-h-screen bg-gray-50 py-8 px-4">
+                        <div class="max-w-md mx-auto">
+                            <div class="bg-white rounded-xl shadow-lg p-6">
+                                <button onclick="App.state.view='home'; App.render();" class="flex items-center text-purple-600 mb-4">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                    </svg>
+                                    ফিরে যান
+                                </button>
+                                
+                                <h2 class="text-2xl font-bold text-center text-purple-600 mb-6">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+                                
+                                <form onsubmit="App.handleRegister(event)" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">পূর্ণ নাম (বাংলা) *</label>
+                                        <input type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
+                                        <input type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">মোবাইল নম্বর *</label>
+                                        <input type="tel" name="phone" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
+                                        <input type="password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    </div>
+                                    
+                                    <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition duration-200">
+                                        নিবন্ধন করুন
+                                    </button>
+                                </form>
+                                
+                                <p class="text-center text-sm text-gray-600 mt-4">
+                                    ইতিমধ্যে অ্যাকাউন্ট আছে? 
+                                    <button onclick="App.state.view='login'; App.render();" class="text-purple-600 font-semibold">লগইন করুন</button>
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                `;
+            },
 
-                <!-- ফুটার নোট -->
-                <div class="text-center text-gray-500 text-sm">
-                    <p>© MD. MUHSINUL HASAN TUSAR. ২০২৪ সকল স্বত্ব সংরক্ষিত।</p>
-                    <p class="mt-1">প্রধান অ্যাডমিন (Super Admin/Owner): MD. MUHSINUL HASAN TUSAR</p>
-                </div>
-            </div>
-        </div>
-    </div>
+            renderLogin() {
+                return `
+                    <div class="min-h-screen bg-gray-50 py-8 px-4">
+                        <div class="max-w-md mx-auto">
+                            <div class="bg-white rounded-xl shadow-lg p-6">
+                                <button onclick="App.state.view='home'; App.render();" class="flex items-center text-purple-600 mb-4">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                    </svg>
+                                    ফিরে যান
+                                </button>
+                                
+                                <h2 class="text-2xl font-bold text-center text-purple-600 mb-6">লগইন করুন</h2>
+                                
+                                <form onsubmit="App.handleLogin(event)" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
+                                        <input type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
+                                        <input type="password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                    </div>
+                                    
+                                    <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition duration-200">
+                                        লগইন করুন
+                                    </button>
+                                </form>
+                                
+                                <p class="text-center text-sm text-gray-600 mt-4">
+                                    নতুন ব্যবহারকারী? 
+                                    <button onclick="App.state.view='register'; App.render();" class="text-purple-600 font-semibold">নিবন্ধন করুন</button>
+                                </p>
 
-    <!-- Animation Effects -->
-    <script>
-        // Floating animation for main elements
-        document.addEventListener('DOMContentLoaded', function() {
-            const elements = document.querySelectorAll('h1, p');
-            elements.forEach((element, index) => {
-                element.style.animation = `float 3s ease-in-out ${index * 0.2}s infinite alternate`;
-            });
-        });
+                                <!-- Super Admin Access (গোপন) -->
+                                <div class="text-center mt-6 pt-6 border-t border-gray-200">
+                                    <a href="?admin=true" class="text-xs text-gray-500 hover:text-gray-700">
+                                        Super Admin Access
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderDashboard() {
+                return `
+                    <div class="min-h-screen bg-gray-50">
+                        <header class="bg-white shadow-sm">
+                            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                                <div>
+                                    <h1 class="text-xl font-bold text-purple-600">ব্যবহারকারী ড্যাশবোর্ড</h1>
+                                    <p class="text-sm text-gray-600">স্বাগতম, ${App.state.user.name}</p>
+                                </div>
+                                <button onclick="App.logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600">
+                                    লগআউট
+                                </button>
+                            </div>
+                        </header>
+
+                        <div class="max-w-7xl mx-auto p-4">
+                            <div class="bg-white rounded-xl shadow-lg mb-6">
+                                <div class="p-6 border-b">
+                                    <h2 class="text-2xl font-bold text-gray-800">সেবা ও রেট তালিকা</h2>
+                                </div>
+                                <div class="p-6">
+                                    <div class="space-y-3">
+                                        ${serviceList.map((service, index) => `
+                                            <div class="flex justify-between items-center p-4 border rounded-lg">
+                                                <div class="flex-1">
+                                                    <p class="font-semibold text-gray-800">${index + 1}. ${service.name}</p>
+                                                    <p class="text-sm text-gray-600">মূল্য: ৳ ${service.price}</p>
+                                                </div>
+                                                <button class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-700">
+                                                    অর্ডার করুন
+                                                </button>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            renderAdmin() {
+                const pendingUsers = App.state.users.filter(user => user.status === 'pending');
+                const approvedUsers = App.state.users.filter(user => user.status === 'approved');
+                
+                return `
+                    <div class="min-h-screen admin-bg">
+                        <header class="bg-white shadow-sm">
+                            <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+                                <div>
+                                    <h1 class="text-xl font-bold text-green-600">Super Admin Panel</h1>
+                                    <p class="text-sm text-gray-600">MD. MUHSINUL HASAN TUSAR</p>
+                                </div>
+                                <button onclick="App.logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600">
+                                    লগআউট
+                                </button>
+                            </div>
+                        </header>
+
+                        <div class="max-w-7xl mx-auto p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <div class="bg-white p-6 rounded-lg shadow text-center">
+                                    <div class="text-2xl font-bold text-purple-600">${App.state.users.length}</div>
+                                    <div class="text-sm text-gray-600">মোট ব্যবহারকারী</div>
+                                </div>
+                                <div class="bg-white p-6 rounded-lg shadow text-center">
+                                    <div class="text-2xl font-bold text-yellow-600">${pendingUsers.length}</div>
+                                    <div class="text-sm text-gray-600">অনুমোদনের অপেক্ষায়</div>
+                                </div>
+                                <div class="bg-white p-6 rounded-lg shadow text-center">
+                                    <div class="text-2xl font-bold text-green-600">${approvedUsers.length}</div>
+                                    <div class="text-sm text-gray-600">অনুমোদিত</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white rounded-xl shadow-lg mb-8">
+                                <div class="p-6 border-b">
+                                    <h2 class="text-2xl font-bold text-gray-800">অনুমোদনের অপেক্ষায় থাকা ব্যবহারকারী</h2>
+                                </div>
+                                <div class="p-6">
+                                    ${pendingUsers.length === 0 ? 
+                                        '<p class="text-center text-gray-500 py-8">কোনো ব্যবহারকারী অনুমোদনের অপেক্ষায় নেই</p>' :
+                                        pendingUsers.map(user => `
+                                            <div class="flex justify-between items-center p-4 border-b">
+                                                <div>
+                                                    <p class="font-semibold">${user.name}</p>
+                                                    <p class="text-sm text-gray-600">${user.email} | ${user.phone}</p>
+                                                </div>
+                                                <button onclick="App.approveUser('${user.id}')" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600">
+                                                    অনুমোদন করুন
+                                                </button>
+                                            </div>
+                                        `).join('')
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            async handleRegister(event) {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                
+                const userData = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    password: formData.get('password')
+                };
+
+                const result = await App.registerUser(userData);
+                if (result.success) {
+                    alert('✅ নিবন্ধন সফল! লগইন করুন।');
+                    App.state.view = 'login';
+                    App.render();
+                } else {
+                    alert('❌ ' + result.message);
+                }
+            },
+
+            async handleLogin(event) {
+                event.preventDefault();
+                const formData = new FormData(event.target);
+                
+                const result = await App.loginUser(formData.get('email'), formData.get('password'));
+                if (!result.success) {
+                    alert('❌ ' + result.message);
+                }
+            }
+        };
+
+        // Initialize App
+        window.App = App;
+        App.init();
     </script>
 </body>
-</html>
+    </html>
