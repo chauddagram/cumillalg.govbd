@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✍️ নিবন্ধন | কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক</title>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.10.0/firebase-storage-compat.js"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="assets/js/firebase-config.js"></script>
+    <script src="assets/js/auth.js" defer></script>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans flex flex-col">
+
+    <header class="header text-white p-4 shadow-lg fixed top-0 w-full z-40">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-xl font-bold">✍️ নতুন অ্যাকাউন্ট নিবন্ধন</h1>
+        </div>
+    </header>
+
+    <main class="pt-20 pb-4 max-w-4xl mx-auto px-4 flex-grow w-full">
+        <section class="bg-white p-6 rounded-xl shadow-lg border border-purple-100 max-w-lg mx-auto">
+            <h2 class="text-2xl font-bold text-purple-700 mb-6">অ্যাকাউন্ট তৈরি করুন</h2>
+            <form id="register-form" onsubmit="handleRegistration(event)">
+                <div class="space-y-4">
+                    <input type="text" id="reg-name-bn" placeholder="পূর্ণ নাম (বাংলা)" required class="input-field">
+                    <input type="text" id="reg-name-en" placeholder="Full Name (English)" required class="input-field">
+                    <input type="email" id="reg-email" placeholder="ইমেইল (Email)" required class="input-field">
+                    <input type="password" id="reg-password" placeholder="পাসওয়ার্ড (Password)" required minlength="6" class="input-field">
+                    <input type="password" id="reg-confirm-password" placeholder="পাসওয়ার্ড নিশ্চিতকরণ" required minlength="6" class="input-field">
+                    <input type="tel" id="reg-mobile" placeholder="মোবাইল নম্বর (Mobile Number)" required class="input-field">
+                    
+                    <label for="reg-photo" class="block text-sm font-medium text-gray-700">➡ ছবি আপলোড (পাসপোর্ট সাইজের)</label>
+                    <input type="file" id="reg-photo" accept="image/*" required class="w-full p-3 border border-gray-300 rounded-lg focus:border-purple-500 focus:ring-purple-500 bg-gray-50">
+                </div>
+                <button type="submit" class="unique-button w-full p-3 mt-6 rounded-xl purple-gradient text-white font-semibold text-lg hover:bg-purple-700">
+                    ➡ Submit Application
+                </button>
+                <p id="reg-message" class="mt-4 text-center text-sm text-red-600 font-semibold"></p>
+            </form>
+            <a href="index.html" class="mt-4 text-sm text-purple-500 hover:underline block text-center">হোমপেজে ফিরে যান</a>
+        </section>
+    </main>
+    
+    <footer class="text-center text-sm text-gray-500 py-3 mt-auto border-t border-gray-200">
+        <p>© প্রধান অ্যাডমিন (Super Admin/Owner). সর্বস্বত্ব সংরক্ষিত।</p>
+    </footer>
+</body>
+</html>
