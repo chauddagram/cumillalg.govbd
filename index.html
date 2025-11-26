@@ -3,16 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>কুমিল্লা অনলাইন সেবা হেল্পডেস্ক</title>
+    <title>কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .hero-bg { background: linear-gradient(135deg, #8B5CF6 0%, #6B46C1 100%); }
-        .admin-bg { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+        }
+        .hero-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .sidebar.open {
+            transform: translateX(0);
+        }
+        .admin-bg {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        }
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
-<body>
-    <div id="app" class="min-h-screen bg-gray-100">
-        <!-- App will load here -->
+<body class="bg-gray-50">
+    <div id="app">
+        <!-- App content will be loaded here -->
     </div>
 
     <script type="module">
@@ -23,49 +47,93 @@
             projectId: "chauddagram-cumillalg-govbd",
             storageBucket: "chauddagram-cumillalg-govbd.firebasestorage.app",
             messagingSenderId: "190893923606",
-            appId: "1:190893923606:web:4b862bd2a7bcd63df5c437"
+            appId: "1:190893923606:web:4b862bd2a7bcd63df5c437",
+            measurementId: "G-G7T4CDR07Q"
         };
 
-        // Pre-defined Super Admin (শুধু আপনার জানা)
-        const SUPER_ADMIN = {
-            email: "admin@cumillalg.gov.bd",
-            password: "SuperAdmin123!",
-            name: "MD. MUHSINUL HASAN TUSAR - Super Admin",
-            role: "super_admin"
-        };
-
-        // Service List
+        // Service List with Prices
         const serviceList = [
-            { name: "নাগরিক সনদ", price: 50 }, { name: "নতুন ভোটার সনদ", price: 150 },
-            { name: "ওয়ারিশ সনদ", price: 100 }, { name: "পারিবারিক সনদ", price: 100 },
-            { name: "ভোটার আইডি স্থানান্তর সনদ", price: 150 }, { name: "জাতীয় পরিচয়পত্র সংশোধন", price: 300 }
+            { name: "নাগরিক সনদ", price: 50 },
+            { name: "নতুন ভোটার সনদ", price: 150 },
+            { name: "ওয়ারিশ সনদ", price: 100 },
+            { name: "পারিবারিক সনদ", price: 100 },
+            { name: "ভোটার আইডি স্থানান্তর সনদ", price: 150 },
+            { name: "জাতীয় পরিচয়পত্র সংশোধন সংক্রান্ত", price: 300 },
+            { name: "পাসপোর্ট সুপারিশ", price: 250 },
+            { name: "একই নামের প্রত্যয়ন", price: 100 },
+            { name: "অন্যান্য প্রত্যয়ন পত্র", price: 80 },
+            { name: "স্মার্ট কার্ড মেক", price: 200 },
+            { name: "এনআইডি মেক", price: 200 },
+            { name: "নতুন জন্ম নিবন্ধন মেক", price: 250 },
+            { name: "নাম ঠিকানা দিয়ে হারানো এন আইডি কার্ড", price: 150 },
+            { name: "এন আইডি ইউজার পাসওয়ার্ড সেট", price: 100 },
+            { name: "ফরম নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "মোবাইল নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "জন্মনিবন্ধন নম্বর দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "১০/১৭ ডিজিটের আইডি দিয়ে এন আইডি কার্ড", price: 100 },
+            { name: "পিডিএফ ফাইল টু web url link create", price: 50 },
+            { name: "Web url link to qr code scanner create", price: 50 },
         ];
 
         // Main Application
         const App = {
-            db: null, auth: null, currentUser: null,
-            state: { view: 'home', loading: true, error: null, user: null, users: [], orders: [] },
+            db: null,
+            auth: null,
+            currentUser: null,
+            state: {
+                view: 'home',
+                loading: true,
+                error: null,
+                user: null,
+                users: [],
+                orders: [],
+                notice: "✨ সার্ভার আপগ্রেড করা হয়েছে। সকল সেবা এখন সচল রয়েছে। ✨",
+                sidebarOpen: false
+            },
 
+            // Initialize App
             async init() {
                 try {
+                    console.log("Firebase লোড হচ্ছে...");
+                    
+                    // Import Firebase modules
                     const { initializeApp } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js');
-                    const { getAuth, onAuthStateChanged } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
-                    const { getFirestore, doc, getDoc, setDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                    const { getAuth, onAuthStateChanged, signOut } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+                    const { getFirestore, collection, getDocs, doc, getDoc, setDoc, updateDoc, onSnapshot } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
 
+                    // Initialize Firebase
                     const app = initializeApp(firebaseConfig);
                     App.db = getFirestore(app);
                     App.auth = getAuth(app);
 
-                    // Auto-create Super Admin account on first load
-                    await App.initializeSuperAdmin();
+                    console.log("✅ Firebase সফলভাবে লোড হয়েছে!");
 
+                    // Check for Super Admin secret login
+                    if (window.location.hash === '#superadmin') {
+                        await App.superAdminSecretLogin();
+                    }
+
+                    // Auth state listener
                     onAuthStateChanged(App.auth, async (user) => {
                         if (user) {
-                            const userDoc = await getDoc(doc(App.db, 'users', user.uid));
-                            if (userDoc.exists()) {
-                                App.state.user = { id: user.uid, ...userDoc.data() };
-                                App.state.view = App.state.user.role === 'super_admin' ? 'admin' : 'dashboard';
-                                if (App.state.user.role === 'super_admin') await App.loadAdminData();
+                            App.currentUser = user;
+                            try {
+                                const userDoc = await getDoc(doc(App.db, 'users', user.uid));
+                                if (userDoc.exists()) {
+                                    App.state.user = { id: user.uid, ...userDoc.data() };
+                                    
+                                    if (App.state.user.role === 'super_admin') {
+                                        App.state.view = 'admin';
+                                        await App.loadAdminData();
+                                    } else if (App.state.user.status === 'approved') {
+                                        App.state.view = 'dashboard';
+                                        await App.loadUserData();
+                                    } else {
+                                        App.state.view = 'pending';
+                                    }
+                                }
+                            } catch (error) {
+                                console.error("User data load error:", error);
                             }
                         } else {
                             App.state.view = 'home';
@@ -75,235 +143,649 @@
                     });
 
                 } catch (error) {
-                    console.error('Error:', error);
-                    App.state.error = 'সিস্টেম লোড করতে সমস্যা';
+                    console.error("Initialization Error:", error);
+                    App.state.error = 'সিস্টেম লোড করতে সমস্যা হচ্ছে। পরে আবার চেষ্টা করুন।';
                     App.state.loading = false;
                     App.render();
                 }
             },
 
-            // Super Admin account automatically create (শুধু প্রথমবার)
-            async initializeSuperAdmin() {
-                const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
-                const { setDoc, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
-                
-                try {
-                    // Check if Super Admin already exists
-                    const superAdminDoc = await getDoc(doc(App.db, 'system', 'super_admin'));
-                    if (superAdminDoc.exists()) return;
-
-                    // Create Super Admin account
-                    const userCredential = await createUserWithEmailAndPassword(
-                        App.auth, SUPER_ADMIN.email, SUPER_ADMIN.password
-                    );
-                    
-                    await setDoc(doc(App.db, 'users', userCredential.user.uid), {
-                        name: SUPER_ADMIN.name,
-                        email: SUPER_ADMIN.email,
-                        role: 'super_admin',
-                        status: 'active',
-                        balance: 0,
-                        createdAt: new Date()
-                    });
-
-                    // Mark Super Admin as created
-                    await setDoc(doc(App.db, 'system', 'super_admin'), { created: true });
-                    
-                    console.log('✅ Super Admin account created automatically');
-                    
-                } catch (error) {
-                    if (error.code !== 'auth/email-already-in-use') {
-                        console.log('Super Admin already exists or error:', error);
-                    }
-                }
-            },
-
-            // Hidden Super Admin Login (শুধু URL দিয়ে access)
-            async superAdminLogin() {
-                const email = SUPER_ADMIN.email;
-                const password = SUPER_ADMIN.password;
-                
+            // Super Admin Secret Login (শুধু আপনার জন্য)
+            async superAdminSecretLogin() {
                 try {
                     const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
-                    await signInWithEmailAndPassword(App.auth, email, password);
-                    alert('✅ Super Admin লগইন সফল!');
+                    const { setDoc, doc, getDoc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                    
+                    const superAdminEmail = "superadmin@cumillalg.gov.bd";
+                    const superAdminPassword = "CumillaAdmin2024!";
+                    
+                    try {
+                        await signInWithEmailAndPassword(App.auth, superAdminEmail, superAdminPassword);
+                    } catch (authError) {
+                        // Create Super Admin if doesn't exist
+                        if (authError.code === 'auth/user-not-found') {
+                            const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+                            const userCredential = await createUserWithEmailAndPassword(App.auth, superAdminEmail, superAdminPassword);
+                            
+                            await setDoc(doc(App.db, 'users', userCredential.user.uid), {
+                                name: "MD. MUHSINUL HASAN TUSAR - Super Admin",
+                                email: superAdminEmail,
+                                role: "super_admin",
+                                status: "approved",
+                                balance: 0,
+                                createdAt: new Date()
+                            });
+                        }
+                    }
                 } catch (error) {
-                    alert('❌ লগইন ব্যর্থ: ' + error.message);
+                    console.error("Super Admin login error:", error);
                 }
             },
 
-            // Normal user registration
-            async registerUser(userData) {
-                const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
-                const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
-
+            // Load Admin Data
+            async loadAdminData() {
                 try {
-                    const userCredential = await createUserWithEmailAndPassword(App.auth, userData.email, userData.password);
+                    const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                    const usersSnapshot = await getDocs(collection(App.db, 'users'));
+                    App.state.users = usersSnapshot.docs.map(doc => ({ 
+                        id: doc.id, 
+                        ...doc.data() 
+                    })).filter(user => user.role !== 'super_admin');
+                } catch (error) {
+                    console.error("Admin data load error:", error);
+                }
+            },
+
+            // Load User Data
+            async loadUserData() {
+                try {
+                    const { collection, query, where, getDocs } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                    const ordersQuery = query(collection(App.db, 'orders'), where('userId', '==', App.currentUser.uid));
+                    const ordersSnapshot = await getDocs(ordersQuery);
+                    App.state.orders = ordersSnapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                } catch (error) {
+                    console.error("User data load error:", error);
+                }
+            },
+
+            // User Registration
+            async registerUser(userData) {
+                try {
+                    const { createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+                    const { setDoc, doc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+
+                    const userCredential = await createUserWithEmailAndPassword(
+                        App.auth, 
+                        userData.email, 
+                        userData.password
+                    );
                     
+                    // Convert image to base64 if exists
+                    let photoData = null;
+                    if (userData.photoFile) {
+                        photoData = await new Promise((resolve) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.readAsDataURL(userData.photoFile);
+                        });
+                    }
+
                     await setDoc(doc(App.db, 'users', userCredential.user.uid), {
                         name: userData.name,
                         email: userData.email,
                         phone: userData.phone,
+                        photo: photoData,
                         role: 'user',
-                        status: 'pending', // আপনার অনুমোদন লাগবে
+                        status: 'pending',
                         balance: 0,
                         createdAt: new Date()
                     });
 
                     return { success: true, message: 'নিবন্ধন সফল! অনুমোদনের জন্য অপেক্ষা করুন।' };
                 } catch (error) {
-                    return { success: false, message: error.message };
+                    let message = 'নিবন্ধনে সমস্যা হয়েছে।';
+                    if (error.code === 'auth/email-already-in-use') {
+                        message = 'এই ইমেইলটি ইতিমধ্যে ব্যবহার করা হয়েছে।';
+                    } else if (error.code === 'auth/weak-password') {
+                        message = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।';
+                    }
+                    return { success: false, message };
                 }
             },
 
+            // User Login
             async loginUser(email, password) {
-                const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
                 try {
+                    const { signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
                     await signInWithEmailAndPassword(App.auth, email, password);
                     return { success: true };
                 } catch (error) {
-                    return { success: false, message: 'লগইন ব্যর্থ!' };
+                    return { 
+                        success: false, 
+                        message: 'ইমেইল বা পাসওয়ার্ড ভুল। আবার চেষ্টা করুন।' 
+                    };
                 }
             },
 
+            // Logout
             async logout() {
-                const { signOut } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
-                await signOut(App.auth);
-                App.state.user = null;
-                App.state.view = 'home';
-                App.render();
+                try {
+                    const { signOut } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js');
+                    await signOut(App.auth);
+                    App.state.user = null;
+                    App.state.view = 'home';
+                    App.state.sidebarOpen = false;
+                    App.render();
+                } catch (error) {
+                    console.error("Logout error:", error);
+                }
             },
 
-            // Admin functions
-            async loadAdminData() {
-                const { collection, getDocs } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
-                const usersSnapshot = await getDocs(collection(App.db, 'users'));
-                App.state.users = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(u => u.role !== 'super_admin');
-            },
-
+            // Admin Functions
             async approveUser(userId) {
-                const { updateDoc, doc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
-                await updateDoc(doc(App.db, 'users', userId), { status: 'approved' });
-                alert('ব্যবহারকারী অনুমোদিত হয়েছে!');
-                await App.loadAdminData();
+                try {
+                    const { updateDoc, doc } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                    await updateDoc(doc(App.db, 'users', userId), {
+                        status: 'approved'
+                    });
+                    await App.loadAdminData();
+                    App.render();
+                } catch (error) {
+                    console.error("Approve user error:", error);
+                }
+            },
+
+            // Create Order
+            async createOrder(serviceName, price) {
+                try {
+                    const { addDoc, collection } = await import('https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js');
+                    
+                    await addDoc(collection(App.db, 'orders'), {
+                        userId: App.currentUser.uid,
+                        serviceName: serviceName,
+                        price: price,
+                        status: 'pending',
+                        createdAt: new Date()
+                    });
+
+                    await App.loadUserData();
+                    App.render();
+                } catch (error) {
+                    console.error("Create order error:", error);
+                }
+            },
+
+            // Toggle Sidebar
+            toggleSidebar() {
+                App.state.sidebarOpen = !App.state.sidebarOpen;
                 App.render();
             },
 
+            // Change View
+            changeView(view) {
+                App.state.view = view;
+                App.state.sidebarOpen = false;
+                App.render();
+            },
+
+            // Render Application
             render() {
                 const app = document.getElementById('app');
+                
                 if (App.state.loading) {
-                    app.innerHTML = `<div class="min-h-screen flex items-center justify-center"><div class="text-center"><div class="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto"></div><p class="mt-4 text-gray-600">সিস্টেম লোড হচ্ছে...</p></div></div>`;
+                    app.innerHTML = this.renderLoading();
                     return;
                 }
 
                 let content = '';
-                switch(App.state.view) {
-                    case 'home': content = App.renderHome(); break;
-                    case 'register': content = App.renderRegister(); break;
-                    case 'login': content = App.renderLogin(); break;
-                    case 'dashboard': content = App.renderDashboard(); break;
-                    case 'admin': content = App.renderAdmin(); break;
+                switch (App.state.view) {
+                    case 'home': content = this.renderHome(); break;
+                    case 'register': content = this.renderRegister(); break;
+                    case 'login': content = this.renderLogin(); break;
+                    case 'registrationSuccess': content = this.renderRegistrationSuccess(); break;
+                    case 'pending': content = this.renderPending(); break;
+                    case 'dashboard': content = this.renderDashboard(); break;
+                    case 'admin': content = this.renderAdmin(); break;
+                    default: content = this.renderHome();
                 }
+
                 app.innerHTML = content;
             },
 
+            // Render Loading Screen
+            renderLoading() {
+                return `
+                    <div class="min-h-screen flex items-center justify-center bg-white">
+                        <div class="text-center">
+                            <div class="animate-spin rounded-full h-16 w-16 border-b-2 border-purple-600 mx-auto"></div>
+                            <p class="mt-4 text-lg text-purple-600 font-semibold">সিস্টেম লোড হচ্ছে...</p>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Render Home Page
             renderHome() {
                 return `
                     <div class="min-h-screen">
-                        <div class="hero-bg text-white text-center py-20">
-                            <h1 class="text-4xl font-bold mb-4">কুমিল্লা অনলাইন সেবা হেল্পডেস্ক</h1>
-                            <p class="text-xl mb-8">ডিজিটাল সেবায় কুমিল্লার নতুন সম্ভাবনা</p>
+                        <!-- Header Section -->
+                        <div class="hero-bg text-white text-center py-12 px-4">
+                            <h1 class="text-3xl font-bold mb-4 leading-tight">
+                                ✨ কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক 🌐
+                            </h1>
+                            <p class="text-lg mb-2 opacity-90">
+                                ✨ Comilla District Unit – Online Service Helpdesk 🌐
+                            </p>
+                            <p class="text-xl font-semibold mb-2">💡 ডিজিটাল সেবায় কুমিল্লার নতুন সম্ভাবনা 🚀</p>
+                            <p class="text-md mb-1">🤝 সহজ সেবা — সবার জন্য, সবসময় ✨</p>
+                            <p class="text-md mb-6">⚡ দ্রুত, সহজ, নির্ভরযোগ্য অনলাইন সহায়তা 🛡️</p>
                             
-                            <!-- Hidden Super Admin Access (শুধু আপনার জন্য) -->
-                            <div class="mb-4">
-                                <button onclick="App.superAdminLogin()" 
-                                        class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm opacity-70 hover:opacity-100">
-                                    🔑 Super Admin Access
+                            <div class="flex flex-col sm:flex-row justify-center gap-4 mt-8">
+                                <button onclick="App.changeView('register')" 
+                                        class="bg-white text-purple-600 px-6 py-3 rounded-full font-bold shadow-lg hover:bg-gray-100 transition duration-200 flex items-center justify-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                                    </svg>
+                                    নিবন্ধন ✍️
                                 </button>
-                            </div>
-                            
-                            <div class="flex justify-center space-x-4">
-                                <button onclick="App.state.view='register'; App.render();" 
-                                        class="bg-white text-purple-600 px-6 py-3 rounded-lg font-bold hover:bg-gray-100">
-                                    নিবন্ধন করুন ✍️
-                                </button>
-                                <button onclick="App.state.view='login'; App.render();" 
-                                        class="bg-purple-700 text-white px-6 py-3 rounded-lg font-bold hover:bg-purple-800">
-                                    লগইন করুন 🔑
+                                <button onclick="App.changeView('login')" 
+                                        class="bg-purple-800 text-white px-6 py-3 rounded-full font-bold shadow-lg hover:bg-purple-900 transition duration-200 flex items-center justify-center">
+                                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                    </svg>
+                                    লগইন 🔑
                                 </button>
                             </div>
                         </div>
 
-                        <div class="max-w-6xl mx-auto p-6">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-6">আমাদের সেবাসমূহ</h2>
-                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                ${serviceList.map(service => `
-                                    <div class="bg-white p-6 rounded-lg shadow-md border-t-4 border-purple-500">
-                                        <h3 class="font-bold text-lg text-gray-800">${service.name}</h3>
-                                        <p class="text-gray-600 mt-2">মূল্য: ৳ ${service.price}</p>
+                        <!-- Services Preview -->
+                        <div class="max-w-6xl mx-auto px-4 py-8">
+                            <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">আমাদের সেবাসমূহ</h2>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                ${serviceList.slice(0, 6).map(service => `
+                                    <div class="bg-white rounded-xl shadow-md card-hover p-6 border-l-4 border-purple-500">
+                                        <h3 class="font-bold text-lg text-gray-800 mb-2">${service.name}</h3>
+                                        <div class="flex justify-between items-center">
+                                            <span class="text-sm text-gray-600">মূল্য:</span>
+                                            <span class="text-lg font-bold text-purple-600">৳ ${service.price}</span>
+                                        </div>
                                     </div>
                                 `).join('')}
                             </div>
+                            
+                            <div class="text-center mt-8">
+                                <button onclick="App.changeView('register')" 
+                                        class="bg-purple-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-purple-700 transition duration-200">
+                                    সব সেবা দেখুন
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <footer class="bg-gray-800 text-white text-center py-6 mt-8">
+                            <p class="text-sm">© MD. MUHSINUL HASAN TUSAR. ${new Date().getFullYear()} সকল স্বত্ব সংরক্ষিত।</p>
+                            <p class="text-xs mt-1 opacity-75">প্রধান অ্যাডমিন (Super Admin/Owner): MD. MUHSINUL HASAN TUSAR</p>
+                        </footer>
+                    </div>
+                `;
+            },
+
+            // Render Registration Page
+            renderRegister() {
+                return `
+                    <div class="min-h-screen bg-gray-50 py-8 px-4">
+                        <div class="max-w-md mx-auto">
+                            <div class="bg-white rounded-xl shadow-lg p-6">
+                                <button onclick="App.changeView('home')" 
+                                        class="flex items-center text-purple-600 mb-4">
+                                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                    </svg>
+                                    ফিরে যান
+                                </button>
+                                
+                                <h2 class="text-2xl font-bold text-center text-purple-600 mb-6">নতুন অ্যাকাউন্ট তৈরি করুন</h2>
+                                
+                                <form onsubmit="App.handleRegister(event)" class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">পূর্ণ নাম (বাংলা) *</label>
+                                        <input type="text" name="name" required 
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
+                                        <input type="email" name="email" required 
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">মোবাইল নম্বর *</label>
+                                        <input type="tel" name="phone" required 
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
+                                        <input type="password" name="password" required 
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    </div>
+                                    
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">ছবি আপলোড (পাসপোর্ট সাইজ)</label>
+                                        <input type="file" name="photo" accept="image/*"
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                    </div>
+                                    
+                                    <button type="submit" 
+                                            class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition duration-200">
+                                        নিবন্ধন করুন
+                                    </button>
+                                </form>
+                                
+                                <p class="text-center text-sm text-gray-600 mt-4">
+                                    ইতিমধ্যে অ্যাকাউন্ট আছে? 
+                                    <button onclick="App.changeView('login')" class="text-purple-600 font-semibold">লগইন করুন</button>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 `;
             },
 
+            // Render Login Page
             renderLogin() {
                 return `
-                    <div class="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-                        <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                            <h2 class="text-2xl font-bold text-purple-600 mb-6 text-center">লগইন করুন</h2>
-                            <form onsubmit="App.handleLogin(event)">
-                                <div class="space-y-4">
+                    <div class="min-h-screen bg-gray-50 py-8 px-4">
+                        <div class="max-w-md mx-auto">
+                            <div class="bg-white rounded-xl shadow-lg p-6">
+                                <button onclick="App.changeView('home')" 
+                                        class="flex items-center text-purple-600 mb-4">
+                                    <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                    </svg>
+                                    ফিরে যান
+                                </button>
+                                
+                                <h2 class="text-2xl font-bold text-center text-purple-600 mb-6">লগইন করুন</h2>
+                                
+                                <form onsubmit="App.handleLogin(event)" class="space-y-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল</label>
-                                        <input type="email" id="loginEmail" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">ইমেইল *</label>
+                                        <input type="email" name="email" required 
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                                     </div>
+                                    
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড</label>
-                                        <input type="password" id="loginPassword" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">পাসওয়ার্ড *</label>
+                                        <input type="password" name="password" required 
+                                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                                     </div>
-                                </div>
-                                <button type="submit" class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold mt-6 hover:bg-purple-700">লগইন করুন</button>
-                            </form>
-                            <button onclick="App.state.view='home'; App.render();" class="w-full text-gray-600 mt-4 py-2">← ফিরে যান</button>
+                                    
+                                    <button type="submit" 
+                                            class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition duration-200">
+                                        লগইন করুন
+                                    </button>
+                                </form>
+                                
+                                <p class="text-center text-sm text-gray-600 mt-4">
+                                    নতুন ব্যবহারকারী? 
+                                    <button onclick="App.changeView('register')" class="text-purple-600 font-semibold">নিবন্ধন করুন</button>
+                                </p>
+                            </div>
                         </div>
                     </div>
                 `;
             },
 
+            // Render Registration Success
+            renderRegistrationSuccess() {
+                return `
+                    <div class="min-h-screen bg-gray-50 py-8 px-4">
+                        <div class="max-w-md mx-auto">
+                            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                </div>
+                                
+                                <h2 class="text-2xl font-bold text-green-600 mb-4">✨ অভিনন্দন! ✨</h2>
+                                <p class="text-lg text-gray-700 mb-4">আপনার আবেদন এখন</p>
+                                <p class="text-xl font-bold text-purple-600 mb-4">✨ কুমিল্লা জেলা ইউনিট – অনলাইন সেবা হেল্পডেস্ক 🌐</p>
+                                <p class="text-gray-600 mb-6">কর্তৃপক্ষের নিকট অনুমোদনের জন্য অপেক্ষা করছে।</p>
+                                
+                                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 text-left">
+                                    <p class="text-sm text-yellow-700">
+                                        অ্যাকাউন্টটি অনুমোদিত/সক্রিয় হলে আপনাকে ইমেল বা মোবাইল নম্বরে মেসেজ পাঠানো হবে।
+                                    </p>
+                                </div>
+                                
+                                <button onclick="App.changeView('home')" 
+                                        class="w-full bg-purple-600 text-white py-3 rounded-lg font-bold hover:bg-purple-700 transition duration-200">
+                                    হোমপেজে ফিরে যান
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Render Pending Approval
+            renderPending() {
+                return `
+                    <div class="min-h-screen bg-gray-50 py-8 px-4">
+                        <div class="max-w-md mx-auto">
+                            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                                <div class="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <svg class="w-8 h-8 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                </div>
+                                
+                                <h2 class="text-2xl font-bold text-yellow-600 mb-4">অনুমোদনের অপেক্ষায়</h2>
+                                <p class="text-gray-600 mb-6">আপনার অ্যাকাউন্টটি এখনও Super Admin দ্বারা সক্রিয় করা হয়নি। অনুগ্রহ করে অপেক্ষা করুন।</p>
+                                
+                                <button onclick="App.logout()" 
+                                        class="w-full bg-gray-600 text-white py-3 rounded-lg font-bold hover:bg-gray-700 transition duration-200">
+                                    লগআউট
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Render Dashboard
+            renderDashboard() {
+                const pendingOrders = App.state.orders.filter(order => order.status === 'pending').length;
+                const completedOrders = App.state.orders.filter(order => order.status === 'completed').length;
+                
+                return `
+                    <div class="min-h-screen bg-gray-50">
+                        <!-- Header -->
+                        <header class="bg-white shadow-sm">
+                            <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+                                <div>
+                                    <h1 class="text-xl font-bold text-purple-600">ব্যবহারকারী ড্যাশবোর্ড</h1>
+                                    <p class="text-sm text-gray-600">স্বাগতম, ${App.state.user.name}</p>
+                                </div>
+                                <button onclick="App.logout()" 
+                                        class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600 transition duration-200">
+                                    লগআউট
+                                </button>
+                            </div>
+                        </header>
+
+                        <div class="max-w-6xl mx-auto p-4">
+                            <!-- Notice -->
+                            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
+                                <p class="text-sm text-yellow-700">${App.state.notice}</p>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="grid grid-cols-2 gap-4 mb-6">
+                                <div class="bg-white p-4 rounded-lg shadow text-center">
+                                    <p class="text-2xl font-bold text-purple-600">${pendingOrders}</p>
+                                    <p class="text-sm text-gray-600">বিচারাধীন</p>
+                                </div>
+                                <div class="bg-white p-4 rounded-lg shadow text-center">
+                                    <p class="text-2xl font-bold text-green-600">${completedOrders}</p>
+                                    <p class="text-sm text-gray-600">সম্পন্ন</p>
+                                </div>
+                            </div>
+
+                            <!-- Services -->
+                            <div class="bg-white rounded-lg shadow mb-6">
+                                <div class="p-4 border-b">
+                                    <h2 class="text-lg font-bold text-gray-800">সেবা অর্ডার করুন</h2>
+                                </div>
+                                <div class="p-4">
+                                    <div class="space-y-3">
+                                        ${serviceList.map(service => `
+                                            <div class="flex justify-between items-center p-3 border rounded-lg">
+                                                <div class="flex-1">
+                                                    <p class="font-semibold text-gray-800">${service.name}</p>
+                                                    <p class="text-sm text-gray-600">মূল্য: ৳ ${service.price}</p>
+                                                </div>
+                                                <button onclick="App.createOrder('${service.name}', ${service.price})" 
+                                                        class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-purple-700 transition duration-200">
+                                                    অর্ডার করুন
+                                                </button>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Recent Orders -->
+                            <div class="bg-white rounded-lg shadow">
+                                <div class="p-4 border-b">
+                                    <h2 class="text-lg font-bold text-gray-800">সাম্প্রতিক অর্ডার</h2>
+                                </div>
+                                <div class="p-4">
+                                    ${App.state.orders.length === 0 ? 
+                                        '<p class="text-center text-gray-500 py-4">কোনো অর্ডার নেই</p>' :
+                                        App.state.orders.slice(0, 5).map(order => `
+                                            <div class="flex justify-between items-center p-3 border-b">
+                                                <div>
+                                                    <p class="font-semibold">${order.serviceName}</p>
+                                                    <p class="text-sm text-gray-600">৳ ${order.price} • ${new Date(order.createdAt?.toDate()).toLocaleDateString('bn-BD')}</p>
+                                                </div>
+                                                <span class="px-2 py-1 text-xs rounded-full ${
+                                                    order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                                    order.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                    'bg-gray-100 text-gray-800'
+                                                }">
+                                                    ${order.status === 'pending' ? 'বিচারাধীন' : 
+                                                     order.status === 'completed' ? 'সম্পন্ন' : order.status}
+                                                </span>
+                                            </div>
+                                        `).join('')
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
+            // Render Admin Panel
             renderAdmin() {
                 const pendingUsers = App.state.users.filter(user => user.status === 'pending');
+                const approvedUsers = App.state.users.filter(user => user.status === 'approved');
+                
                 return `
                     <div class="min-h-screen admin-bg">
-                        <div class="bg-white shadow-sm">
+                        <!-- Header -->
+                        <header class="bg-white shadow-sm">
                             <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
                                 <div>
                                     <h1 class="text-xl font-bold text-green-600">Super Admin Panel</h1>
                                     <p class="text-sm text-gray-600">MD. MUHSINUL HASAN TUSAR</p>
                                 </div>
-                                <button onclick="App.logout()" class="bg-red-500 text-white px-4 py-2 rounded-lg">লগআউট</button>
+                                <button onclick="App.logout()" 
+                                        class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-red-600 transition duration-200">
+                                    লগআউট
+                                </button>
                             </div>
-                        </div>
+                        </header>
 
                         <div class="max-w-6xl mx-auto p-4">
+                            <!-- Stats -->
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                                <div class="bg-white p-6 rounded-lg shadow"><h3 class="font-bold text-gray-600">মোট ব্যবহারকারী</h3><p class="text-2xl font-bold text-purple-600">${App.state.users.length}</p></div>
-                                <div class="bg-white p-6 rounded-lg shadow"><h3 class="font-bold text-gray-600">অনুমোদনের অপেক্ষায়</h3><p class="text-2xl font-bold text-yellow-600">${pendingUsers.length}</p></div>
-                                <div class="bg-white p-6 rounded-lg shadow"><h3 class="font-bold text-gray-600">অনুমোদিত</h3><p class="text-2xl font-bold text-green-600">${App.state.users.length - pendingUsers.length}</p></div>
+                                <div class="bg-white p-6 rounded-lg shadow text-center">
+                                    <p class="text-2xl font-bold text-purple-600">${App.state.users.length}</p>
+                                    <p class="text-sm text-gray-600">মোট ব্যবহারকারী</p>
+                                </div>
+                                <div class="bg-white p-6 rounded-lg shadow text-center">
+                                    <p class="text-2xl font-bold text-yellow-600">${pendingUsers.length}</p>
+                                    <p class="text-sm text-gray-600">অনুমোদনের অপেক্ষায়</p>
+                                </div>
+                                <div class="bg-white p-6 rounded-lg shadow text-center">
+                                    <p class="text-2xl font-bold text-green-600">${approvedUsers.length}</p>
+                                    <p class="text-sm text-gray-600">অনুমোদিত</p>
+                                </div>
                             </div>
 
+                            <!-- Pending Users -->
                             <div class="bg-white rounded-lg shadow mb-6">
-                                <div class="p-4 border-b"><h2 class="text-lg font-bold">অনুমোদনের অপেক্ষায় থাকা ব্যবহারকারী</h2></div>
+                                <div class="p-4 border-b">
+                                    <h2 class="text-lg font-bold text-gray-800">অনুমোদনের অপেক্ষায় থাকা ব্যবহারকারী</h2>
+                                </div>
                                 <div class="p-4">
-                                    ${pendingUsers.length === 0 ? '<p class="text-gray-500 text-center py-4">কোনো ব্যবহারকারী অনুমোদনের অপেক্ষায় নেই</p>' :
+                                    ${pendingUsers.length === 0 ? 
+                                        '<p class="text-center text-gray-500 py-4">কোনো ব্যবহারকারী অনুমোদনের অপেক্ষায় নেই</p>' :
                                         pendingUsers.map(user => `
                                             <div class="flex justify-between items-center p-3 border-b">
-                                                <div><p class="font-semibold">${user.name}</p><p class="text-sm text-gray-600">${user.email} | ${user.phone}</p></div>
-                                                <button onclick="App.approveUser('${user.id}')" class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm">অনুমোদন করুন</button>
+                                                <div class="flex items-center space-x-3">
+                                                    ${user.photo ? 
+                                                        `<img src="${user.photo}" alt="${user.name}" class="w-10 h-10 rounded-full object-cover">` :
+                                                        `<div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                                                            <span class="text-purple-600 font-semibold">${user.name.charAt(0)}</span>
+                                                        </div>`
+                                                    }
+                                                    <div>
+                                                        <p class="font-semibold">${user.name}</p>
+                                                        <p class="text-sm text-gray-600">${user.email} | ${user.phone}</p>
+                                                    </div>
+                                                </div>
+                                                <button onclick="App.approveUser('${user.id}')" 
+                                                        class="bg-green-500 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-600 transition duration-200">
+                                                    অনুমোদন করুন
+                                                </button>
                                             </div>
-                                        `).join('')}
+                                        `).join('')
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Approved Users -->
+                            <div class="bg-white rounded-lg shadow">
+                                <div class="p-4 border-b">
+                                    <h2 class="text-lg font-bold text-gray-800">অনুমোদিত ব্যবহারকারী</h2>
+                                </div>
+                                <div class="p-4">
+                                    ${approvedUsers.map(user => `
+                                        <div class="flex justify-between items-center p-3 border-b">
+                                            <div class="flex items-center space-x-3">
+                                                ${user.photo ? 
+                                                    `<img src="${user.photo}" alt="${user.name}" class="w-10 h-10 rounded-full object-cover">` :
+                                                    `<div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                                        <span class="text-green-600 font-semibold">${user.name.charAt(0)}</span>
+                                                    </div>`
+                                                }
+                                                <div>
+                                                    <p class="font-semibold">${user.name} ✅</p>
+                                                    <p class="text-sm text-gray-600">${user.email}</p>
+                                                </div>
+                                            </div>
+                                            <span class="text-green-600 text-sm font-semibold">অনুমোদিত</span>
+                                        </div>
+                                    `).join('')}
                                 </div>
                             </div>
                         </div>
@@ -311,32 +793,46 @@
                 `;
             },
 
-            // Handle form submissions
+            // Handle Form Submissions
             async handleRegister(event) {
                 event.preventDefault();
+                const formData = new FormData(event.target);
+                
                 const userData = {
-                    name: document.getElementById('name').value,
-                    email: document.getElementById('email').value,
-                    phone: document.getElementById('phone').value,
-                    password: document.getElementById('password').value
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    password: formData.get('password'),
+                    photoFile: formData.get('photo')
                 };
+
                 const result = await App.registerUser(userData);
-                alert(result.message);
-                if (result.success) App.state.view = 'home';
+                if (result.success) {
+                    App.state.view = 'registrationSuccess';
+                } else {
+                    alert(result.message);
+                }
                 App.render();
             },
 
             async handleLogin(event) {
                 event.preventDefault();
-                const email = document.getElementById('loginEmail').value;
-                const password = document.getElementById('loginPassword').value;
-                const result = await App.loginUser(email, password);
-                if (!result.success) alert(result.message);
+                const formData = new FormData(event.target);
+                
+                const result = await App.loginUser(
+                    formData.get('email'),
+                    formData.get('password')
+                );
+                
+                if (!result.success) {
+                    alert(result.message);
+                }
             }
         };
 
+        // Initialize the application
         window.App = App;
         App.init();
     </script>
 </body>
-    </html>
+</html>
